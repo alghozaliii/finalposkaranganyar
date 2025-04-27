@@ -1,0 +1,159 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
+
+class EmployeeController extends Controller
+{
+    /**
+     * Tampilkan daftar pegawai untuk Owner
+     */
+    public function index()
+    {
+        if (auth()->user()->role_id !== 2) {
+            abort(403, 'Only owners can access this page');
+        }
+        
+        $employees = User::where('owner_id', auth()->id())
+                         ->where('role_id', 3)
+                         ->get();
+        
+        return Inertia::render('OwnerDashboard', [
+            'employees' => $employees
+        ]);
+    }
+    
+    /**
+     * Tambah Pegawai Baru dengan Role (Cashier atau Stock)
+     */
+    public function store(Request $request)
+    {
+        if (auth()->user()->role_id !== 2) {
+            abort(403, 'Only owners can register employees');
+        }
+        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
+            'employees_role' => 'required|in:cashier,stock' // Hanya bisa cashier atau stock
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role_id' => 3, // Role utama employees
+            'employees_role' => $request->employees_role, // Sub-role (cashier/stock)
+            'owner_id' => auth()->id(), // Owner yang menambahkan pegawai ini
+            'is_approved' => true, // Pegawai langsung disetujui
+        ]);
+
+        return redirect()->back()->with('success', 'Employee successfully added.');
+    }
+    
+    /**
+     * Hapus Pegawai
+     */
+    public function destroy($id)
+    {
+        if (auth()->user()->role_id !== 2) {
+            abort(403, 'Only owners can remove employees');
+        }
+        
+        $employee = User::where('id', $id)
+                        ->where('owner_id', auth()->id())
+                        ->where('role_id', 3)
+                        ->firstOrFail();
+        
+        $employee->delete();
+        
+        return redirect()->back()->with('success', 'Employee successfully removed.');
+    }
+    
+    /**
+     * Tampilkan Dashboard Pegawai
+     */
+    public function dashboard()
+    {
+        if (auth()->user()->role_id !== 3) {
+            abort(403, 'Only employees can access this page');
+        }
+        
+        $owner = User::find(auth()->user()->owner_id);
+        
+        return Inertia::render('Employee/Dashboard', [
+            'owner' => $owner
+        ]);
+    }
+
+    /**
+     * Tampilkan Halaman Kasir
+     */
+    public function cashier()
+    {
+        if (auth()->user()->role_id !== 3 || auth()->user()->employees_role !== 'cashier') {
+            abort(403, 'Only cashiers can access this page');
+        }
+        
+        $user = auth()->user();
+        
+        // Get the store name from the owner
+        if ($user->owner_id) {
+            $owner = \App\Models\User::find($user->owner_id);
+            if ($owner && $owner->store_name) {
+                $user->store_name = $owner->store_name;
+            }
+        }
+    
+        return Inertia::render('Employee/Cashier');
+    }
+    
+    /**
+     * Tampilkan Halaman Manajemen Stok
+     */
+    public function stock()
+    {
+        if (auth()->user()->role_id !== 3 || auth()->user()->employees_role !== 'stock') {
+            abort(403, 'Only stock admins can access this page');
+        }
+        
+        $user = auth()->user();
+        
+        // Get the store name from the owner
+        if ($user->owner_id) {
+            $owner = \App\Models\User::find($user->owner_id);
+            if ($owner && $owner->store_name) {
+                $user->store_name = $owner->store_name;
+            }
+        }
+    
+        return Inertia::render('Employee/StockManagement', [
+            'addProductRoute' => route('employee.stock.add'), // Kirim route ke Vue
+            'listProductsRoute' => route('employee.stock.products')
+        ]);
+    }
+    
+    /**
+     * Tampilkan Form Tambah Produk (Hanya Admin Stok)
+     */
+    public function addProduct()
+    {
+        if (auth()->user()->role_id !== 3 || auth()->user()->employees_role !== 'stock') {
+            abort(403, 'Only stock admins can add products');
+        }
+
+        return Inertia::render('Employee/AddProduct');
+    }
+
+    public function getSalesHistory()
+    {
+        $sales = \DB::table('purchase')->orderBy('created_at', 'desc')->get();
+        return response()->json($sales);
+    }    
+        
+}
