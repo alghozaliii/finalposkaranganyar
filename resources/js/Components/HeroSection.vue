@@ -30,18 +30,18 @@
       </div>
     </div>
 
-   <!-- Tombol CTA -->
-  <div class="mt-8">
-    <button
-      @click="window.location.href='/pos-guide'"
-      class="flex items-center gap-3.5 text-lg font-medium text-stone-900 bg-transparent border border-stone-900 px-4 py-2 rounded hover:bg-stone-900 hover:text-white transition-colors duration-200"
-    >
-      <span class="w-10 h-10 flex items-center justify-center rounded-full bg-stone-900 text-white">
-        ▶
-      </span>
-      <span>View Demo</span>
-    </button>
-  </div>
+    <!-- Tombol CTA -->
+    <div class="mt-8">
+      <a 
+        href="/pos-guide" 
+        class="flex items-center gap-3.5 text-lg font-medium text-stone-900 bg-transparent border border-stone-900 px-4 py-2 rounded hover:bg-stone-900 hover:text-white transition-colors duration-200 inline-block"
+      >
+        <span class="w-10 h-10 flex items-center justify-center rounded-full bg-stone-900 text-white">
+          ▶
+        </span>
+        <span>View Demo</span>
+      </a>
+    </div>
   </section>
 </template>
 
