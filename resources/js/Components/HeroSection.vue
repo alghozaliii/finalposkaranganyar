@@ -42,6 +42,93 @@
         <span>View Demo</span>
       </a>
     </div>
+    
+    <!-- GWL Kasir Promotional Section -->
+    <div class="mt-24 bg-purple-50 rounded-lg p-8">
+      <div class="grid md:grid-cols-2 gap-8 items-center mb-12">
+        <div class="order-2 md:order-1">
+          <img 
+            src="/images/asset.avif" 
+            alt="Mengelola usaha dengan Aplikasi Kasir GWL" 
+            class="rounded-3xl shadow-lg w-full max-w-md"
+            loading="lazy"
+          />
+        </div>
+        <div class="order-1 md:order-2">
+          <h3 class="text-3xl font-bold text-stone-900 mb-4">Mengelola usaha lebih mudah dengan Aplikasi Kasir GWL</h3>
+          <p class="text-base mb-6">Kami membantu Anda menyajikan data-data penting dari transaksi Anda sehingga Anda bisa membuat keputusan terbaik.</p>
+          <a 
+            href="/register" 
+            class="inline-block bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition-colors duration-200"
+          >
+            Mulai →
+          </a>
+        </div>
+      </div>
+      
+      <h3 class="text-3xl font-bold text-center mb-12">GWL Hadir dengan solusi</h3>
+      
+      <div class="grid md:grid-cols-2 gap-8 items-center">
+        <div class="space-y-8">
+          <!-- Manajemen Pesanan -->
+          <div class="flex gap-6 items-start">
+            <div class="bg-teal-100 p-4 rounded-full w-16 h-16 flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-bold text-xl mb-2">Manajemen Pesanan</h4>
+              <p class="text-gray-700">Kelola pesanan dengan mudah dan terorganisir. Pantau setiap transaksi, perbarui status pesanan secara real-time.</p>
+            </div>
+          </div>
+          
+          <!-- Pembayaran Digital -->
+          <div class="flex gap-6 items-start">
+            <div class="bg-amber-100 p-4 rounded-full w-16 h-16 flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 9v6"></path>
+                <path d="M9 12h6"></path>
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-bold text-xl mb-2">Pembayaran Digital</h4>
+              <p class="text-gray-700">Dukung transaksi tanpa tunai dengan e-wallet dan transfer bank. Proses pembayaran jadi lebih cepat, aman, dan praktis.</p>
+            </div>
+          </div>
+          
+          <!-- E-Receipt -->
+          <div class="flex gap-6 items-start">
+            <div class="bg-pink-100 p-4 rounded-full w-16 h-16 flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2"></path>
+                <path d="M1 10h22"></path>
+                <path d="M6 14h2"></path>
+                <path d="M16 14h2"></path>
+                <path d="M10 14h4"></path>
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-bold text-xl mb-2">E-Receipt</h4>
+              <p class="text-gray-700">Kirim struk digital langsung ke pelanggan melalui email atau WhatsApp.</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Image Section -->
+        <div class="flex justify-center">
+          <img 
+            src="/images/asset2.avif" 
+            alt="Staff menggunakan aplikasi Kasir GWL" 
+            class="rounded-3xl shadow-lg w-full max-w-md"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 

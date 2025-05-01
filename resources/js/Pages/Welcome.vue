@@ -3,12 +3,14 @@
       <NavigationHeader />
       <HeroSection />
       <FeaturesSection />
+      <NavigationFooter/>
     </div>
   </template>
   
   <script>
   import NavigationHeader from "../Components/NavigationHeader.vue";
   import HeroSection from "../Components/HeroSection.vue";
+  import NavigationFooter from "../Components/NavigationFooter.vue";
   import FeaturesSection from "../Components/FeaturesSection.vue";
   
   export default {
@@ -17,6 +19,7 @@
       NavigationHeader,
       HeroSection,
       FeaturesSection,
+      NavigationFooter,
     },
   };
   </script>

@@ -17,7 +17,6 @@
                 <span class="inline-block bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-white to-purple-500 animate-shimmer">GWL</span>
               </a>
             </div>
-            
             <h1 class="text-3xl sm:text-4xl font-bold text-center text-white mb-2">
               Welcome Back!
             </h1>
