@@ -106,7 +106,7 @@ require __DIR__.'/auth.php';
 // Halaman Publik
 Route::get('/faq', fn() => Inertia::render('FAQ'))->name('faq.index');
 Route::get('/blog', fn() => Inertia::render('blog'))->name('blog.index');
-Route::get('/Aboutus', fn() => Inertia::render('AboutUs'))->name('AboutUs.index');
+Route::get('/Aboutus', fn() => Inertia::render('Aboutus'))->name('Aboutus.index');
 Route::get('/FAQ', fn() => Inertia::render('FAQ'))->name('FAQ.index');  
 Route::get('/pos-guide', fn() => Inertia::render('pos-guide'))->name('pos-guide.index'); 
 
