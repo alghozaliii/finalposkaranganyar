@@ -57,9 +57,22 @@ const confirmPayment = async () => {
             payment_method: paymentMethod.value
         });
 
-        alert('Pembayaran berhasil!');
+        // Simpan data invoice ke localStorage untuk diakses oleh halaman invoice
+        const invoiceData = {
+            items: order.value,
+            totalPrice: totalPrice.value,
+            receivedAmount: receivedAmount.value,
+            change: change.value,
+            paymentMethod: paymentMethod.value,
+            date: new Date().toLocaleString('id-ID'),
+            invoiceNumber: `INV-${Date.now().toString().slice(-8)}`,
+        };
+        
+        localStorage.setItem('invoiceData', JSON.stringify(invoiceData));
         localStorage.removeItem('order');
-        window.location.href = '/employee/cashier'; // Arahkan ke halaman kasir
+        
+        // Redirect ke halaman invoice
+        window.location.href = '/employee/invoice';
     } catch (error) {
         console.error('Gagal memproses pembayaran:', error);
         alert('Terjadi kesalahan saat memproses pembayaran.');

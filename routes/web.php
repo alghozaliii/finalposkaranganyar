@@ -75,6 +75,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
         // Route untuk melihat daftar produk (khusus admin stok)
         Route::get('/stock/products', [ProductController::class, 'index'])->name('stock.products');
+        
+        // Route untuk halaman invoice pembayaran
+        Route::get('/invoice', function () {
+            return Inertia::render('Employee/InvoicePembayaran');
+        })->name('invoice');
     });
 
     // **Verifikator**
