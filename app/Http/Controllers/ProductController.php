@@ -12,29 +12,25 @@ class ProductController extends Controller
     {
         return Inertia::render('Employee/AddProduct');
     }
-
+    
     public function store(Request $request)
-    {
-        $request->validate([
-            'code' => 'required|string|unique:products,code',
-            'name' => 'required|string',
-            'stock' => 'required|integer|min:1',
-            'average_price' => 'required|numeric|min:0',
-            'markup' => 'required|numeric|min:0',
-            'selling_price' => 'required|numeric|min:0',
-        ]);
+{
+    $validated = $request->validate([
+        'code' => 'required|unique:products,code',
+        'name' => 'required',
+        'stock' => 'required|integer',
+        'average_price' => 'required|numeric',
+        'markup' => 'required|numeric',
+        'selling_price' => 'required|numeric',
+        'category' => 'nullable|string',
+        'unit' => 'nullable|string',
+    ]);
 
-        Product::create([
-            'code' => $request->code,
-            'name' => $request->name,
-            'stock' => $request->stock,
-            'average_price' => $request->average_price,
-            'markup' => $request->markup,
-            'selling_price' => $request->selling_price,
-        ]);
+    Product::create($validated);
 
-        return redirect()->route('employee.stock')->with('success', 'Produk berhasil ditambahkan!');
-    }
+    return redirect()->back()->with('success', 'Produk berhasil ditambahkan');
+}
+    
 
     public function index()
     {
