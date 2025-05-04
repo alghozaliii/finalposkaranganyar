@@ -6,26 +6,42 @@
         <section class="fixed inset-0 bg-black flex justify-center items-start overflow-y-auto pt-20 md:pt-24 pb-10">   
             <div class="w-full max-w-2xl px-4 my-8">
                 <form @submit.prevent="submit" enctype="multipart/form-data" class="bg-zinc-900 rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl border border-zinc-800">
-                    <!-- Header -->
-                    <div class="flex flex-col items-center mb-8">
-                        <div class="shrink-0 h-12 w-[100px] mb-4 relative overflow-hidden">
-                            <!-- Enhanced GWL text with effects -->
-                            <div class="text-4xl font-bold tracking-wider relative z-10 text-center">
-                                <a href="/" class="shrink-0 h-9 w-[75px] mb-6 block text-center">
-                                <span class="inline-block bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-white to-purple-500 animate-shimmer">GWL</span>
-                             </a>
-                            </div>
-                            <!-- Glow effect -->
-                            <div class="absolute -inset-1 rounded-full blur-md bg-gradient-to-r from-violet-500/30 to-purple-600/30 z-0"></div>
-                        </div>
-                        <h1 class="text-3xl sm:text-4xl font-bold text-center text-white mb-2">
-                            Buat Akun Baru
-                        </h1>
-                        <p class="text-sm sm:text-base text-center text-zinc-300">
-                            Silakan lengkapi data untuk mendaftar sebagai partner
-                        </p>
-                    </div>
-
+<!-- Header dengan Logo GWL yang Ditingkatkan -->
+<div class="flex flex-col items-center mb-8">
+    <!-- Container Logo dengan efek lebih kuat -->
+    <div class="shrink-0 h-16 w-[140px] mb-6 relative overflow-hidden">
+        <!-- Background efek cahaya -->
+        <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/20 via-purple-600/20 to-violet-600/20 rounded-lg blur-xl animate-pulse"></div>
+        
+        <!-- Lingkaran efek di belakang logo -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-br from-violet-700/40 to-indigo-600/40 rounded-full blur-md"></div>
+        
+        <!-- GWL Text dengan efek yang lebih kaya -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+            <a href="/" class="block">
+                <span class="text-5xl font-extrabold tracking-widest text-center inline-block bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-white to-purple-500 animate-shimmer drop-shadow-lg">GWL</span>
+            </a>
+        </div>
+        
+        <!-- Garis bawah logo -->
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-16 h-[2px] bg-gradient-to-r from-violet-500 to-indigo-500"></div>
+        
+        <!-- Efek partikel (titik-titik cahaya) -->
+        <div class="absolute top-0 left-0 w-full h-full">
+            <div class="absolute top-1 left-3 w-1 h-1 rounded-full bg-purple-300 animate-ping"></div>
+            <div class="absolute top-2 right-5 w-1 h-1 rounded-full bg-indigo-300 animate-ping" style="animation-delay: 0.5s"></div>
+            <div class="absolute bottom-2 left-6 w-1 h-1 rounded-full bg-violet-300 animate-ping" style="animation-delay: 1s"></div>
+        </div>
+    </div>
+    
+    <!-- Teks Header -->
+    <h1 class="text-3xl sm:text-4xl font-bold text-center text-white mb-2">
+        Buat Akun Baru
+    </h1>
+    <p class="text-sm sm:text-base text-center text-zinc-300">
+        Silakan lengkapi data untuk mendaftar sebagai partner
+    </p>
+</div>
                     <!-- Form sections with improved spacing -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
                         <!-- Section 1: Akun -->
