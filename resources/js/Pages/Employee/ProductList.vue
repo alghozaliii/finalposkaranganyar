@@ -33,26 +33,32 @@ defineProps({
                     <div class="mt-4 overflow-x-auto">
                         <table class="min-w-full bg-white border">
                             <thead>
-                                <tr>
-                                    <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">Nama Produk</th>
-                                    <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">Stok</th>
-                                    <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">Harga Rata-rata</th>
-                                    <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">Markup (%)</th>
-                                    <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">Harga Jual</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-if="products.length === 0">
-                                    <td colspan="5" class="py-4 px-4 border-b text-center">Tidak ada produk tersedia</td>
-                                </tr>
-                                <tr v-for="product in products" :key="product.id" class="hover:bg-gray-50">
-                                    <td class="py-2 px-4 border-b">{{ product.name }}</td>
-                                    <td class="py-2 px-4 border-b">{{ product.stock }}</td>
-                                    <td class="py-2 px-4 border-b">Rp {{ Number(product.average_price).toLocaleString() }}</td>
-                                    <td class="py-2 px-4 border-b">{{ product.markup }}%</td>
-                                    <td class="py-2 px-4 border-b">Rp {{ Number(product.selling_price).toLocaleString() }}</td>
-                                </tr>
-                            </tbody>
+    <tr>
+        <th class="py-2 px-4 border-b bg-gray-100 text-left text-sm font-semibold text-gray-700">Nama Produk</th>
+        <th class="py-2 px-4 border-b bg-gray-100 text-left text-sm font-semibold text-gray-700">Stok</th>
+        <th class="py-2 px-4 border-b bg-gray-100 text-left text-sm font-semibold text-gray-700">Harga Rata-rata</th>
+        <th class="py-2 px-4 border-b bg-gray-100 text-left text-sm font-semibold text-gray-700">Markup (%)</th>
+        <th class="py-2 px-4 border-b bg-gray-100 text-left text-sm font-semibold text-gray-700">Harga Jual</th>
+        <th class="py-2 px-4 border-b bg-gray-100 text-left text-sm font-semibold text-gray-700">Kategori</th>
+        <th class="py-2 px-4 border-b bg-gray-100 text-left text-sm font-semibold text-gray-700">Unit</th>
+    </tr>
+</thead>
+
+<tbody>
+    <tr v-if="products.length === 0">
+        <td colspan="7" class="py-4 px-4 border-b text-center">Tidak ada produk tersedia</td>
+    </tr>
+    <tr v-for="product in products" :key="product.id" class="hover:bg-gray-50">
+        <td class="py-2 px-4 border-b">{{ product.name }}</td>
+        <td class="py-2 px-4 border-b">{{ product.stock }}</td>
+        <td class="py-2 px-4 border-b">Rp {{ Number(product.average_price).toLocaleString() }}</td>
+        <td class="py-2 px-4 border-b">{{ product.markup }}%</td>
+        <td class="py-2 px-4 border-b">Rp {{ Number(product.selling_price).toLocaleString() }}</td>
+        <td class="py-2 px-4 border-b">{{ product.category || '-' }}</td>
+        <td class="py-2 px-4 border-b">{{ product.unit || '-' }}</td>
+    </tr>
+</tbody>
+
                         </table>
                     </div>
                 </div>

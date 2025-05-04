@@ -10,7 +10,10 @@ const form = useForm({
   stock: 0,
   average_price: 0,
   selling_price: 0,
+  category: '', // Tambahkan ini
+  unit: '',     // Tambahkan ini
 });
+
 
 // Untuk stok lama & baru
 const oldStock = ref(0);
@@ -74,7 +77,41 @@ function addProduct() {
               <input v-model="form.name" type="text" class="w-full border p-2 rounded" required />
               <div v-if="form.errors.name" class="text-red-500 text-sm">{{ form.errors.name }}</div>
             </div>
+            <div>
+    <label for="category">Kategori</label>
+    <select v-model="form.category" id="category">
+  <option value="Sembako">Sembako</option>
+  <option value="Makanan Instan & Siap Saji">Makanan Instan & Siap Saji</option>
+  <option value="Camilan & Snack">Camilan & Snack</option>
+  <option value="Minuman">Minuman</option>
+  <option value="Produk Susu">Produk Susu</option>
+  <option value="Bumbu Dapur">Bumbu Dapur</option>
+  <option value="Produk Beku & Dingin">Produk Beku & Dingin</option>
+  <option value="Rokok & Aksesoris">Rokok & Aksesoris</option>
+  <option value="Kebutuhan Kebersihan Pribadi">Kebutuhan Kebersihan Pribadi</option>
+  <option value="Kebutuhan Rumah Tangga">Kebutuhan Rumah Tangga</option>
+  <option value="Perlengkapan Mandi & Cuci">Perlengkapan Mandi & Cuci</option>
+  <option value="Perlengkapan Bayi & Anak">Perlengkapan Bayi & Anak</option>
+  <option value="Obat-Obatan Ringan">Obat-Obatan Ringan</option>
+  <option value="Peralatan Dapur">Peralatan Dapur</option>
+  <option value="Alat Tulis & Sekolah">Alat Tulis & Sekolah</option>
+  <option value="Perlengkapan Plastik & Rumah">Perlengkapan Plastik & Rumah</option>
+  <option value="Pulsa & Token">Pulsa & Token</option>
+  <option value="Peralatan Elektronik Kecil">Peralatan Elektronik Kecil</option>
+  <option value="Kosmetik Ringan">Kosmetik Ringan</option>
+  <option value="Makanan Hewan">Makanan Hewan</option>
+</select>
 
+
+    <label for="unit">Unit</label>
+    <select v-model="form.unit" id="unit">
+      <option value="" disabled>Pilih unit</option>
+      <option value="pcs">pcs</option>
+      <option value="box">box</option>
+      <option value="kg">kg</option>
+      <option value="liter">liter</option>
+    </select>
+  </div>
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label>Stok Lama</label>

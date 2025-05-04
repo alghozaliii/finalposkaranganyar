@@ -21,6 +21,29 @@ onMounted(() => {
     }
 });
 
+
+const receivedAmount = ref(0);
+const receivedFormatted = ref('');
+
+const formatRupiah = (value) => {
+    const numberString = value.replace(/[^\d]/g, '');
+    const number = parseInt(numberString) || 0;
+    return 'Rp ' + number.toLocaleString('id-ID');
+};
+
+const handleReceivedInput = (e) => {
+    const input = e.target.value;
+    const numberOnly = input.replace(/[^\d]/g, '');
+    receivedAmount.value = parseInt(numberOnly) || 0;
+    receivedFormatted.value = formatRupiah(input);
+};
+
+const change = computed(() => {
+    return receivedAmount.value - totalPrice.value;
+});
+
+
+
 // Konfirmasi pembayaran
 const confirmPayment = async () => {
     if (order.value.length === 0) {
@@ -91,6 +114,32 @@ const confirmPayment = async () => {
                             <option value="qris">QRIS</option>
                         </select>
                     </div>
+<!-- Kalkulator Uang Diterima & Kembalian untuk pembayaran tunai -->
+<div v-if="paymentMethod === 'cash'" class="mt-6 bg-gray-100 p-4 rounded">
+  <h4 class="text-md font-medium mb-2">Kalkulator Pembayaran Tunai</h4>
+
+  <div class="mb-3">
+    <label class="block mb-1 font-medium">Total Belanja:</label>
+    <p class="text-lg">Rp {{ Number(totalPrice).toLocaleString('id-ID') }}</p>
+  </div>
+
+  <div class="mb-3">
+  <label class="block mb-1 font-medium">Uang Diterima:</label>
+  <input
+    type="text"
+    :value="receivedFormatted"
+    @input="handleReceivedInput"
+    class="w-full border p-2 rounded"
+    placeholder="Masukkan uang dari pembeli"
+  />
+</div>
+  <div>
+    <label class="block mb-1 font-medium">Kembalian:</label>
+    <p class="text-lg font-semibold text-green-600">
+      Rp {{ Number(change).toLocaleString('id-ID') }}
+    </p>
+  </div>
+</div>
 
                     <!-- Tampilkan QR Code jika pilih QRIS -->
                     <div v-if="paymentMethod === 'qris'" class="mt-4 text-center">
