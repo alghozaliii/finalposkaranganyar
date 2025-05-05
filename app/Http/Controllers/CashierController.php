@@ -4,9 +4,31 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 
 class CashierController extends Controller
 {
+
+    public function getProducts()
+    {
+        // Mendapatkan pengguna yang sedang login
+        $employee = Auth::user();
+        
+        // Pastikan pengguna adalah seorang employee (role 3)
+        if ($employee->role_id === 3) {
+            // Ambil produk berdasarkan owner_id yang terkait dengan employee
+            $products = Product::where('user_id', $employee->owner_id)  // owner_id adalah ID owner terkait
+                ->select('id', 'name', 'stock', 'average_price', 'markup', 'selling_price')
+                ->get();
+
+            return response()->json($products);
+        }
+
+        // Jika pengguna bukan employee (role 3), beri respon error
+        return response()->json(['message' => 'Akses ditolak.'], 403);
+    }
+    
     public function checkout(Request $request)
     {
         $order = $request->input('order');

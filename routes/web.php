@@ -15,9 +15,7 @@ use App\Http\Controllers\Owner\SalesController;
 use App\Http\Controllers\SalesRecommendationController;
 
 // Route untuk mengambil data produk dari database
-Route::get('/cashier/products', function () {
-    return response()->json(Product::select('id', 'name', 'stock', 'average_price', 'markup', 'selling_price')->get());
-});
+Route::get('/cashier/products', [CashierController::class, 'getProducts']);
 
 // Halaman Utama
 Route::get('/', function () {
