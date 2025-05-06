@@ -1,128 +1,271 @@
 <template>
-  <AuthenticatedLayout title="Dashboard Verifikator">
-    <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        Dashboard Verifikator
-      </h2>
-    </template>
+  <AuthenticatedLayout/>
+  <div class="min-h-screen bg-gray-50">
+    
+    
+    <!-- Main Container -->
+    <div class="flex pt-4">
+      
+      <!-- Sidebar -->
+      <div
+        :class="[
+          'bg-gray-300 h-screen flex flex-col items-center pt-5 fixed left-0 top-16 z-40 transition-all duration-300',
+          showSidebar ? 'w-48' : 'w-0 lg:w-48',
+          showSidebar ? 'opacity-100' : 'opacity-0 lg:opacity-100'
+        ]"
+      >
+        <div class="w-full flex flex-col gap-4 px-4 overflow-hidden">
+          <a href="/Verifikator">
+            <div
+              :class="[
+                'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
+                showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none'
+              ]"
+            >
+              <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+              <span class="font-bold text-sm mt-2">Dashboard</span>
+            </div>
+          </a>
 
-    <div class="py-12">
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div v-if="$page.props.flash && $page.props.flash.message" 
-             class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-          {{ $page.props.flash.message }}
+          <a href="/Helpdesk">
+            <div
+              :class="[
+                'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
+                showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none',
+                'transition-transform delay-100'
+              ]"
+            >
+              <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              <span class="font-bold text-sm mt-2">Helpdesk</span>
+            </div>
+          </a>
+
+          <a href="/Setting">
+            <div
+              :class="[
+                'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
+                showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none',
+                'transition-transform delay-100'
+              ]"
+            >
+            <img src="/images/sett.png" alt="Pengaturan" class="w-11 h-11" />
+              <span class="font-bold text-sm mt-1">Pengaturan</span>
+            </div>
+          </a>
         </div>
 
-        <!-- Tombol Helpdesk dan FAQ -->
-        <div class="mb-4 flex space-x-2">
-          <button 
-            @click="goToHelpdesk"
-            class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
-          >
-            + Tambah FAQ
-          </button>
-
-          <button 
-            @click="goToFAQ"
-            class="px-4 py-2 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600"
-          >
-            Lihat FAQ
-          </button>
+        <!-- Tombol Logout -->
+        <div 
+          :class="[
+            'mt-auto mb-20 bg-white p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-gray-100 transition-all duration-300 mx-4',
+            showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none',
+            'transition-transform delay-200'
+          ]"
+          @click="logout"
+        >
+          <svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          <span class="font-bold text-sm mt-1">Logout</span>
         </div>
+      </div>
 
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-          <div class="p-6 bg-white border-b border-gray-200">
-            <h3 class="text-lg font-medium mb-4">Permintaan Pendaftaran Menunggu Persetujuan</h3>
-
-            <div v-if="pendingUsers.length === 0" class="text-gray-500">
-              Tidak ada permintaan pendaftaran yang menunggu persetujuan.
+      <!-- Konten Utama -->
+      <div class="w-full transition-all duration-300" :class="{'lg:ml-48': true, 'ml-0': !showSidebar}">
+        <div class="px-6 lg:mr-64 mt-1 pb-6 flex-1 overflow-auto">
+          <div class="py-9">
+            
+            <div v-if="$page.props.flash && $page.props.flash.message" 
+                 class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+              {{ $page.props.flash.message }}
             </div>
 
-            <table v-else class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Daftar</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="user in pendingUsers" :key="user.id">
-                  <td class="px-6 py-4 whitespace-nowrap">{{ user.name }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap">{{ user.email }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap">{{ formatDate(user.created_at) }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap flex space-x-2">
-                    <button 
-                      @click="showDetails(user)"
-                      class="inline-flex items-center px-4 py-2 bg-yellow-500 text-white font-semibold rounded-md hover:bg-yellow-600"
-                    >
-                      Detail
-                    </button>
+            <!-- Tombol Helpdesk dan FAQ -->
+            <div class="mb-4 flex space-x-2">
+              <button 
+                @click="goToHelpdesk"
+                class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
+              >
+                + Tambah FAQ
+              </button>
 
-                    <form @submit.prevent="approveUser(user.id)">
-                      <button 
-                        type="submit" 
-                        class="inline-flex items-center px-4 py-2 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600"
-                      >
-                        Setujui
-                      </button>
-                    </form>
+              <button 
+                @click="goToFAQ"
+                class="px-4 py-2 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600"
+              >
+                Lihat FAQ
+              </button>
+            </div>
+          </div>
 
-                    <form @submit.prevent="rejectUser(user.id)">
-                      <button 
-                        type="submit" 
-                        class="inline-flex items-center px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600"
-                      >
-                        Tolak
-                      </button>
-                    </form>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <!-- Tab Navigation -->
+          <div class="sticky top-10 bg-white py-4 z-10 flex gap-2 overflow-x-auto border-b mb-6">
+            <button
+              @click="selectedTab = 'request'"
+              :class="[
+                'px-3 py-2 rounded-md font-bold whitespace-nowrap',
+                selectedTab === 'request' ? 'bg-purple-700 text-white' : 'bg-gray-200'
+              ]"
+            >
+              Request
+            </button>
+            <button
+              @click="selectedTab = 'accepted'"
+              :class="[
+                'px-3 py-2 rounded-md font-bold whitespace-nowrap',
+                selectedTab === 'accepted' ? 'bg-purple-700 text-white' : 'bg-gray-200'
+              ]"
+            >
+              Accepted
+            </button>
+            <button
+              @click="selectedTab = 'rejected'"
+              :class="[
+                'px-3 py-2 rounded-md font-bold whitespace-nowrap',
+                selectedTab === 'rejected' ? 'bg-purple-700 text-white' : 'bg-gray-200'
+              ]"
+            >
+              Rejected
+            </button>
+          </div>
+
+          <!-- Daftar Biodata -->
+          <div class="bg-white p-4 rounded-lg shadow max-h-[calc(100vh-180px)] overflow-y-auto">
+            <div v-if="selectedTab === 'request' && filteredUsers.length === 0" class="text-center py-8">
+              <svg class="w-16 h-16 mx-auto text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p class="text-gray-500 mt-4">Tidak ada permintaan pendaftaran yang menunggu persetujuan.</p>
+            </div>
+
+            <div v-else-if="selectedTab === 'request'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div
+                v-for="user in filteredUsers"
+                :key="user.id"
+                class="bg-gray-100 p-4 rounded-lg shadow text-center transition-all duration-200 hover:shadow-md"
+              >
+                <img src="/images/profile.png" class="w-12 h-12 rounded-full mx-auto mb-3" alt="Profile" />
+                <h3 class="font-bold">{{ user.name }}</h3>
+                <p class="text-sm"><strong>NIK:</strong> {{ user.nik }}</p>
+                <p class="text-sm">
+                  <strong>Email:</strong>
+                  <a :href="'mailto:' + user.email" class="text-blue-500">{{ user.email }}</a>
+                </p>
+                <p class="text-sm"><strong>Nomor HP:</strong> {{ user.phone }}</p>
+                <p class="text-sm text-gray-700 truncate" :title="user.address">
+                  <strong>Alamat:</strong> {{ user.address }}
+                </p>
+                <div class="flex gap-2 justify-center mt-3">
+                  <button
+                    class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm transition-colors"
+                    @click="showDetails(user)"
+                  >
+                    🔍 Detail
+                  </button>
+                  <button
+                    class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm transition-colors"
+                    @click="approveUser(user.id)"
+                  >
+                    ✅ Accept
+                  </button>
+                  <button
+                    class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm transition-colors"
+                    @click="rejectUser(user.id)"
+                  >
+                    ❌ Reject
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div v-else-if="selectedTab === 'accepted' || selectedTab === 'rejected'" class="text-center py-8">
+              <svg class="w-16 h-16 mx-auto text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p class="text-gray-500 mt-4">No items to display in this category</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profil Admin (untuk layar besar) -->
+        <div class="hidden lg:block w-64 bg-gray-200 rounded-lg p-4 text-center fixed right-3 top-24">
+          <img
+            src="/images/profile.png"
+            class="w-20 h-20 rounded-full mx-auto border-4 border-white mb-3"
+            alt="Profile Petugas"
+          />
+          <h3 class="font-bold text-lg">{{ $page.props.auth.user.name }}</h3>
+          <p class="text-gray-600">Verifikator</p>
+        </div>
+
+        <!-- Modal Profil Mobile -->
+        <div
+          :class="[
+            'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center transition-opacity duration-300',
+            showProfile ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          ]"
+          @click="showProfile = false"
+        >
+          <div 
+            class="bg-white p-6 rounded-lg w-64 text-center transform transition-transform duration-300"
+            :class="[showProfile ? 'scale-100' : 'scale-90']"
+            @click.stop
+          >
+            <img
+              src="/images/profile.png"
+              class="w-24 h-24 rounded-full mx-auto border-4 border-purple-200 mb-4"
+              alt="Profile Petugas"
+            />
+            <h3 class="font-bold text-xl">{{ $page.props.auth.user.name }}</h3>
+            <p class="text-gray-600 mb-4">Verifikator</p>
+            <button @click="showProfile = false" class="bg-purple-600 text-white px-4 py-2 rounded-lg w-full">
+              Close
+            </button>
           </div>
         </div>
       </div>
     </div>
 
-<!-- Modal Detail -->
-<div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-  <div class="bg-white p-6 rounded-lg shadow-lg w-1/3 max-h-[80vh] overflow-y-auto">
-    <h2 class="text-xl font-semibold mb-4">Detail Calon Owner</h2>
+    <!-- Modal Detail -->
+    <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md max-h-[80vh] overflow-y-auto mx-4">
+        <h2 class="text-xl font-semibold mb-4">Detail Calon Owner</h2>
 
-    <div class="mb-2"><strong>Nama:</strong> {{ selectedUser.name }}</div>
-    <div class="mb-2"><strong>Email:</strong> {{ selectedUser.email }}</div>
-    <div class="mb-2"><strong>Nomor HP (WA):</strong> {{ selectedUser.phone }}</div>
-    <div class="mb-2"><strong>Alamat:</strong> {{ selectedUser.address }}</div>
-    <div class="mb-2"><strong>NIK:</strong> {{ selectedUser.nik }}</div>
+        <div class="mb-2"><strong>Nama:</strong> {{ selectedUser.name }}</div>
+        <div class="mb-2"><strong>Email:</strong> {{ selectedUser.email }}</div>
+        <div class="mb-2"><strong>Nomor HP (WA):</strong> {{ selectedUser.phone }}</div>
+        <div class="mb-2"><strong>Alamat:</strong> {{ selectedUser.address }}</div>
+        <div class="mb-2"><strong>NIK:</strong> {{ selectedUser.nik }}</div>
 
-    <div class="mt-4">
-      <h3 class="font-semibold">Foto KTP:</h3>
-      <img :src="getImageUrl(selectedUser.ktp_photo)" 
-           alt="Foto KTP" 
-           class="w-full max-h-60 object-contain rounded-lg">
-    </div>
+        <div class="mt-4">
+          <h3 class="font-semibold">Foto KTP:</h3>
+          <img :src="getImageUrl(selectedUser.ktp_photo)" 
+              alt="Foto KTP" 
+              class="w-full max-h-60 object-contain rounded-lg">
+        </div>
 
-    <div class="mt-4">
-      <h3 class="font-semibold">Foto Selfie:</h3>
-      <img :src="getImageUrl(selectedUser.selfie_photo)" 
-           alt="Foto Selfie" 
-           class="w-full max-h-60 object-contain rounded-lg">
-    </div>
+        <div class="mt-4">
+          <h3 class="font-semibold">Foto Selfie:</h3>
+          <img :src="getImageUrl(selectedUser.selfie_photo)" 
+              alt="Foto Selfie" 
+              class="w-full max-h-60 object-contain rounded-lg">
+        </div>
 
-    <div class="mt-6 flex justify-end space-x-2">
-      <button 
-        @click="showModal = false"
-        class="px-4 py-2 bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600"
-      >
-        Tutup
-      </button>
+        <div class="mt-6 flex justify-end space-x-2">
+          <button 
+            @click="showModal = false"
+            class="px-4 py-2 bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-
-  </AuthenticatedLayout>
 </template>
 
 <script>
@@ -131,7 +274,7 @@ import { router } from '@inertiajs/vue3';
 
 export default {
   components: {
-    AuthenticatedLayout,
+    AuthenticatedLayout
   },
   
   props: {
@@ -140,11 +283,29 @@ export default {
 
   data() {
     return {
+      selectedTab: "request",
+      showSidebar: window.innerWidth >= 1024,
+      showProfile: false,
       showModal: false,
       selectedUser: {},
+      acceptedUsers: [],
+      rejectedUsers: []
     };
   },
   
+  computed: {
+    filteredUsers() {
+      if (this.selectedTab === 'request') {
+        return this.pendingUsers || [];
+      } else if (this.selectedTab === 'accepted') {
+        return this.acceptedUsers;
+      } else if (this.selectedTab === 'rejected') {
+        return this.rejectedUsers;
+      }
+      return [];
+    }
+  },
+
   methods: {
     formatDate(dateString) {
       const date = new Date(dateString);
@@ -182,7 +343,31 @@ export default {
 
     goToFAQ() {
       router.get(route('verificator.helpdesk.faq'));
+    },
+    
+    handleResize() {
+      if (window.innerWidth < 1024) {
+        this.showSidebar = false;
+      } else {
+        this.showSidebar = true;
+      }
+    },
+    
+    logout() {
+      router.post(route('logout'));
     }
+  },
+  
+  mounted() {
+    window.addEventListener("resize", this.handleResize);
+  },
+  
+  beforeUnmount() {
+    window.removeEventListener("resize", this.handleResize);
   }
 };
 </script>
+
+<style scoped>
+/* Tambahkan styling tambahan jika diperlukan */
+</style>
