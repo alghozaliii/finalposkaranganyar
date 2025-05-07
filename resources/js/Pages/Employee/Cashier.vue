@@ -11,6 +11,8 @@ const showSidebar = ref(true);
 const searchQuery = ref('');
 const activeCategory = ref('Semua');
 
+
+
 // Kategori produk
 const categories = [
   { name: 'Semua', active: true },
@@ -109,9 +111,7 @@ const removeFromCart = (itemId) => {
 
 // Logout function
 const logout = () => {
-    // Implement logout logic here
-    // For example:
-    // router.post('/logout');
+    router.post('/logout');
 };
 
 // Lanjut ke pembayaran
