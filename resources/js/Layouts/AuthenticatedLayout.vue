@@ -32,7 +32,7 @@ const storeName = computed(() => {
   <div>
     <div class="bg-gray-100">
       <!-- Navigation Bar -->
-      <nav class="border-b border-purple-300 bg-purple-300">
+      <nav class="border-b border-black bg-black">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div class="flex h-16 justify-between">
             <div class="flex">
@@ -58,7 +58,7 @@ const storeName = computed(() => {
               </div>
 
               <!-- Navigation Links -->
-              <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+              <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex text-white">
                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                   {{ storeName }}
                 </NavLink>
@@ -73,7 +73,8 @@ const storeName = computed(() => {
                     <span class="inline-flex items-center rounded-md">
                       <button
                         type="button"
-                        class="inline-flex items-center rounded-md border border-transparent bg-purple-300 px-3 py-2 text-sm font-medium leading-4 text-gray-700 transition duration-150 ease-in-out hover:text-purple-800 focus:outline-none"
+                        class="inline-flex items-center rounded-md border border-transparent bg-black px-3 py-2 text-sm font-medium leading-4 text-white transition duration-150 ease-in-out hover:text-gray-300 focus:outline-none"
+
                       >
                         <span class="mr-2">{{ $page.props.auth.user.name }}</span>
                         <div class="h-8 w-8 rounded-full overflow-hidden border-2 border-indigo-200 flex-shrink-0">
