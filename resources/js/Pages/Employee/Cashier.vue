@@ -258,67 +258,79 @@ onMounted(fetchProducts);
               </div>
             </div>
 
-            <!-- Keranjang Belanja -->
-            <div class="w-1/3 bg-white shadow-md rounded-lg p-4 sticky top-20 max-h-[calc(100vh-8rem)] overflow-auto">
-              <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold">Pesanan baru</h3>
-                <button class="text-gray-500" @click="removeFromCart(item.id)">
-                  <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              </div>
-              <div v-if="cartItems.length === 0" class="text-gray-500 text-center py-8">
-                Keranjang kosong
-              </div>
-              <div v-else class="space-y-4">
-                <div 
-                  v-for="item in cartItems" 
-                  :key="item.id" 
-                  class="flex justify-between items-center border-b pb-3"
-                >
-                  <div class="flex-grow pr-4">
-                    <h4 class="font-semibold">{{ item.name }}</h4>
-                    <p class="text-sm text-gray-600">{{ Number(item.selling_price).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }) }}</p>
-                  </div>
-                  <div class="flex items-center">
-                    <button 
-                      @click.stop="decrementQuantity(item)"
-                      class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-700"
-                    >
-                      <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                      </svg>
-                    </button>
-                    <span class="w-8 text-center">{{ item.quantity }}</span>
-                    <button 
-                      @click.stop="incrementQuantity(item)"
-                      class="w-8 h-8 rounded-full bg-purple-300 flex items-center justify-center text-white"
-                    >
-                      <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                <!-- Total -->
-                <div class="mt-4 pt-2 border-t">
-                  <div class="flex justify-between font-semibold text-lg">
-                    <span>Total</span>
-                    <span>Rp {{ Number(cartTotal).toLocaleString('id-ID') }}</span>
-                  </div>
-                  <button 
-                    @click="proceedToPayment"
-                    class="mt-4 w-full bg-purple-400 text-white py-3 rounded-lg hover:bg-purple-500 transition text-lg flex items-center justify-center"
-                  >
-                    <span>Bayar</span>
-                    <svg class="w-5 h-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
+            <!-- Bagian yang diubah hanya pada komponen Keranjang Belanja -->
+<div class="w-1/3 bg-white shadow-md rounded-lg p-4 sticky top-20 max-h-[calc(100vh-8rem)] overflow-auto">
+  <div class="flex justify-between items-center mb-4">
+    <h3 class="text-lg font-semibold">Pesanan baru</h3>
+    <button 
+      v-if="cartItems.length > 0" 
+      class="text-gray-500 hover:text-red-500" 
+      @click="cartItems = []"
+    >
+      <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
+    </button>
+  </div>
+  <div v-if="cartItems.length === 0" class="text-gray-500 text-center py-8">
+    Keranjang kosong
+  </div>
+  <div v-else class="space-y-4">
+    <div 
+      v-for="item in cartItems" 
+      :key="item.id" 
+      class="flex justify-between items-center border-b pb-3"
+    >
+      <div class="flex-grow pr-4">
+        <h4 class="font-semibold">{{ item.name }}</h4>
+        <p class="text-sm text-gray-600">{{ Number(item.selling_price).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }) }}</p>
+      </div>
+      <div class="flex items-center">
+        <button 
+          @click.stop="decrementQuantity(item)"
+          class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-700"
+        >
+          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+          </svg>
+        </button>
+        <span class="w-8 text-center">{{ item.quantity }}</span>
+        <button 
+          @click.stop="incrementQuantity(item)"
+          class="w-8 h-8 rounded-full bg-purple-300 flex items-center justify-center text-white"
+        >
+          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+        </button>
+        <button 
+          @click.stop="removeFromCart(item.id)"
+          class="ml-2 text-gray-400 hover:text-red-500"
+        >
+          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <!-- Total -->
+    <div class="mt-4 pt-2 border-t">
+      <div class="flex justify-between font-semibold text-lg">
+        <span>Total</span>
+        <span>Rp {{ Number(cartTotal).toLocaleString('id-ID') }}</span>
+      </div>
+      <button 
+        @click="proceedToPayment"
+        class="mt-4 w-full bg-purple-400 text-white py-3 rounded-lg hover:bg-purple-500 transition text-lg flex items-center justify-center"
+      >
+        <span>Bayar</span>
+        <svg class="w-5 h-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
           </div>
         </div>
       </div>
