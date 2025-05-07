@@ -76,8 +76,9 @@
 
       <!-- Konten Utama -->
       <div class="w-full transition-all duration-300" :class="{'lg:ml-48': true, 'ml-0': !showSidebar}">
-        <div class="px-6 lg:mr-64 mt-1 pb-6 flex-1 overflow-auto">
-          <div class="py-9">
+
+        <div class="pt-1 pb-6 px-8 flex-1 overflow-auto">
+          <div class="pt-4 ">
             
             <div v-if="$page.props.flash && $page.props.flash.message" 
                  class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
@@ -85,7 +86,7 @@
             </div>
 
             <!-- Tombol Helpdesk dan FAQ -->
-            <div class="mb-4 flex space-x-2">
+            <!-- <div class="mb-4 flex space-x-2">
               <button 
                 @click="goToHelpdesk"
                 class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
@@ -99,7 +100,7 @@
               >
                 Lihat FAQ
               </button>
-            </div>
+            </div> -->
           </div>
 
           <!-- Tab Navigation -->
@@ -169,7 +170,7 @@
                 </p>
                 
                 <!-- Preview dokumen KTP kecil -->
-                <div class="mt-2 mb-2">
+                <!-- <div class="mt-2 mb-2">
                   <p class="text-xs text-gray-500 mb-1">KTP:</p>
                   <div class="bg-gray-200 rounded overflow-hidden h-16 flex items-center justify-center">
                     <img 
@@ -179,7 +180,7 @@
                       @error="handleImageError"
                     />
                   </div>
-                </div>
+                </div> -->
                 
                 <div class="flex gap-2 justify-center mt-3">
                   <button
@@ -211,17 +212,6 @@
               <p class="text-gray-500 mt-4">No items to display in this category</p>
             </div>
           </div>
-        </div>
-
-        <!-- Profil Admin (untuk layar besar) -->
-        <div class="hidden lg:block w-64 bg-gray-200 rounded-lg p-4 text-center fixed right-3 top-24">
-          <img
-            src="/images/profile.png"
-            class="w-20 h-20 rounded-full mx-auto border-4 border-white mb-3"
-            alt="Profile Petugas"
-          />
-          <h3 class="font-bold text-lg">{{ $page.props.auth.user.name }}</h3>
-          <p class="text-gray-600">Verifikator</p>
         </div>
 
         <!-- Modal Profil Mobile -->

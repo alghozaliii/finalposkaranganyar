@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-indigo-700">
+  <div class="min-h-screen bg-purple-50">
     <AuthenticatedLayout/>
     
     <!-- Main Container -->
@@ -83,18 +83,18 @@
             <!-- Header Area -->
             <div class="flex items-center justify-between mb-6">
               <div>
-                <button @click="toggleSidebar" class="lg:hidden text-white">
+                <button @click="toggleSidebar" class="lg:hidden text-black">
                   <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                 </button>
-                <h1 class="text-2xl font-bold text-white inline-block ml-2">F.A.Q.</h1>
+                <h1 class="text-2xl font-bold text-black inline-block ml-2">F.A.Q.</h1>
               </div>
               
               <!-- Tambah Button -->
               <button 
                 @click="redirectToCreateFAQ" 
-                class="bg-white text-indigo-700 px-4 py-2 rounded-md flex items-center font-medium hover:bg-gray-100 transition"
+                class="bg-white text-purple-600 px-4 py-2 rounded-md flex items-center font-medium hover:bg-gray-100 transition"
               >
                 <svg class="w-5 h-5 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -108,7 +108,7 @@
               <input 
                 type="text" 
                 v-model="searchQuery"
-                class="w-full py-2 pl-10 pr-4 text-gray-700 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                class="w-full py-2 pl-10 pr-4 text-gray-700 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400"
                 placeholder="Search" 
               />
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -119,7 +119,7 @@
             </div>
             
             <!-- Last Updated Info -->
-            <div class="flex items-center text-white mb-6">
+            <div class="flex items-center text-black mb-6">
               <span>Last updated: {{ lastUpdated }}</span>
               <svg class="w-5 h-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4" />
@@ -128,23 +128,23 @@
             
             <!-- FAQ Categories -->
             <div class="mb-6">
-              <h2 class="text-xl font-semibold text-white mb-2">{{ selectedCategory }}</h2>
+              <h2 class="text-xl font-semibold text-black mb-2">{{ selectedCategory }}</h2>
               
               <!-- FAQ Items -->
               <div class="space-y-4">
                 <div
                   v-for="(faq, index) in filteredFaqs"
                   :key="index"
-                  class="bg-white bg-opacity-95 rounded-md overflow-hidden"
+                  class="bg-white rounded-md overflow-hidden"
                 >
                   <div 
-                    class="p-4 flex justify-between items-center cursor-pointer hover:bg-indigo-50 transition-colors"
+                    class="p-4 flex justify-between items-center cursor-pointer hover:bg-purple-200 transition-colors"
                     @click="toggleFaq(index)"
                   >
                     <h3 class="font-medium text-gray-800">{{ faq.question }}</h3>
                     <svg
                       :class="{'transform rotate-180': faq.open, 'transform rotate-0': !faq.open}"
-                      class="w-5 h-5 text-indigo-600 transition-transform duration-200"
+                      class="w-5 h-5 text-purple-600 transition-transform duration-200"
                       xmlns="http://www.w3.org/2000/svg" 
                       fill="none" 
                       viewBox="0 0 24 24" 
@@ -165,21 +165,21 @@
             
             <!-- Category Sections -->
             <div v-if="selectedCategory === 'General Question'" class="mb-8">
-              <h2 class="text-xl font-semibold text-white mb-2">Transaction Question</h2>
+              <h2 class="text-xl font-semibold text-black mb-2">Transaction Question</h2>
               <div class="space-y-4">
                 <div
                   v-for="(faq, index) in transactionFaqs"
                   :key="'transaction-'+index"
-                  class="bg-white bg-opacity-95 rounded-md overflow-hidden"
+                  class="bg-white rounded-md overflow-hidden"
                 >
                   <div 
-                    class="p-4 flex justify-between items-center cursor-pointer hover:bg-indigo-50 transition-colors"
+                    class="p-4 flex justify-between items-center cursor-pointer hover:bg-purple-200 transition-colors"
                     @click="toggleTransactionFaq(index)"
                   >
                     <h3 class="font-medium text-gray-800">{{ faq.question }}</h3>
                     <svg
                       :class="{'transform rotate-180': faq.open, 'transform rotate-0': !faq.open}"
-                      class="w-5 h-5 text-indigo-600 transition-transform duration-200"
+                      class="w-5 h-5 text-purple-600 transition-transform duration-200"
                       xmlns="http://www.w3.org/2000/svg" 
                       fill="none" 
                       viewBox="0 0 24 24" 
@@ -201,7 +201,7 @@
         </div>
 
         <!-- Profil Admin (untuk layar besar) -->
-        <div class="hidden lg:block w-64 bg-gray-200 rounded-lg p-4 text-center fixed right-3 top-24">
+        <!-- <div class="hidden lg:block w-64 bg-gray-200 rounded-lg p-4 text-center fixed right-3 top-24">
           <img
             src="/images/profile.png"
             class="w-20 h-20 rounded-full mx-auto border-4 border-white mb-3"
@@ -209,7 +209,7 @@
           />
           <h3 class="font-bold text-lg">{{ userName }}</h3>
           <p class="text-gray-600">Verifikator</p>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
