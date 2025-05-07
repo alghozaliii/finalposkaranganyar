@@ -148,7 +148,15 @@
                 :key="user.id"
                 class="bg-gray-100 p-4 rounded-lg shadow text-center transition-all duration-200 hover:shadow-md"
               >
-                <img src="/images/profile.png" class="w-12 h-12 rounded-full mx-auto mb-3" alt="Profile" />
+                <!-- Preview Selfie kecil -->
+                <div class="mb-3 flex justify-center">
+                  <img 
+                    :src="getImageUrl(user.selfie_photo)" 
+                    class="w-12 h-12 rounded-full object-cover border-2 border-purple-400" 
+                    alt="Profile" 
+                    @error="handleImageError"
+                  />
+                </div>
                 <h3 class="font-bold">{{ user.name }}</h3>
                 <p class="text-sm"><strong>NIK:</strong> {{ user.nik }}</p>
                 <p class="text-sm">
@@ -159,6 +167,20 @@
                 <p class="text-sm text-gray-700 truncate" :title="user.address">
                   <strong>Alamat:</strong> {{ user.address }}
                 </p>
+                
+                <!-- Preview dokumen KTP kecil -->
+                <div class="mt-2 mb-2">
+                  <p class="text-xs text-gray-500 mb-1">KTP:</p>
+                  <div class="bg-gray-200 rounded overflow-hidden h-16 flex items-center justify-center">
+                    <img 
+                      :src="getImageUrl(user.ktp_photo)" 
+                      class="h-full object-contain" 
+                      alt="KTP Preview"
+                      @error="handleImageError"
+                    />
+                  </div>
+                </div>
+                
                 <div class="flex gap-2 justify-center mt-3">
                   <button
                     class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm transition-colors"
@@ -245,14 +267,24 @@
           <h3 class="font-semibold">Foto KTP:</h3>
           <img :src="getImageUrl(selectedUser.ktp_photo)" 
               alt="Foto KTP" 
-              class="w-full max-h-60 object-contain rounded-lg">
+              class="w-full max-h-60 object-contain rounded-lg border border-gray-300"
+              @error="handleImageError">
+          <!-- Link untuk melihat/download gambar -->
+          <a :href="getImageUrl(selectedUser.ktp_photo)" target="_blank" class="text-blue-500 text-sm mt-1 inline-block">
+            Lihat Gambar Asli
+          </a>
         </div>
 
         <div class="mt-4">
           <h3 class="font-semibold">Foto Selfie:</h3>
           <img :src="getImageUrl(selectedUser.selfie_photo)" 
               alt="Foto Selfie" 
-              class="w-full max-h-60 object-contain rounded-lg">
+              class="w-full max-h-60 object-contain rounded-lg border border-gray-300"
+              @error="handleImageError">
+          <!-- Link untuk melihat/download gambar -->
+          <a :href="getImageUrl(selectedUser.selfie_photo)" target="_blank" class="text-blue-500 text-sm mt-1 inline-block">
+            Lihat Gambar Asli
+          </a>
         </div>
 
         <div class="mt-6 flex justify-end space-x-2">
@@ -289,7 +321,8 @@ export default {
       showModal: false,
       selectedUser: {},
       acceptedUsers: [],
-      rejectedUsers: []
+      rejectedUsers: [],
+      fallbackImage: '/images/profile.png'
     };
   },
   
@@ -334,7 +367,24 @@ export default {
     },
 
     getImageUrl(photoPath) {
-      return photoPath ? `/storage/${photoPath}` : '/images/default.png';
+      if (!photoPath) return '/images/default.png';
+      
+      // Handle full URLs (in case they're already absolute)
+      if (photoPath.startsWith('http')) {
+        return photoPath;
+      }
+      
+      // Ensure path starts with /storage/ for Laravel public storage
+      if (!photoPath.startsWith('/storage/')) {
+        return `/storage/${photoPath}`;
+      }
+      
+      return photoPath;
+    },
+    
+    // Handle image loading errors
+    handleImageError(e) {
+      e.target.src = this.fallbackImage;
     },
 
     goToHelpdesk() {
@@ -369,5 +419,25 @@ export default {
 </script>
 
 <style scoped>
-/* Tambahkan styling tambahan jika diperlukan */
+/* Improved styles for image display */
+img.rounded-full {
+  object-fit: cover;
+  border: 2px solid #a78bfa;
+}
+
+/* Hover effect for images */
+.bg-gray-200 img:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+/* Additional animation for loading images */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+img {
+  animation: fadeIn 0.3s ease;
+}
 </style>
