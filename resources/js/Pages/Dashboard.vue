@@ -15,7 +15,7 @@
         ]"
       >
         <div class="w-full flex flex-col gap-4 px-4 overflow-hidden">
-          <a href="/Verifikator">
+          <a href="/dashboard">
             <div
               :class="[
                 'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
@@ -29,7 +29,7 @@
             </div>
           </a>
 
-          <a href="/Helpdesk">
+          <a href="/verificator/helpdesk">
             <div
               :class="[
                 'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
@@ -44,7 +44,7 @@
             </div>
           </a>
 
-          <a href="/Setting">
+          <!-- <a href="/Setting">
             <div
               :class="[
                 'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
@@ -55,7 +55,7 @@
             <img src="/images/sett.png" alt="Pengaturan" class="w-11 h-11" />
               <span class="font-bold text-sm mt-1">Pengaturan</span>
             </div>
-          </a>
+          </a> -->
         </div>
 
         <!-- Tombol Logout -->
