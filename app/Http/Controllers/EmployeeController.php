@@ -18,13 +18,8 @@ class EmployeeController extends Controller
             abort(403, 'Only owners can access this page');
         }
         
-        $employees = User::where('owner_id', auth()->id())
-                         ->where('role_id', 3)
-                         ->get();
-        
-        return Inertia::render('OwnerDashboard', [
-            'employees' => $employees
-        ]);
+        // Redirect to owner dashboard instead
+        return redirect()->route('owner.dashboard');
     }
     
     /**
@@ -184,6 +179,24 @@ class EmployeeController extends Controller
         return Inertia::render('Employee/StockManagement', [
             'addProductRoute' => route('owner.stock.add'), // Kirim route ke Vue
             'listProductsRoute' => route('owner.stock.products')
+        ]);
+    }
+
+    /**
+     * Tampilkan Dashboard Owner
+     */
+    public function ownerDashboard()
+    {
+        if (auth()->user()->role_id !== 2) {
+            abort(403, 'Only owners can access this page');
+        }
+        
+        $employees = User::where('owner_id', auth()->id())
+                         ->where('role_id', 3)
+                         ->get();
+        
+        return Inertia::render('OwnerDashboard', [
+            'employees' => $employees
         ]);
     }
 }

@@ -1,8 +1,20 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
+
+// Get user information
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+
+// Get the return route if provided
+const props = defineProps({
+  returnRoute: {
+    type: String,
+    default: null
+  }
+});
 
 // Ambil data pesanan dari localStorage
 const order = ref([]);
@@ -45,6 +57,15 @@ function selectMethod(m) {
   }
 }
 
+// Determine the correct invoice route based on user role
+const getInvoiceRoute = () => {
+  if (user.value.role_id === 2) {
+    return route('owner.invoice');
+  } else {
+    return route('employee.invoice');
+  }
+};
+
 // Checkout
 const confirmPayment = async () => {
   if (!order.value.length) {
@@ -69,7 +90,9 @@ const confirmPayment = async () => {
     };
     localStorage.setItem('invoiceData', JSON.stringify(invoiceData));
     localStorage.removeItem('order');
-    window.location.href = '/employee/invoice';
+    
+    // Redirect using the appropriate route
+    router.get(getInvoiceRoute());
   } catch (e) {
     console.error(e);
     alert('Gagal memproses pembayaran.');

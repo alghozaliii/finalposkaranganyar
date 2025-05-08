@@ -44,7 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Auth::logout();
                 return redirect('/')->with('message', 'Your account is still pending approval from a verificator.');
             }
-            return redirect()->route('employees.index');
+            return redirect()->route('owner.dashboard');
         } elseif ($user->role_id === 3) {
             // Employees dibagi menjadi cashier dan stock
             if ($user->employees_role === 'cashier') {
@@ -82,6 +82,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // **Route untuk Owner**
     Route::prefix('owner')->name('owner.')->group(function () {
+        // Owner dashboard
+        Route::get('/dashboard', [EmployeeController::class, 'ownerDashboard'])->name('dashboard');
+        
         // Route untuk cashier
         Route::get('/cashier', [EmployeeController::class, 'ownerCashier'])->name('cashier');
         
@@ -96,6 +99,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         
         // Route untuk melihat daftar produk
         Route::get('/stock/products', [ProductController::class, 'index'])->name('stock.products');
+        
+        // Route untuk halaman invoice pembayaran
+        Route::get('/invoice', function () {
+            return Inertia::render('Employee/InvoicePembayaran');
+        })->name('invoice');
     });
 
     // **Verifikator**
@@ -140,7 +148,19 @@ Route::middleware(['auth', 'role:verificator'])->group(function () {
 });
 
 Route::get('/payment', function () {
-    return inertia('Employee/Payment');
+    $user = Auth::user();
+    
+    if ($user && $user->role_id === 2) {
+        // If owner, add owner payment route
+        return inertia('Employee/Payment', [
+            'returnRoute' => 'owner.cashier'
+        ]);
+    }
+    
+    // Default for employees
+    return inertia('Employee/Payment', [
+        'returnRoute' => 'employee.cashier'
+    ]);
 });
 
 Route::post('/cashier/checkout', [CashierController::class, 'checkout']);

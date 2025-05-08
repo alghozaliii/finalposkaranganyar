@@ -1,7 +1,10 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import { ref, onMounted } from 'vue';
+import { Head, router, usePage } from '@inertiajs/vue3';
+import { ref, onMounted, computed } from 'vue';
+
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 
 const invoiceData = ref({
     items: [],
@@ -30,12 +33,11 @@ const printInvoice = () => {
 const returnToCashier = () => {
     localStorage.removeItem('invoiceData');
     
-    // Check if the user is an owner or employee and redirect accordingly
-    const user = document.querySelector('meta[name="user-role"]')?.getAttribute('content');
-    if (user === '2') { // Role ID 2 is owner
-        window.location.href = '/owner/cashier';
+    // Redirect based on user role using Inertia's router
+    if (user.value.role_id === 2) { // Role ID 2 is owner
+        router.get(route('owner.cashier'));
     } else {
-        window.location.href = '/employee/cashier';
+        router.get(route('employee.cashier'));
     }
 };
 </script>
