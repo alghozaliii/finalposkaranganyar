@@ -155,5 +155,35 @@ class EmployeeController extends Controller
         $sales = \DB::table('purchase')->orderBy('created_at', 'desc')->get();
         return response()->json($sales);
     }    
+
+    /**
+     * Tampilkan Halaman Kasir untuk Owner
+     */
+    public function ownerCashier()
+    {
+        if (auth()->user()->role_id !== 2) {
+            abort(403, 'Only owners can access this page');
+        }
         
+        $user = auth()->user();
+    
+        return Inertia::render('Employee/Cashier');
+    }
+    
+    /**
+     * Tampilkan Halaman Manajemen Stok untuk Owner
+     */
+    public function ownerStock()
+    {
+        if (auth()->user()->role_id !== 2) {
+            abort(403, 'Only owners can access this page');
+        }
+        
+        $user = auth()->user();
+    
+        return Inertia::render('Employee/StockManagement', [
+            'addProductRoute' => route('owner.stock.add'), // Kirim route ke Vue
+            'listProductsRoute' => route('owner.stock.products')
+        ]);
+    }
 }

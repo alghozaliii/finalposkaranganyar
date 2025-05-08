@@ -23,7 +23,7 @@
           </button>
           
           <!-- Transaksi -->
-          <button @click="goToSales" class="flex flex-col items-center">
+          <button @click="goToCashier" class="flex flex-col items-center">
             <div class="p-3 rounded-md">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -33,7 +33,7 @@
           </button>
           
           <!-- Stok barang -->
-          <button @click="activateSection('stock')" class="flex flex-col items-center">
+          <button @click="goToStock" class="flex flex-col items-center">
             <div class="p-3 rounded-md" :class="activeSection==='stock' ? 'bg-purple-100 text-purple-700' : 'text-gray-500'">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" :class="activeSection==='stock' ? 'text-purple-700' : 'text-gray-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -689,9 +689,9 @@ import axios from 'axios';
 import { utils, writeFile } from 'xlsx';
 import Papa from 'papaparse';
 
-// Props awal (fallback)
+// Props
 const props = defineProps({
-  employees: { type: Array, default: () => [] },
+  employees: Array,
   totalRevenue: { type: Number, default: 0 },
   totalSales: { type: Number, default: 0 },
   totalCustomers: { type: Number, default: 0 },
@@ -705,7 +705,6 @@ const props = defineProps({
   activeTab: { type: String, default: 'Month' },
   salesrecommendation: { type: Array, default: () => [] }
 });
-
 
 // Reactive data
 const employees = ref(props.employees);
@@ -772,7 +771,8 @@ const activateSection = (section) => {
 
 // Navigation
 const goToFAQ = () => router.get(route('verificator.helpdesk.faq'));
-const goToSales = () => router.get(route('owner.sales'));
+const goToCashier = () => router.get(route('owner.cashier'));
+const goToStock = () => router.get(route('owner.stock'));
 const goToRecommendation = () => router.get(route('owner.sales.recommendation'));
 const logout = () => router.post(route('logout'));
 const setActiveTab = t => activeTab.value = t;
@@ -1118,10 +1118,6 @@ const fetchProducts = async () => {
     console.error('Error fetching products:', error);
   }
 };
-
-// Tambahkan tombol Import ke toolbar
-// Tempatkan tombol ini di sebelah tombol "Tambah" di komponen Anda:
-// <button class="btn-import" @click="openImportModal">Import</button>
 
 // Sinkronisasi data saat mounted
 onMounted(async () => {

@@ -1,10 +1,22 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
-defineProps({
+const props = defineProps({
     products: Array
 });
+
+// Get the user's role from the page props
+const page = usePage();
+const isOwner = computed(() => {
+    return page.props.auth.user.role_id === 2;
+});
+
+// Determine the correct route based on user role
+const getBackRoute = () => {
+    return isOwner.value ? 'owner.stock' : 'employee.stock';
+};
 </script>
 
 <template>
@@ -23,7 +35,7 @@ defineProps({
 
                     <!-- Link kembali ke stock management -->
                     <Link 
-                        :href="route('employee.stock')"
+                        :href="route(getBackRoute())"
                         class="mb-4 inline-block px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-700"
                     >
                         Kembali

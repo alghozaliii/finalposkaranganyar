@@ -80,6 +80,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
         })->name('invoice');
     });
 
+    // **Route untuk Owner**
+    Route::prefix('owner')->name('owner.')->group(function () {
+        // Route untuk cashier
+        Route::get('/cashier', [EmployeeController::class, 'ownerCashier'])->name('cashier');
+        
+        // Route untuk stock management
+        Route::get('/stock', [EmployeeController::class, 'ownerStock'])->name('stock');
+        
+        // Route untuk menampilkan halaman Tambah Produk
+        Route::get('/stock/add', [ProductController::class, 'create'])->name('stock.add');
+        
+        // Route untuk menyimpan produk baru
+        Route::post('/stock', [ProductController::class, 'store'])->name('stock.store'); 
+        
+        // Route untuk melihat daftar produk
+        Route::get('/stock/products', [ProductController::class, 'index'])->name('stock.products');
+    });
+
     // **Verifikator**
     Route::prefix('verificator')->name('verificator.')->group(function () {
         Route::get('/dashboard', [VerificatorController::class, 'dashboard'])->name('dashboard');

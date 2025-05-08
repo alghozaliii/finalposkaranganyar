@@ -11,7 +11,13 @@ class ProductController extends Controller
 {
     public function create()
     {
-        return Inertia::render('Employee/AddProduct');
+        // Check if user is a stock employee or owner
+        $user = auth()->user();
+        if (($user->role_id === 3 && $user->employees_role === 'stock') || $user->role_id === 2) {
+            return Inertia::render('Employee/AddProduct');
+        }
+        
+        abort(403, 'Unauthorized access');
     }
     
     public function store(Request $request)
@@ -27,13 +33,15 @@ class ProductController extends Controller
             'unit' => 'nullable|string',
         ]);
 
-        // Get the current employee
-        $employee = auth()->user();
+        // Get the current user
+        $user = auth()->user();
         
-        // If this is a stock employee, get their owner's ID
-        if ($employee->role_id === 3 && $employee->employees_role === 'stock' && $employee->owner_id) {
-            // Set the user_id to be the owner's ID
-            $validated['user_id'] = $employee->owner_id;
+        if ($user->role_id === 3 && $user->employees_role === 'stock' && $user->owner_id) {
+            // If user is a stock employee, set the user_id to be the owner's ID
+            $validated['user_id'] = $user->owner_id;
+        } elseif ($user->role_id === 2) {
+            // If user is an owner, set the user_id to their own ID
+            $validated['user_id'] = $user->id;
         }
 
         Product::create($validated);
@@ -45,10 +53,17 @@ class ProductController extends Controller
     public function index()
     {
         // Get the current logged-in user
-        $employee = auth()->user();
+        $user = auth()->user();
     
-        // Filter products by the owner's ID
-        $products = Product::where('user_id', $employee->owner_id)->get();
+        if ($user->role_id === 3 && $user->employees_role === 'stock') {
+            // If stock employee, filter products by the owner's ID
+            $products = Product::where('user_id', $user->owner_id)->get();
+        } elseif ($user->role_id === 2) {
+            // If owner, show their own products
+            $products = Product::where('user_id', $user->id)->get();
+        } else {
+            abort(403, 'Unauthorized access');
+        }
     
         return Inertia::render('Employee/ProductList', [
             'products' => $products,

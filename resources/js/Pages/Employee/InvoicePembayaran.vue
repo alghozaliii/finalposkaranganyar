@@ -29,7 +29,14 @@ const printInvoice = () => {
 // Function to return to cashier page
 const returnToCashier = () => {
     localStorage.removeItem('invoiceData');
-    window.location.href = '/employee/cashier';
+    
+    // Check if the user is an owner or employee and redirect accordingly
+    const user = document.querySelector('meta[name="user-role"]')?.getAttribute('content');
+    if (user === '2') { // Role ID 2 is owner
+        window.location.href = '/owner/cashier';
+    } else {
+        window.location.href = '/employee/cashier';
+    }
 };
 </script>
 
