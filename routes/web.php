@@ -133,10 +133,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 require __DIR__.'/auth.php';
 
 // Halaman Publik
-Route::get('/faq', fn() => Inertia::render('FAQ'))->name('faq.index');
+Route::get('/faq', [HelpdeskController::class, 'guestFaq'])->name('faq.index');
 Route::get('/blog', fn() => Inertia::render('blog'))->name('blog.index');
 Route::get('/Aboutus', fn() => Inertia::render('Aboutus'))->name('Aboutus.index');
-Route::get('/FAQ', fn() => Inertia::render('FAQ'))->name('FAQ.index');  
+Route::get('/FAQ', [HelpdeskController::class, 'guestFaq'])->name('FAQ.index');  
 Route::get('/pos-guide', fn() => Inertia::render('pos-guide'))->name('pos-guide.index'); 
 
 // Resource Controller Employees (CRUD Pegawai)

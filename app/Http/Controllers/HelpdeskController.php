@@ -60,5 +60,11 @@ public function create()
     return Inertia::render('Helpdesk'); // Halaman tambah FAQ
 }
 
+    // Menampilkan FAQ untuk guest/publik
+    public function guestFaq()
+    {
+        $faqs = FAQ::whereNotNull('answer')->get();
+        return Inertia::render('FAQguest', ['faqs' => $faqs]);
+    }
 
 }

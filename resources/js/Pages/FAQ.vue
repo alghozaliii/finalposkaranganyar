@@ -88,7 +88,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                 </button>
-                <h1 class="text-2xl font-bold text-black inline-block ml-2">F.A.Q.</h1>
+                <h1 class="text-2xl font-bold text-black inline-block ml-2">F.A.Q. kontol</h1>
               </div>
               
               <!-- Tambah Button -->
