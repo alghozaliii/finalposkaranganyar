@@ -52,7 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             } elseif ($user->employees_role === 'stock') {
                 return redirect()->route('employee.stock');
             } else {
-                return redirect()->route('employee.dashboard');
+                return redirect()->route('employee.dashboard');       
             }
         }
 
@@ -104,7 +104,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/invoice', function () {
             return Inertia::render('Employee/InvoicePembayaran');
         })->name('invoice');
+
+        
     });
+    Route::get('/helpdeskowner', function () {
+        return Inertia::render('HelpdeskOwner');
+    })->name('helpdeskowner');
 
     // **Verifikator**
     Route::prefix('verificator')->name('verificator.')->group(function () {
@@ -114,8 +119,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Helpdesk di dalam verifikator
         Route::prefix('helpdesk')->name('helpdesk.')->group(function () {
-            Route::get('/', [HelpdeskController::class, 'index'])->name('index'); // Lihat FAQ
-            Route::get('/faq', [HelpdeskController::class, 'faq'])->name('faq'); // Lihat daftar FAQ
+            Route::get('/', [HelpdeskController::class, 'index'])->name('index'); 
+            Route::get('/faq', [HelpdeskController::class, 'faq'])->name('faq'); 
             Route::get('/create', [HelpdeskController::class, 'create'])->name('create'); // Tambah FAQ
             Route::post('/store', [HelpdeskController::class, 'store'])->name('store'); // Simpan FAQ
         });

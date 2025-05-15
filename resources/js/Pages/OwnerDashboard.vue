@@ -770,7 +770,7 @@ const activateSection = (section) => {
 };
 
 // Navigation
-const goToFAQ = () => router.get('/faq');
+const goToFAQ = () => router.get('/helpdeskowner');
 const goToCashier = () => router.get(route('owner.cashier'));
 const goToStock = () => router.get(route('owner.stock'));
 const goToRecommendation = () => router.get(route('owner.sales.recommendation'));

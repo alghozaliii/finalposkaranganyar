@@ -42,22 +42,6 @@
               <span class="font-bold text-sm mt-2">Helpdesk</span>
             </div>
           </a>
-
-          <a href="/Setting">
-            <div
-              :class="[
-                'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
-                showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none',
-                'transition-transform delay-100'
-              ]"
-            >
-              <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span class="font-bold text-sm mt-1">Pengaturan</span>
-            </div>
-          </a>
         </div>
 
         <!-- Tombol Logout -->
@@ -88,7 +72,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                 </button>
-                <h1 class="text-2xl font-bold text-black inline-block ml-2">F.A.Q. kontol</h1>
+                <h1 class="text-2xl font-bold text-black inline-block ml-2">F.A.Q. </h1>
               </div>
               
               <!-- Tambah Button -->

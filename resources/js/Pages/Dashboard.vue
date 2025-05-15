@@ -29,7 +29,7 @@
             </div>
           </a>
 
-          <a href="/verificator/helpdesk">
+          <button @click="goToFAQ">
             <div
               :class="[
                 'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
@@ -42,7 +42,7 @@
               </svg>
               <span class="font-bold text-sm mt-2">Helpdesk</span>
             </div>
-          </a>
+         </button>
 
           <!-- <a href="/Setting">
             <div
