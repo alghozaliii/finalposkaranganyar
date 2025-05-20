@@ -259,7 +259,15 @@
             <h1 class="text-2xl text-gray-800 font-semibold mb-5">Laporan Penjualan</h1>
               
             <!-- Date Filter -->
-            <div class="flex justify-end mb-5">
+            <div class="flex justify-between mb-5">
+              <div class="flex gap-3">
+                <button @click="goToSales" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+                  Rekap
+                </button>
+                <button @click="goToSalesRecommendation" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+                  Rekomendasi
+                </button>
+              </div>
               <div class="bg-white px-4 py-2 rounded-full text-sm">
                 {{ dateRange }}
               </div>
@@ -773,7 +781,8 @@ const activateSection = (section) => {
 const goToFAQ = () => router.get('/helpdeskowner');
 const goToCashier = () => router.get(route('owner.cashier'));
 const goToStock = () => router.get(route('owner.stock'));
-const goToRecommendation = () => router.get(route('owner.sales.recommendation'));
+const goToSales = () => router.get(route('owner.sales'));
+const goToSalesRecommendation = () => router.get(route('owner.sales.recommendation'));
 const logout = () => router.post(route('logout'));
 const setActiveTab = t => activeTab.value = t;
 

@@ -138,7 +138,7 @@
                           </button>
                         </td>
                       </tr>
-                      <tr v-if="faq.open" class="bg-purple-50">
+                      <tr v-if="faq.open" class="bg-purple-200">
                         <td colspan="2" class="py-3 px-4 text-sm text-gray-700 border-b">
                           <p>{{ faq.answer }}</p>
                         </td>
@@ -180,7 +180,7 @@
                           </button>
                         </td>
                       </tr>
-                      <tr v-if="faq.open" class="bg-purple-50">
+                      <tr v-if="faq.open" class="bg-purple-200">
                         <td colspan="2" class="py-3 px-4 text-sm text-gray-700 border-b">
                           <p>{{ faq.answer }}</p>
                         </td>
