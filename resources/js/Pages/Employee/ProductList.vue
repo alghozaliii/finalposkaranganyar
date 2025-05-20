@@ -70,7 +70,7 @@ const getBackRoute = () => {
         <td class="py-2 px-4 border-b">{{ product.unit || '-' }}</td>
     </tr>
 </tbody>
-
+    
                         </table>
                     </div>
                 </div>

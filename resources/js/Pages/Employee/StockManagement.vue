@@ -1,11 +1,228 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { ref, computed, onMounted } from 'vue';
 
 // Ambil props dari backend
 defineProps({
     addProductRoute: String,
-    listProductsRoute: String // Tambahkan props baru untuk route daftar produk
+    listProductsRoute: String
+});
+
+// Data
+const products = ref([
+    { id: 'ID00111111', name: 'Minyakita 1L', stock: 3, price: 14500, category: 'Sembako', status: 'Avail', selected: false },
+    { id: 'ID00222222', name: 'Beras Pulen 5kg', stock: 10, price: 65000, category: 'Sembako', status: 'Avail', selected: false },
+    { id: 'ID00333333', name: 'Gula Pasir 1kg', stock: 15, price: 16000, category: 'Sembako', status: 'Avail', selected: false },
+    { id: 'ID00444444', name: 'Teh Celup (25 pcs)', stock: 20, price: 7500, category: 'Minuman', status: 'Avail', selected: false },
+    { id: 'ID00555555', name: 'Air Mineral 600ml', stock: 48, price: 3500, category: 'Minuman', status: 'Avail', selected: false },
+    { id: 'ID00666666', name: 'Kopi Sachet', stock: 25, price: 2000, category: 'Minuman', status: 'Avail', selected: false },
+    { id: 'ID00777777', name: 'Mie Instan', stock: 0, price: 3500, category: 'Makanan', status: 'Out of Stock', selected: false },
+    { id: 'ID00888888', name: 'Susu UHT 1L', stock: 5, price: 16000, category: 'Minuman', status: 'Avail', selected: false },
+]);
+
+const itemsPerPage = ref(5);
+const currentPage = ref(1);
+const allSelected = ref(false);
+const activeActionMenu = ref(null);
+const showImportModal = ref(false);
+const showAddProductModal = ref(false);
+const selectedFile = ref(null);
+const newProduct = ref({
+    id: '',
+    name: '',
+    stock: 0,
+    price: 0,
+    category: '',
+    status: 'Avail',
+    selected: false
+});
+
+// Computed properties
+const totalPages = computed(() => {
+    return Math.ceil(products.value.length / itemsPerPage.value);
+});
+
+const displayedProducts = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return products.value.slice(start, end);
+});
+
+const paginationNumbers = computed(() => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages.value <= maxVisiblePages) {
+        for (let i = 1; i <= totalPages.value; i++) {
+            pages.push(i);
+        }
+    } else {
+        let startPage = Math.max(1, currentPage.value - 2);
+        let endPage = Math.min(totalPages.value, startPage + maxVisiblePages - 1);
+        
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(i);
+        }
+    }
+    
+    return pages;
+});
+
+// Methods
+function formatPrice(price) {
+    return price.toLocaleString('id-ID');
+}
+
+function selectAll() {
+    products.value.forEach(product => {
+        product.selected = allSelected.value;
+    });
+}
+
+function openActionMenu(index) {
+    if (activeActionMenu.value === index) {
+        activeActionMenu.value = null;
+    } else {
+        activeActionMenu.value = index;
+    }
+}
+
+function goToPage(page) {
+    if (page >= 1 && page <= totalPages.value) {
+        currentPage.value = page;
+        activeActionMenu.value = null;
+    }
+}
+
+function editProduct(product) {
+    // Implementation for editing product
+    console.log('Editing product:', product);
+    activeActionMenu.value = null;
+}
+
+function deleteProduct(product) {
+    // Implementation for deleting product
+    console.log('Deleting product:', product);
+    activeActionMenu.value = null;
+    
+    if (confirm(`Anda yakin ingin menghapus ${product.name}?`)) {
+        const index = products.value.findIndex(p => p === product);
+        if (index !== -1) {
+            products.value.splice(index, 1);
+        }
+    }
+}
+
+function viewDetails(product) {
+    // Implementation for viewing product details
+    console.log('Viewing details for product:', product);
+    activeActionMenu.value = null;
+}
+
+function triggerFileInput() {
+    document.getElementById('fileInput').click();
+}
+
+function handleFileChange(event) {
+    const file = event.target.files[0];
+    if (file) {
+        selectedFile.value = file;
+    }
+}
+
+function handleFileDrop(event) {
+    const file = event.dataTransfer.files[0];
+    if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls') || file.name.endsWith('.csv'))) {
+        selectedFile.value = file;
+    }
+}
+
+function downloadTemplate() {
+    // Logic to download template file
+    console.log('Downloading template file');
+    // In a real app, this would trigger a download of an actual file
+    alert('Template akan diunduh');
+}
+
+function importData() {
+    // Implementation for importing data
+    console.log('Importing data from file:', selectedFile.value);
+    // In a real app, this would process the file and import the data
+    
+    // Mock import success
+    setTimeout(() => {
+        alert('Data berhasil diimport!');
+        showImportModal.value = false;
+        selectedFile.value = null;
+    }, 1000);
+}
+
+function exportToPDF() {
+    console.log('Exporting to PDF');
+    // Implementation for PDF export
+}
+
+function exportToExcel() {
+    console.log('Exporting to Excel');
+    // Implementation for Excel export
+}
+
+function exportToCSV() {
+    console.log('Exporting to CSV');
+    // Implementation for CSV export
+}
+
+function openAddProductModal() {
+    showAddProductModal.value = true;
+    newProduct.value = {
+        id: `ID00${Math.floor(100000 + Math.random() * 900000)}`,
+        name: '',
+        stock: 0,
+        price: 0,
+        category: '',
+        status: 'Avail',
+        selected: false
+    };
+}
+
+function saveNewProduct() {
+    if (!newProduct.value.name || !newProduct.value.category) {
+        alert('Nama dan Kategori produk harus diisi!');
+        return;
+    }
+    
+    // Create a copy of the new product
+    const productToAdd = { ...newProduct.value };
+    
+    // Add to products array
+    products.value.push(productToAdd);
+    
+    // Close modal and reset form
+    showAddProductModal.value = false;
+    newProduct.value = {
+        id: '',
+        name: '',
+        stock: 0,
+        price: 0,
+        category: '',
+        status: 'Avail',
+        selected: false
+    };
+}
+
+// Lifecycle hooks
+onMounted(() => {
+    // Close action menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.action-button') && activeActionMenu.value !== null) {
+            activeActionMenu.value = null;
+        }
+    });
 });
 </script>
 
@@ -20,34 +237,546 @@ defineProps({
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900">
-                    <h3 class="font-medium text-lg">Manage Stock</h3>
-                    <p>Manage your stock items here.</p>
+                    <div class="stock-management">
+                        <div class="header">
+                            <h2 class="title">Product</h2>
+                            <div class="actions">
+                                <div class="showing">
+                                    Showing
+                                    <select v-model="itemsPerPage" class="page-select">
+                                        <option>2</option>
+                                        <option>5</option>
+                                        <option>10</option>
+                                        <option>25</option>
+                                        <option>50</option>
+                                    </select>
+                                </div>
+                                <button class="btn-filter">
+                                    <i class="fas fa-filter"></i> Filter
+                                </button>
+                                <div class="export-dropdown">
+                                    <button class="btn-export">
+                                        Export <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                    <div class="export-menu">
+                                        <button @click="exportToPDF">Export to PDF</button>
+                                        <button @click="exportToExcel">Export to Excel</button>
+                                        <button @click="exportToCSV">Export to CSV</button>
+                                    </div>
+                                </div>
+                                
+                                
+                                <!-- Integration with your original links -->
+                                <Link 
+                                    v-if="addProductRoute"
+                                    :href="addProductRoute"
+                                    class="btn-add"
+                                >
+                                    Tambah Produk (Route)
+                                </Link>
+                                <Link 
+                                    v-if="listProductsRoute"
+                                    :href="listProductsRoute"
+                                    class="btn-view"
+                                >
+                                    Lihat Produk
+                                </Link>
+                            </div>
+                        </div>
 
-                    <!-- Debug: Cek apakah props diterima -->
-                    <p v-if="addProductRoute" class="text-green-500">Route: {{ addProductRoute }}</p>
-                    <p v-else class="text-red-500">Route belum diterima!</p>
+                        <div class="product-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th width="30">
+                                            <input type="checkbox" @change="selectAll" v-model="allSelected">
+                                        </th>
+                                        <th>ID Barang</th>
+                                        <th>Nama Barang</th>
+                                        <th>Stock</th>
+                                        <th>Price</th>
+                                        <th>Category</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(product, index) in displayedProducts" :key="index">
+                                        <td>
+                                            <input type="checkbox" v-model="product.selected">
+                                        </td>
+                                        <td>{{ product.id }}</td>
+                                        <td>{{ product.name }}</td>
+                                        <td>{{ product.stock }}</td>
+                                        <td>Rp {{ formatPrice(product.price) }}</td>
+                                        <td>{{ product.category }}</td>
+                                        <td>
+                                            <span class="status-badge" :class="{ 'available': product.status === 'Avail' }">
+                                                {{ product.status }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="action-button" @click="openActionMenu(index)">
+                                                <i class="fas fa-ellipsis-h"></i>
+                                            </button>
+                                            <div class="action-menu" v-if="activeActionMenu === index">
+                                                <button @click="editProduct(product)">Edit</button>
+                                                <button @click="deleteProduct(product)">Delete</button>
+                                                <button @click="viewDetails(product)">View Details</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
-                    <div class="flex space-x-4 mt-4">
-                        <!-- Tombol Tambah Produk -->
-                        <Link 
-                            v-if="addProductRoute"
-                            :href="addProductRoute"
-                            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
-                        >
-                            Tambah Produkoto
-                        </Link>
+                        <div class="pagination">
+                            <div class="pagination-info">
+                                {{ currentPage }} of {{ totalPages }}
+                            </div>
+                            <div class="pagination-controls">
+                                <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button 
+                                    v-for="page in paginationNumbers" 
+                                    :key="page" 
+                                    @click="goToPage(page)"
+                                    :class="{ active: currentPage === page }"
+                                >
+                                    {{ page }}
+                                </button>
+                                <button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
 
-                        <!-- Tombol Lihat Produk -->
-                        <Link 
-                            v-if="listProductsRoute"
-                            :href="listProductsRoute"
-                            class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700"
-                        >
-                            Lihat Produk
-                        </Link>
+                        <!-- Import Modal -->
+                        <div class="modal" v-if="showImportModal">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3>Import Data Produk</h3>
+                                    <button class="close-btn" @click="showImportModal = false">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="import-instructions">
+                                        <p>Silahkan upload file Excel (.xlsx) atau CSV untuk mengimpor data produk.</p>
+                                        <p>Download template: 
+                                            <a href="#" @click.prevent="downloadTemplate">template-import-produk.xlsx</a>
+                                        </p>
+                                    </div>
+                                    <div class="file-upload">
+                                        <input type="file" id="fileInput" @change="handleFileChange" accept=".xlsx,.xls,.csv">
+                                        <div class="upload-zone" @click="triggerFileInput" @dragover.prevent @drop.prevent="handleFileDrop">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <p>Drag and drop file atau klik untuk memilih</p>
+                                            <span v-if="selectedFile">File terpilih: {{ selectedFile.name }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn-cancel" @click="showImportModal = false">Batal</button>
+                                    <button class="btn-import" @click="importData" :disabled="!selectedFile">Import</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add Product Modal -->
+                        <div class="modal" v-if="showAddProductModal">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3>Tambah Produk Baru</h3>
+                                    <button class="close-btn" @click="showAddProductModal = false">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="productId">ID Barang</label>
+                                        <input type="text" id="productId" v-model="newProduct.id" placeholder="ID Barang">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="productName">Nama Barang</label>
+                                        <input type="text" id="productName" v-model="newProduct.name" placeholder="Nama Barang">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="productStock">Stock</label>
+                                        <input type="number" id="productStock" v-model="newProduct.stock" placeholder="Stock">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="productPrice">Price (Rp)</label>
+                                        <input type="number" id="productPrice" v-model="newProduct.price" placeholder="Price">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="productCategory">Category</label>
+                                        <select id="productCategory" v-model="newProduct.category">
+                                            <option value="">Pilih Kategori</option>
+                                            <option value="Sembako">Sembako</option>
+                                            <option value="Minuman">Minuman</option>
+                                            <option value="Makanan">Makanan</option>
+                                            <option value="Lainnya">Lainnya</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="productStatus">Status</label>
+                                        <select id="productStatus" v-model="newProduct.status">
+                                            <option value="Avail">Avail</option>
+                                            <option value="Out of Stock">Out of Stock</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn-cancel" @click="showAddProductModal = false">Batal</button>
+                                    <button class="btn-save" @click="saveNewProduct">Simpan</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </AuthenticatedLayout>
 </template>
+
+<style scoped>
+.stock-management {
+    background-color: #ffffff;
+    border-radius: 8px;
+    /* Shadow removed as it's already provided by the parent container */
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.title {
+    font-size: 1.5rem;
+    color: #333;
+    font-weight: 500;
+    margin: 0;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.showing {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #666;
+}
+
+.page-select {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+.btn-filter, .btn-export, .btn-add, .btn-view {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.875rem;
+}
+
+.btn-add {
+    background-color: #6c5ce7;
+    color: white;
+    border: none;
+}
+
+.btn-view {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+}
+
+.export-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.export-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 10;
+    border-radius: 4px;
+}
+
+.export-dropdown:hover .export-menu {
+    display: block;
+}
+
+.export-menu button {
+    padding: 10px 16px;
+    text-align: left;
+    display: block;
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.export-menu button:hover {
+    background-color: #f1f1f1;
+}
+
+.product-table {
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead th {
+    padding: 12px 15px;
+    text-align: left;
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: 500;
+    border-bottom: 1px solid #ddd;
+}
+
+tbody td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    background-color: #e74c3c;
+    color: white;
+}
+
+.status-badge.available {
+    background-color: #2ecc71;
+}
+
+.action-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.action-menu {
+    position: absolute;
+    right: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    z-index: 10;
+}
+
+.action-menu button {
+    display: block;
+    width: 100%;
+    padding: 8px 16px;
+    text-align: left;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.action-menu button:hover {
+    background-color: #f1f1f1;
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination-info {
+    color: #666;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.pagination-controls button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.pagination-controls button.active {
+    background-color: #6c5ce7;
+    color: white;
+    border-color: #6c5ce7;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.modal-content {
+    background-color: #fff;
+    border-radius: 8px;
+    width: 500px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-weight: 500;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-cancel, .btn-import, .btn-save {
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+}
+
+.btn-import, .btn-save {
+    background-color: #6c5ce7;
+    color: white;
+    border: none;
+}
+
+.btn-import:disabled {
+    background-color: #a29bfa;
+    cursor: not-allowed;
+}
+
+.import-instructions {
+    margin-bottom: 20px;
+}
+
+.import-instructions a {
+    color: #6c5ce7;
+    text-decoration: underline;
+}
+
+.file-upload {
+    margin-top: 15px;
+}
+
+.file-upload input[type="file"] {
+    display: none;
+}
+
+.upload-zone {
+    border: 2px dashed #ddd;
+    border-radius: 4px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.upload-zone:hover {
+    border-color: #6c5ce7;
+}
+
+.upload-zone i {
+    font-size: 24px;
+    color: #6c5ce7;
+    margin-bottom: 10px;
+}
+
+.upload-zone p {
+    margin: 10px 0;
+}
+
+.upload-zone span {
+    display: block;
+    margin-top: 10px;
+    color: #6c5ce7;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Adding Font Awesome CDN in case you need it */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+</style>

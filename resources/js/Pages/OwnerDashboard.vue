@@ -117,7 +117,7 @@
 
             <!-- Welcome Row -->
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-              <h2 class="text-xl font-semibold text-gray-700">Welcome, Toko Semangat!</h2>
+              <h2 class="text-xl font-semibold text-gray-700">Welcome!</h2>
               <div class="flex flex-col sm:flex-row gap-2">
                 <div class="flex">
                   <button @click="setActiveTab('Day')" :class="activeTab==='Day'? tabActive:tabInactive" class="px-4 py-1 rounded-l-md">Day</button>
@@ -757,7 +757,7 @@ const form = useForm({
   password: '',
   employees_role: 'cashier'
 });
-
+  
 // Toggle sidebar
 const toggleMobileMenu = (force) => {
   mobileMenuOpen.value = force === false ? false : !mobileMenuOpen.value;
