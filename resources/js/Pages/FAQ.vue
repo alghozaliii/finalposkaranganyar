@@ -1,215 +1,210 @@
 <template>
-  <div class="min-h-screen bg-purple-50">
+  <div class="h-screen bg-purple-50 flex flex-col overflow-hidden">
     <AuthenticatedLayout/>
     
     <!-- Main Container -->
-    <div class="flex pt-4">
+    <div class="flex h-screen overflow-hidden">
       
-      <!-- Sidebar (menggunakan sidebar yang sudah ada) -->
-      <div
+      <!-- Sidebar -->
+      <aside
         :class="[
-          'bg-gray-300 h-screen flex flex-col items-center pt-5 fixed left-0 top-16 z-40 transition-all duration-300',
-          showSidebar ? 'w-48' : 'w-0 lg:w-48',
-          showSidebar ? 'opacity-100' : 'opacity-0 lg:opacity-100'
+          'bg-white shadow-lg flex flex-col items-center pt-6 fixed inset-y-0 left-0 h-screen transition-transform z-30',
+          showSidebar ? 'translate-x-0' : '-translate-x-full',
+          'md:translate-x-0 md:static md:w-24 w-64'
         ]"
-      >
-        <div class="w-full flex flex-col gap-4 px-4 overflow-hidden">
-          <a href="/dashboard">
-            <div
-              :class="[
-                'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
-                showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none'
-              ]"
-            >
-              <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+      >        
+        <nav class="flex flex-col items-center gap-10 mt-8 flex-1">  
+          <!-- Dashboard -->
+          <button @click="goToDashboard" class="flex flex-col items-center">
+            <div class="p-3 rounded-md">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
               </svg>
-              <span class="font-bold text-sm mt-2">Dashboard</span>
             </div>
-          </a>
+            <span class="text-xs mt-2">Dashboard</span>
+          </button>
 
-          <a href="/verificator/helpdesk">
-            <div
-              :class="[
-                'bg-purple-500 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-400 transition-all duration-300',
-                showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none',
-                'transition-transform delay-100'
-              ]"
-            >
-              <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+          <!-- Helpdesk -->
+          <button @click="goToFAQ" class="flex flex-col items-center">
+            <div class="p-3 rounded-md" :class="activeSection==='helpdesk' ? 'bg-purple-100 text-purple-700' : 'text-gray-500'">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" :class="activeSection==='helpdesk' ? 'text-purple-500' : ''">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span class="font-bold text-sm mt-2">Helpdesk</span>
             </div>
-          </a>
+            <span class="text-xs mt-2">Helpdesk</span>
+          </button>
+        </nav>
+        
+        <button @click="logout" class="flex flex-col items-center mt-auto mb-20">
+          <div class="p-3 rounded-md">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </div>
+          <span class="text-xs">Logout</span>
+        </button>
+      </aside>
 
-          <a href="/Setting">
-            <div
-              :class="[
-                'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
-                showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none',
-                'transition-transform delay-100'
-              ]"
-            >
-              <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span class="font-bold text-sm mt-1">Pengaturan</span>
-            </div>
-          </a>
-        </div>
-
-        <!-- Tombol Logout -->
-        <div 
-          :class="[
-            'mt-auto mb-20 bg-white p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-gray-100 transition-all duration-300 mx-4',
-            showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none',
-            'transition-transform delay-200'
-          ]"
-          @click="logout"
-        >
-          <svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
-          <span class="font-bold text-sm mt-1">Logout</span>
-        </div>
-      </div>
+      <!-- Overlay mobile -->
+      <div
+        v-if="showSidebar"
+        @click="showSidebar = false"
+        class="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+      ></div>
 
       <!-- Main Content Area -->
-      <div class="w-full transition-all duration-300" :class="{'lg:ml-48': true, 'ml-0': !showSidebar}">
-        <div class="px-6 lg:mr-64 mt-1 pb-6 flex-1 overflow-auto">
-          <div class="pt-16">
-            <!-- Header Area -->
-            <div class="flex items-center justify-between mb-6">
-              <div>
-                <button @click="toggleSidebar" class="lg:hidden text-black">
-                  <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                </button>
-                <h1 class="text-2xl font-bold text-black inline-block ml-2">F.A.Q.</h1>
-              </div>
-              
-              <!-- Tambah Button -->
-              <button 
-                @click="redirectToCreateFAQ" 
-                class="bg-white text-purple-600 px-4 py-2 rounded-md flex items-center font-medium hover:bg-gray-100 transition"
-              >
-                <svg class="w-5 h-5 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      <div class="w-full flex flex-col transition-all duration-300" :class="{'lg:ml-0': true, 'ml-0': !showSidebar}">
+        <!-- Fixed Header Area -->
+        <div class="px-6 py-4 bg-purple-50 shadow-sm">
+          <div class="flex items-center justify-between">
+            <div>
+              <button @click="toggleSidebar" class="lg:hidden text-black">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
-                Tambah
               </button>
+              <h1 class="text-2xl font-bold text-black inline-block ml-2">F.A.Q. </h1>
             </div>
             
-            <!-- Search Box -->
-            <div class="relative mb-6">
-              <input 
-                type="text" 
-                v-model="searchQuery"
-                class="w-full py-2 pl-10 pr-4 text-gray-700 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400"
-                placeholder="Search" 
-              />
-              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <svg class="w-5 h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-            </div>
-            
-            <!-- Last Updated Info -->
-            <div class="flex items-center text-black mb-6">
-              <span>Last updated: {{ lastUpdated }}</span>
-              <svg class="w-5 h-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4" />
+            <!-- Tambah Button -->
+            <button 
+              @click="redirectToCreateFAQ" 
+              class="bg-white text-purple-600 px-4 py-2 rounded-md flex items-center font-medium hover:bg-gray-100 transition"
+            >
+              <svg class="w-5 h-5 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              Tambah
+            </button>
+          </div>
+          
+          <!-- Search Box -->
+          <div class="relative mt-4">
+            <input 
+              type="text" 
+              v-model="searchQuery"
+              class="w-full py-2 pl-10 pr-4 text-gray-700 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400"
+              placeholder="Search" 
+            />
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <svg class="w-5 h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            
+          </div>
+          
+          <!-- Last Updated Info -->
+          <div class="flex items-center text-black mt-4">
+            <span>Last updated: {{ lastUpdated }}</span>
+            <svg class="w-5 h-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4" />
+            </svg>
+          </div>
+        </div>
+        
+        <!-- Scrollable Content Area -->
+        <div class="flex-1 overflow-hidden flex">
+          <!-- Main scrollable content -->
+          <div class="flex-1 overflow-auto px-6 pb-6">
             <!-- FAQ Categories -->
-            <div class="mb-6">
+            <div class="mt-4">
               <h2 class="text-xl font-semibold text-black mb-2">{{ selectedCategory }}</h2>
               
-              <!-- FAQ Items -->
-              <div class="space-y-4">
-                <div
-                  v-for="(faq, index) in filteredFaqs"
-                  :key="index"
-                  class="bg-white rounded-md overflow-hidden"
-                >
-                  <div 
-                    class="p-4 flex justify-between items-center cursor-pointer hover:bg-purple-200 transition-colors"
-                    @click="toggleFaq(index)"
-                  >
-                    <h3 class="font-medium text-gray-800">{{ faq.question }}</h3>
-                    <svg
-                      :class="{'transform rotate-180': faq.open, 'transform rotate-0': !faq.open}"
-                      class="w-5 h-5 text-purple-600 transition-transform duration-200"
-                      xmlns="http://www.w3.org/2000/svg" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor"
-                    >
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                  <div 
-                    v-show="faq.open" 
-                    class="p-4 pt-0 bg-white text-gray-700 border-t border-gray-100"
-                  >
-                    <p>{{ faq.answer }}</p>
-                  </div>
-                </div>
+              <!-- FAQ Items table -->
+              <div class="w-full bg-white rounded-lg overflow-hidden shadow">
+                <table class="min-w-full">
+                  <thead>
+                    <tr class="bg-gray-50 border-b">
+                      <th class="py-3 px-4 text-left text-sm font-medium text-gray-700">Question</th>
+                      <th class="py-3 px-4 text-right w-16">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template v-for="(faq, index) in filteredFaqs" :key="index">
+                      <tr class="border-b hover:bg-purple-50">
+                        <td class="py-3 px-4 text-sm text-gray-800">{{ faq.question }}</td>
+                        <td class="py-3 px-4 text-right">
+                          <button @click="toggleFaq(index)" class="text-purple-600">
+                            <svg
+                              :class="{'transform rotate-180': faq.open, 'transform rotate-0': !faq.open}"
+                              class="w-5 h-5 transition-transform duration-200 inline-block"
+                              xmlns="http://www.w3.org/2000/svg" 
+                              fill="none" 
+                              viewBox="0 0 24 24" 
+                              stroke="currentColor"
+                            >
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+                      <tr v-if="faq.open" class="bg-purple-50">
+                        <td colspan="2" class="py-3 px-4 text-sm text-gray-700 border-b">
+                          <p>{{ faq.answer }}</p>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
               </div>
             </div>
             
-            <!-- Category Sections -->
-            <div v-if="selectedCategory === 'General Question'" class="mb-8">
+            <!-- Transaction Category Section -->
+            <div v-if="selectedCategory === 'General Question'" class="mt-6">
               <h2 class="text-xl font-semibold text-black mb-2">Transaction Question</h2>
-              <div class="space-y-4">
-                <div
-                  v-for="(faq, index) in transactionFaqs"
-                  :key="'transaction-'+index"
-                  class="bg-white rounded-md overflow-hidden"
-                >
-                  <div 
-                    class="p-4 flex justify-between items-center cursor-pointer hover:bg-purple-200 transition-colors"
-                    @click="toggleTransactionFaq(index)"
-                  >
-                    <h3 class="font-medium text-gray-800">{{ faq.question }}</h3>
-                    <svg
-                      :class="{'transform rotate-180': faq.open, 'transform rotate-0': !faq.open}"
-                      class="w-5 h-5 text-purple-600 transition-transform duration-200"
-                      xmlns="http://www.w3.org/2000/svg" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor"
-                    >
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                  <div 
-                    v-show="faq.open" 
-                    class="p-4 pt-0 bg-white text-gray-700 border-t border-gray-100"
-                  >
-                    <p>{{ faq.answer }}</p>
-                  </div>
-                </div>
+              
+              <div class="w-full bg-white rounded-lg overflow-hidden shadow">
+                <table class="min-w-full">
+                  <thead>
+                    <tr class="bg-gray-50 border-b">
+                      <th class="py-3 px-4 text-left text-sm font-medium text-gray-700">Question</th>
+                      <th class="py-3 px-4 text-right w-16">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template v-for="(faq, index) in transactionFaqs" :key="`transaction-${index}`">
+                      <tr class="border-b hover:bg-purple-50">
+                        <td class="py-3 px-4 text-sm text-gray-800">{{ faq.question }}</td>
+                        <td class="py-3 px-4 text-right">
+                          <button @click="toggleTransactionFaq(index)" class="text-purple-600">
+                            <svg
+                              :class="{'transform rotate-180': faq.open, 'transform rotate-0': !faq.open}"
+                              class="w-5 h-5 transition-transform duration-200 inline-block"
+                              xmlns="http://www.w3.org/2000/svg" 
+                              fill="none" 
+                              viewBox="0 0 24 24" 
+                              stroke="currentColor"
+                            >
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+                      <tr v-if="faq.open" class="bg-purple-50">
+                        <td colspan="2" class="py-3 px-4 text-sm text-gray-700 border-b">
+                          <p>{{ faq.answer }}</p>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
+          
+          <!-- Right sidebar for admin profile, hidden on mobile -->
+          <!-- <div class="hidden lg:block w-64 p-4 bg-white border-l">
+            <div class="text-center">
+              <img
+                src="/images/profile.png"
+                class="w-20 h-20 rounded-full mx-auto border-4 border-white mb-3"
+                alt="Profile Petugas"
+              />
+              <h3 class="font-bold text-lg">{{ userName }}</h3>
+              <p class="text-gray-600">Verifikator</p>
+            </div>
+          </div> -->
         </div>
-
-        <!-- Profil Admin (untuk layar besar) -->
-        <!-- <div class="hidden lg:block w-64 bg-gray-200 rounded-lg p-4 text-center fixed right-3 top-24">
-          <img
-            src="/images/profile.png"
-            class="w-20 h-20 rounded-full mx-auto border-4 border-white mb-3"
-            alt="Profile Petugas"
-          />
-          <h3 class="font-bold text-lg">{{ userName }}</h3>
-          <p class="text-gray-600">Verifikator</p>
-        </div> -->
       </div>
     </div>
   </div>
@@ -242,6 +237,7 @@ export default {
     const lastUpdated = ref('11 Sep, 2024');
     const selectedCategory = ref('General Question');
     const userName = ref(props.auth?.user?.name || 'Verifikator');
+    const activeSection = ref('helpdesk');
     
     // Menggunakan data dari props jika tersedia, jika tidak gunakan data sampel
     const faqData = ref(props.faqs.length > 0 ? props.faqs.map(faq => ({...faq, open: false})) : [
@@ -309,6 +305,16 @@ export default {
     const toggleSidebar = () => {
       showSidebar.value = !showSidebar.value;
     };
+
+    const goToDashboard = () => {
+      router.get(route('dashboard'));
+    };
+
+    const goToFAQ = () => {
+      router.get(route('verificator.helpdesk.faq'));
+      activeSection.value = 'helpdesk';
+    };
+
     
     const redirectToCreateFAQ = () => {
       router.get(route('verificator.helpdesk.create'));
@@ -346,8 +352,11 @@ export default {
       toggleTransactionFaq,
       toggleSidebar,
       redirectToCreateFAQ,
+      goToDashboard,
+      goToFAQ,
       logout,
-      userName
+      userName,
+      activeSection
     };
   }
 };
@@ -360,16 +369,16 @@ export default {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+  background: #f1f1f1;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
+  background: #d1d5db;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
+  background: #9ca3af;
 }
 </style>

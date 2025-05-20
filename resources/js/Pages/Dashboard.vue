@@ -4,103 +4,75 @@
     
     
     <!-- Main Container -->
-    <div class="flex pt-4">
+    <div class="flex h-screen">
       
       <!-- Sidebar -->
-      <div
+      <aside
         :class="[
-          'bg-gray-300 h-screen flex flex-col items-center pt-5 fixed left-0 top-16 z-40 transition-all duration-300',
-          showSidebar ? 'w-48' : 'w-0 lg:w-48',
-          showSidebar ? 'opacity-100' : 'opacity-0 lg:opacity-100'
+          'bg-white shadow-lg flex flex-col items-center pt-6 fixed inset-y-0 left-0 h-screen transition-transform z-30',
+          showSidebar ? 'translate-x-0' : '-translate-x-full',
+          'md:translate-x-0 md:static md:w-24 w-64'
         ]"
-      >
-        <div class="w-full flex flex-col gap-4 px-4 overflow-hidden">
-          <a href="/dashboard">
-            <div
-              :class="[
-                'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
-                showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none'
-              ]"
-            >
-              <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+      >        
+        <nav class="flex flex-col items-center gap-10 mt-8 flex-1">  
+          <!-- Dashboard -->
+          <button @click="activateSection('dashboard')" class="flex flex-col items-center">
+            <div class="p-3 rounded-md" :class="activeSection==='dashboard' ? 'bg-purple-100 text-purple-700' : 'text-gray-500'">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" :class="activeSection==='dashboard' ? 'text-purple-700' : ''">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
               </svg>
-              <span class="font-bold text-sm mt-2">Dashboard</span>
             </div>
-          </a>
+            <span class="text-xs mt-2">Dashboard</span>
+          </button>
 
-          <a href="/verificator/helpdesk">
-            <div
-              :class="[
-                'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
-                showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none',
-                'transition-transform delay-100'
-              ]"
-            >
-              <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+          <!-- Helpdesk -->
+          <button @click="goToFAQ" class="flex flex-col items-center">
+            <div class="p-3 rounded-md">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span class="font-bold text-sm mt-2">Helpdesk</span>
             </div>
-          </a>
+            <span class="text-xs mt-2">Helpdesk</span>
+          </button>
+        </nav>
+        
+        <button @click="logout" class="flex flex-col items-center mt-auto mb-20">
+          <div class="p-3 rounded-md">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </div>
+          <span class="text-xs">Logout</span>
+        </button>
+      </aside>
 
-          <!-- <a href="/Setting">
-            <div
-              :class="[
-                'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
-                showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none',
-                'transition-transform delay-100'
-              ]"
-            >
-            <img src="/images/sett.png" alt="Pengaturan" class="w-11 h-11" />
-              <span class="font-bold text-sm mt-1">Pengaturan</span>
-            </div>
-          </a> -->
-        </div>
+      <!-- Overlay mobile -->
+      <div
+        v-if="showSidebar"
+        @click="showSidebar = false"
+        class="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+      ></div>
 
-        <!-- Tombol Logout -->
-        <div 
-          :class="[
-            'mt-auto mb-20 bg-white p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-gray-100 transition-all duration-300 mx-4',
-            showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none',
-            'transition-transform delay-200'
-          ]"
-          @click="logout"
-        >
-          <svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
-          <span class="font-bold text-sm mt-1">Logout</span>
-        </div>
-      </div>
+      <!-- Main content -->
+      <div class="flex-1 md:ml-25 h-screen flex flex-col">
+        <!-- Mobile header -->
+        <header class="flex items-center justify-between bg-white p-4 shadow md:hidden">
+          <button @click="showSidebar = !showSidebar">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <h1 class="text-lg font-semibold">Dashboard</h1>  
+        </header>
 
-      <!-- Konten Utama -->
-      <div class="w-full transition-all duration-300" :class="{'lg:ml-48': true, 'ml-0': !showSidebar}">
-
-        <div class="pt-1 pb-6 px-8 flex-1 overflow-auto">
+        <!-- Konten Utama -->
+        <div class="flex-1 overflow-y-auto pt-1 pb-6 px-8">
           <div class="pt-4 ">
             
             <div v-if="$page.props.flash && $page.props.flash.message" 
                  class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
               {{ $page.props.flash.message }}
             </div>
-
-            <!-- Tombol Helpdesk dan FAQ -->
-            <!-- <div class="mb-4 flex space-x-2">
-              <button 
-                @click="goToHelpdesk"
-                class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
-              >
-                + Tambah FAQ
-              </button>
-
-              <button 
-                @click="goToFAQ"
-                class="px-4 py-2 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600"
-              >
-                Lihat FAQ
-              </button>
-            </div> -->
           </div>
 
           <!-- Tab Navigation -->
@@ -312,7 +284,9 @@ export default {
       selectedUser: {},
       acceptedUsers: [],
       rejectedUsers: [],
-      fallbackImage: '/images/profile.png'
+      fallbackImage: '/images/profile.png',
+      activeSection: 'dashboard',
+      mobileMenuOpen: false
     };
   },
   
@@ -377,10 +351,6 @@ export default {
       e.target.src = this.fallbackImage;
     },
 
-    goToHelpdesk() {
-      router.get(route('verificator.helpdesk.create'));
-    },
-
     goToFAQ() {
       router.get(route('verificator.helpdesk.faq'));
     },
@@ -395,6 +365,11 @@ export default {
     
     logout() {
       router.post(route('logout'));
+    },
+
+    activateSection(section) {
+      this.activeSection = section;
+      this.showSidebar = false;
     }
   },
   
@@ -429,5 +404,12 @@ img.rounded-full {
 
 img {
   animation: fadeIn 0.3s ease;
+}
+</style>
+
+<style>
+html, body, #app {
+  height: 100%;
+  overflow: hidden;
 }
 </style>

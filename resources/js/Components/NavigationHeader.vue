@@ -9,7 +9,7 @@
       <!-- Desktop Menu -->
       <div class="hidden md:flex gap-10 items-center text-base font-medium">
         <a href="/" class="text-lg text-black">Home</a>
-        <a href="/FAQ" class="hover:text-black">FAQ</a>
+        <a href="/faq" class="hover:text-black">FAQ</a>
         <a href="/blog" class="hover:text-black">Blog</a>
         <a href="/Aboutus" class="hover:text-black">About Us</a>
       </div>
