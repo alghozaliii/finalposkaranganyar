@@ -99,6 +99,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         
         // Route untuk melihat daftar produk
         Route::get('/stock/products', [ProductController::class, 'index'])->name('stock.products');
+
+ 
         
         // Route untuk halaman invoice pembayaran
         Route::get('/invoice', function () {

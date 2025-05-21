@@ -2,25 +2,33 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { ref, computed, onMounted } from 'vue';
+import axios from 'axios';
+import { usePage } from '@inertiajs/vue3';
 
-// Ambil props dari backend
-defineProps({
-    addProductRoute: String,
-    listProductsRoute: String
+// Define props dengan destructuring
+const props = defineProps({
+    products: {
+        type: Array,
+        default: () => []
+    },
+    addProductRoute: {
+        type: String,
+        required: true
+    },
+    listProductsRoute: {
+        type: String,
+        required: true
+    }
+}); 
+
+// Get user role
+const page = usePage();
+const isOwner = computed(() => {
+    return page.props.auth.user.role_id === 2;
 });
 
-// Data
-const products = ref([
-    { id: 'ID00111111', name: 'Minyakita 1L', stock: 3, price: 14500, category: 'Sembako', status: 'Avail', selected: false },
-    { id: 'ID00222222', name: 'Beras Pulen 5kg', stock: 10, price: 65000, category: 'Sembako', status: 'Avail', selected: false },
-    { id: 'ID00333333', name: 'Gula Pasir 1kg', stock: 15, price: 16000, category: 'Sembako', status: 'Avail', selected: false },
-    { id: 'ID00444444', name: 'Teh Celup (25 pcs)', stock: 20, price: 7500, category: 'Minuman', status: 'Avail', selected: false },
-    { id: 'ID00555555', name: 'Air Mineral 600ml', stock: 48, price: 3500, category: 'Minuman', status: 'Avail', selected: false },
-    { id: 'ID00666666', name: 'Kopi Sachet', stock: 25, price: 2000, category: 'Minuman', status: 'Avail', selected: false },
-    { id: 'ID00777777', name: 'Mie Instan', stock: 0, price: 3500, category: 'Makanan', status: 'Out of Stock', selected: false },
-    { id: 'ID00888888', name: 'Susu UHT 1L', stock: 5, price: 16000, category: 'Minuman', status: 'Avail', selected: false },
-]);
-
+// Data states - gunakan props.products sebagai nilai awal
+const products = ref(props.products || []);
 const itemsPerPage = ref(5);
 const currentPage = ref(1);
 const allSelected = ref(false);
@@ -28,20 +36,45 @@ const activeActionMenu = ref(null);
 const showImportModal = ref(false);
 const showAddProductModal = ref(false);
 const selectedFile = ref(null);
+
+const viewDetails = (product) => {
+    // Implement view details functionality
+    console.log('View details for product:', product);
+    activeActionMenu.value = null;
+};
+// Tambahkan definisi newProduct
 const newProduct = ref({
     id: '',
     name: '',
     stock: 0,
-    price: 0,
+    average_price: 0,
+    markup: 0,
+    selling_price: 0,
     category: '',
+    unit: '',
     status: 'Avail',
     selected: false
 });
 
+// Perbaiki fungsi fetchProducts
+const fetchProducts = async () => {
+    try {
+        const response = await axios.get(props.listProductsRoute);
+        if (response.data && response.data.products) {
+            products.value = response.data.products.map(product => ({
+                ...product,
+                selected: false,
+                status: product.stock > 0 ? 'Avail' : 'Out of Stock'
+            }));
+        }
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        products.value = [];
+    }
+};
+
 // Computed properties
-const totalPages = computed(() => {
-    return Math.ceil(products.value.length / itemsPerPage.value);
-});
+const totalPages = computed(() => Math.ceil(products.value.length / itemsPerPage.value));
 
 const displayedProducts = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage.value;
@@ -69,161 +102,94 @@ const paginationNumbers = computed(() => {
             pages.push(i);
         }
     }
-    
     return pages;
 });
 
 // Methods
-function formatPrice(price) {
-    return price.toLocaleString('id-ID');
-}
+const formatPrice = (price) => price.toLocaleString('id-ID');
 
-function selectAll() {
+const selectAll = () => {
     products.value.forEach(product => {
         product.selected = allSelected.value;
     });
-}
+};
 
-function openActionMenu(index) {
-    if (activeActionMenu.value === index) {
-        activeActionMenu.value = null;
-    } else {
-        activeActionMenu.value = index;
-    }
-}
+const openActionMenu = (index) => {
+    activeActionMenu.value = activeActionMenu.value === index ? null : index;
+};
 
-function goToPage(page) {
+const goToPage = (page) => {
     if (page >= 1 && page <= totalPages.value) {
         currentPage.value = page;
         activeActionMenu.value = null;
     }
-}
+};
 
-function editProduct(product) {
-    // Implementation for editing product
-    console.log('Editing product:', product);
+// CRUD Operations
+const editProduct = async (product) => {
+    try {
+        const response = await axios.put(`/api/products/${product.id}`, product);
+        if (response.status === 200) {
+            await fetchProducts();
+        }
+    } catch (error) {
+        console.error('Error updating product:', error);
+    }
     activeActionMenu.value = null;
-}
+};
 
-function deleteProduct(product) {
-    // Implementation for deleting product
-    console.log('Deleting product:', product);
-    activeActionMenu.value = null;
-    
+const deleteProduct = async (product) => {
     if (confirm(`Anda yakin ingin menghapus ${product.name}?`)) {
-        const index = products.value.findIndex(p => p === product);
-        if (index !== -1) {
-            products.value.splice(index, 1);
+        try {
+            await axios.delete(`/api/products/${product.id}`);
+            await fetchProducts();
+        } catch (error) {
+            console.error('Error deleting product:', error);
         }
     }
-}
-
-function viewDetails(product) {
-    // Implementation for viewing product details
-    console.log('Viewing details for product:', product);
     activeActionMenu.value = null;
-}
+};
 
-function triggerFileInput() {
-    document.getElementById('fileInput').click();
-}
-
-function handleFileChange(event) {
-    const file = event.target.files[0];
-    if (file) {
-        selectedFile.value = file;
-    }
-}
-
-function handleFileDrop(event) {
-    const file = event.dataTransfer.files[0];
-    if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls') || file.name.endsWith('.csv'))) {
-        selectedFile.value = file;
-    }
-}
-
-function downloadTemplate() {
-    // Logic to download template file
-    console.log('Downloading template file');
-    // In a real app, this would trigger a download of an actual file
-    alert('Template akan diunduh');
-}
-
-function importData() {
-    // Implementation for importing data
-    console.log('Importing data from file:', selectedFile.value);
-    // In a real app, this would process the file and import the data
-    
-    // Mock import success
-    setTimeout(() => {
-        alert('Data berhasil diimport!');
-        showImportModal.value = false;
-        selectedFile.value = null;
-    }, 1000);
-}
-
-function exportToPDF() {
-    console.log('Exporting to PDF');
-    // Implementation for PDF export
-}
-
-function exportToExcel() {
-    console.log('Exporting to Excel');
-    // Implementation for Excel export
-}
-
-function exportToCSV() {
-    console.log('Exporting to CSV');
-    // Implementation for CSV export
-}
-
-function openAddProductModal() {
-    showAddProductModal.value = true;
-    newProduct.value = {
-        id: `ID00${Math.floor(100000 + Math.random() * 900000)}`,
-        name: '',
-        stock: 0,
-        price: 0,
-        category: '',
-        status: 'Avail',
-        selected: false
-    };
-}
-
-function saveNewProduct() {
+const saveNewProduct = async () => {
     if (!newProduct.value.name || !newProduct.value.category) {
         alert('Nama dan Kategori produk harus diisi!');
         return;
     }
-    
-    // Create a copy of the new product
-    const productToAdd = { ...newProduct.value };
-    
-    // Add to products array
-    products.value.push(productToAdd);
-    
-    // Close modal and reset form
-    showAddProductModal.value = false;
-    newProduct.value = {
-        id: '',
-        name: '',
-        stock: 0,
-        price: 0,
-        category: '',
-        status: 'Avail',
-        selected: false
-    };
-}
+
+    try {
+        await axios.post('/api/products', newProduct.value);
+        await fetchProducts();
+        showAddProductModal.value = false;
+        newProduct.value = {
+            id: '',
+            name: '',
+            stock: 0,
+            average_price: 0,
+            markup: 0,
+            selling_price: 0,
+            category: '',
+            unit: '',
+            status: 'Avail',
+            selected: false
+        };
+    } catch (error) {
+        console.error('Error creating product:', error);
+    }
+};
+
+
 
 // Lifecycle hooks
 onMounted(() => {
-    // Close action menu when clicking outside
+    fetchProducts();
+    
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.action-button') && activeActionMenu.value !== null) {
             activeActionMenu.value = null;
         }
     });
 });
+
 </script>
 
 <template>
@@ -243,27 +209,17 @@ onMounted(() => {
                             <div class="actions">
                                 <div class="showing">
                                     Showing
-                                    <select v-model="itemsPerPage" class="page-select">
-                                        <option>2</option>
-                                        <option>5</option>
-                                        <option>10</option>
-                                        <option>25</option>
-                                        <option>50</option>
-                                    </select>
+                                <select v-model="itemsPerPage" class="page-select">
+                                    <option :value="2">2</option>
+                                    <option :value="5">5</option>
+                                    <option :value="10">10</option>
+                                    <option :value="25">25</option>
+                                    <option :value="50">50</option>
+                                </select>
                                 </div>
                                 <button class="btn-filter">
                                     <i class="fas fa-filter"></i> Filter
                                 </button>
-                                <div class="export-dropdown">
-                                    <button class="btn-export">
-                                        Export <i class="fas fa-chevron-down"></i>
-                                    </button>
-                                    <div class="export-menu">
-                                        <button @click="exportToPDF">Export to PDF</button>
-                                        <button @click="exportToExcel">Export to Excel</button>
-                                        <button @click="exportToCSV">Export to CSV</button>
-                                    </div>
-                                </div>
                                 
                                 
                                 <!-- Integration with your original links -->
@@ -272,62 +228,66 @@ onMounted(() => {
                                     :href="addProductRoute"
                                     class="btn-add"
                                 >
-                                    Tambah Produk (Route)
-                                </Link>
-                                <Link 
-                                    v-if="listProductsRoute"
-                                    :href="listProductsRoute"
-                                    class="btn-view"
-                                >
-                                    Lihat Produk
+                                    Tambah Produk
                                 </Link>
                             </div>
                         </div>
 
                         <div class="product-table">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th width="30">
-                                            <input type="checkbox" @change="selectAll" v-model="allSelected">
-                                        </th>
-                                        <th>ID Barang</th>
-                                        <th>Nama Barang</th>
-                                        <th>Stock</th>
-                                        <th>Price</th>
-                                        <th>Category</th>
-                                        <th>Status</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th width="30">
+                                        <input type="checkbox" @change="selectAll" v-model="allSelected">
+                                    </th>
+                                    <th>ID Barang</th>
+                                    <th>Nama Barang</th>
+                                    <th>Stock</th>
+                                    <th>Harga Rata-rata</th>
+                                    <th>Markup (%)</th>
+                                    <th>Harga Jual</th>
+                                    <th>Category</th>
+                                    <th>Unit</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
                                 <tbody>
-                                    <tr v-for="(product, index) in displayedProducts" :key="index">
+                                    <tr v-if="products.length === 0">
+                                        <td colspan="11" class="py-4 px-4 border-b text-center">
+                                            Tidak ada produk tersedia
+                                        </td>
+                                    </tr>
+                                    <tr v-for="(product, index) in displayedProducts" :key="product.id">
                                         <td>
                                             <input type="checkbox" v-model="product.selected">
                                         </td>
-                                        <td>{{ product.id }}</td>
+                                        <td>{{ product.code }}</td>
                                         <td>{{ product.name }}</td>
                                         <td>{{ product.stock }}</td>
-                                        <td>Rp {{ formatPrice(product.price) }}</td>
-                                        <td>{{ product.category }}</td>
+                                        <td>Rp {{ Number(product.average_price).toLocaleString() }}</td>
+                                        <td>{{ product.markup }}%</td>
+                                        <td>Rp {{ Number(product.selling_price).toLocaleString() }}</td>
+                                        <td>{{ product.category || '-' }}</td>
+                                        <td>{{ product.unit || '-' }}</td>
                                         <td>
-                                            <span class="status-badge" :class="{ 'available': product.status === 'Avail' }">
-                                                {{ product.status }}
+                                            <span class="status-badge" :class="{ 'available': product.stock > 0 }">
+                                                {{ product.stock > 0 ? 'Avail' : 'Out of Stock' }}
                                             </span>
                                         </td>
                                         <td>
-                                            <button class="action-button" @click="openActionMenu(index)">
-                                                <i class="fas fa-ellipsis-h"></i>
-                                            </button>
-                                            <div class="action-menu" v-if="activeActionMenu === index">
-                                                <button @click="editProduct(product)">Edit</button>
-                                                <button @click="deleteProduct(product)">Delete</button>
-                                                <button @click="viewDetails(product)">View Details</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                        <button class="action-button" @click="openActionMenu(index)">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                        <div class="action-menu" v-if="activeActionMenu === index">
+                                            <button @click="editProduct(product)">Edit</button>
+                                            <button @click="deleteProduct(product)">Delete</button>
+                                            <button @click="viewDetails(product)">View Details</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                         </div>
 
                         <div class="pagination">
@@ -411,8 +371,14 @@ onMounted(() => {
                                         <select id="productCategory" v-model="newProduct.category">
                                             <option value="">Pilih Kategori</option>
                                             <option value="Sembako">Sembako</option>
+                                            <option value="Makanan Instan & Siap Saji">Makanan Instan & Siap Saji</option>
+                                            <option value="Camilan & Snack">Camilan & Snack</option>
                                             <option value="Minuman">Minuman</option>
-                                            <option value="Makanan">Makanan</option>
+                                            <option value="Produk Susu">Produk Susu</option>
+                                            <option value="Bumbu Dapur">Bumbu Dapur</option>
+                                            <option value="Produk Beku & Dingin">Produk Beku & Dingin</option>
+                                            <option value="Rokok & Aksesoris">Rokok & Aksesoris</option>
+                                            <option value="Kebutuhan Kebersihan">Kebutuhan Kebersihan</option>
                                             <option value="Lainnya">Lainnya</option>
                                         </select>
                                     </div>
@@ -427,6 +393,17 @@ onMounted(() => {
                                 <div class="modal-footer">
                                     <button class="btn-cancel" @click="showAddProductModal = false">Batal</button>
                                     <button class="btn-save" @click="saveNewProduct">Simpan</button>
+                                </div>
+                                <div class="form-group">
+                                    <label for="productUnit">Unit</label>
+                                    <select id="productUnit" v-model="newProduct.unit">
+                                        <option value="">Pilih Unit</option>
+                                        <option value="pcs">pcs</option>
+                                        <option value="box">box</option>
+                                        <option value="kg">kg</option>
+                                        <option value="liter">liter</option>
+                                        <option value="pack">pack</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -503,39 +480,6 @@ onMounted(() => {
     border: none;
 }
 
-.export-dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.export-menu {
-    display: none;
-    position: absolute;
-    right: 0;
-    background-color: #fff;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 10;
-    border-radius: 4px;
-}
-
-.export-dropdown:hover .export-menu {
-    display: block;
-}
-
-.export-menu button {
-    padding: 10px 16px;
-    text-align: left;
-    display: block;
-    width: 100%;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-}
-
-.export-menu button:hover {
-    background-color: #f1f1f1;
-}
 
 .product-table {
     overflow-x: auto;

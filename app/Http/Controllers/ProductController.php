@@ -50,24 +50,27 @@ class ProductController extends Controller
     }
     
 
-    public function index()
-    {
-        // Get the current logged-in user
-        $user = auth()->user();
-    
-        if ($user->role_id === 3 && $user->employees_role === 'stock') {
-            // If stock employee, filter products by the owner's ID
-            $products = Product::where('user_id', $user->owner_id)->get();
-        } elseif ($user->role_id === 2) {
-            // If owner, show their own products
-            $products = Product::where('user_id', $user->id)->get();
-        } else {
-            abort(403, 'Unauthorized access');
-        }
-    
-        return Inertia::render('Employee/ProductList', [
-            'products' => $products,
-        ]);
+        public function index()
+        {
+            $user = auth()->user();
+            
+            if ($user->role_id === 3 && $user->employees_role === 'stock') {
+                $products = Product::where('user_id', $user->owner_id)->get();
+            } elseif ($user->role_id === 2) {
+                $products = Product::where('user_id', $user->id)->get();
+            } else {
+                abort(403, 'Unauthorized access');
+            }
+
+            return response()->json([
+                'products' => $products
+            ]);
+            
+       return Inertia::render('Employee/StockManagement', [
+        'products' => $products,
+        'addProductRoute' => route('employee.stock.create'),
+        'listProductsRoute' => route('employee.stock.products')
+    ]);
     }
     
 }
