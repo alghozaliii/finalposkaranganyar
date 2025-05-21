@@ -23,20 +23,23 @@ class HelpdeskController extends Controller
         return Inertia::render('Pages/UnansweredFAQ', ['faqs' => $faqs]);
     }
 
-public function store(Request $request)
-{
-    DB::enableQueryLog(); // Aktifkan log query
+    public function store(Request $request)
+    {
+        $request->validate([
+            'category' => 'required|string',
+            'question' => 'required|string',
+            'answer' => 'required|string',
+        ]);
 
-    FAQ::create([
-        'category' => $request->category,
-        'question' => $request->question,
-        'answer' => $request->answer, // Pastikan ini masuk
-    ]);
+        FAQ::create([
+            'category' => $request->category,
+            'question' => $request->question,
+            'answer' => $request->answer,
+        ]);
 
-    dd(DB::getQueryLog()); // Cek query yang dijalankan
-}
+        return redirect()->back()->with('success', 'FAQ berhasil ditambahkan');
+    }
 
-    
     // Menjawab pertanyaan oleh verifikator
     public function answer(Request $request, $id)
     {
@@ -50,15 +53,17 @@ public function store(Request $request)
 
         return redirect()->route('helpdesk.index')->with('message', 'FAQ berhasil dijawab.');
     }
+
     public function faq()
-{
-    $faqs = FAQ::whereNotNull('answer')->get();
-    return Inertia::render('FAQ', ['faqs' => $faqs]);
-}
-public function create()
-{
-    return Inertia::render('Helpdesk'); // Halaman tambah FAQ
-}
+    {
+        $faqs = FAQ::whereNotNull('answer')->get();
+        return Inertia::render('FAQ', ['faqs' => $faqs]);
+    }
+
+    public function create()
+    {
+        return Inertia::render('Helpdesk'); // Halaman tambah FAQ
+    }
 
     // Menampilkan FAQ untuk guest/publik
     public function guestFaq()
@@ -66,5 +71,4 @@ public function create()
         $faqs = FAQ::whereNotNull('answer')->get();
         return Inertia::render('FAQguest', ['faqs' => $faqs]);
     }
-
 }

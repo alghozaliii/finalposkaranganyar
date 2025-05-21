@@ -207,6 +207,70 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal for Adding FAQ -->
+    <div v-if="showAddModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg p-6 w-full max-w-2xl mx-4">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-medium">Tambah Pertanyaan FAQ</h3>
+          <button @click="showAddModal = false" class="text-gray-500 hover:text-gray-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form @submit.prevent="submitFAQ">
+          <!-- Kategori -->
+          <div class="mb-4">
+            <label for="category" class="block text-sm font-medium text-gray-700">Kategori</label>
+            <select v-model="newFaq.category" id="category" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-indigo-200">
+              <option disabled value="">Pilih Kategori</option>
+              <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
+            </select>
+          </div>
+
+          <!-- Pertanyaan -->
+          <div class="mb-4">
+            <label for="question" class="block text-sm font-medium text-gray-700">Pertanyaan</label>
+            <input
+              type="text"
+              id="question"
+              v-model="newFaq.question"
+              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-indigo-200"
+              placeholder="Masukkan pertanyaan"
+            />
+          </div>
+
+          <!-- Jawaban -->
+          <div class="mb-4">
+            <label for="answer" class="block text-sm font-medium text-gray-700">Jawaban</label>
+            <textarea
+              id="answer"
+              v-model="newFaq.answer"
+              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-indigo-200"
+              placeholder="Masukkan jawaban"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <!-- Tombol Submit -->
+          <div class="flex justify-end">
+            <button
+              type="submit"
+              class="px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700 transition"
+            >
+              Simpan FAQ
+            </button>
+          </div>
+        </form>
+
+        <!-- Pesan sukses -->
+        <div v-if="successMessage" class="mt-4 p-4 bg-green-100 text-green-700 rounded">
+          {{ successMessage }}
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -238,7 +302,26 @@ export default {
     const selectedCategory = ref('General Question');
     const userName = ref(props.auth?.user?.name || 'Verifikator');
     const activeSection = ref('helpdesk');
+    const showAddModal = ref(false);
+    const successMessage = ref('');
     
+    const categories = [
+      "Umum",
+      "Produk",
+      "Transaksi",
+      "Pelanggan",
+      "Laporan",
+      "Keamanan",
+      "Integrasi",
+      "Bantuan",
+    ];
+
+    const newFaq = ref({
+      category: "",
+      question: "",
+      answer: "",
+    });
+
     // Menggunakan data dari props jika tersedia, jika tidak gunakan data sampel
     const faqData = ref(props.faqs.length > 0 ? props.faqs.map(faq => ({...faq, open: false})) : [
       {
@@ -317,11 +400,26 @@ export default {
 
     
     const redirectToCreateFAQ = () => {
-      router.get(route('verificator.helpdesk.create'));
+      showAddModal.value = true;
     };
     
     const logout = () => {
       router.post(route('logout'));
+    };
+    
+    const submitFAQ = () => {
+      router.post("/verificator/helpdesk/store", newFaq.value, {
+        onSuccess: () => {
+          successMessage.value = "FAQ berhasil ditambahkan!";
+          newFaq.value.category = "";
+          newFaq.value.question = "";
+          newFaq.value.answer = "";
+          setTimeout(() => {
+            showAddModal.value = false;
+            successMessage.value = "";
+          }, 2000);
+        },
+      });
     };
     
     const handleResize = () => {
@@ -356,7 +454,12 @@ export default {
       goToFAQ,
       logout,
       userName,
-      activeSection
+      activeSection,
+      showAddModal,
+      newFaq,
+      categories,
+      submitFAQ,
+      successMessage
     };
   }
 };
