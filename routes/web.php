@@ -190,3 +190,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/owner/salesrecommendation', [SalesRecommendationController::class, 'index'])->name('owner.sales.recommendation');
 });
 Route::get('/sales-recommendation/export', [SalesRecommendationController::class, 'exportCSV']); // Untuk download CSV
+
+// SSO Routes
+Route::get('/sso/redirect', [App\Http\Controllers\Auth\SSOController::class, 'redirect'])->name('sso.redirect');
+Route::get('/sso/callback', [App\Http\Controllers\Auth\SSOController::class, 'callback'])->name('sso.callback');
+Route::post('/sso/register/store', [App\Http\Controllers\Auth\SSOController::class, 'registerStore'])->name('sso.register.store');

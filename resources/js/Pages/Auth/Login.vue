@@ -148,6 +148,20 @@
             </template>
           </PrimaryButton>
 
+          <!-- SSO Login Button -->
+          <div class="mt-4">
+            <a
+              href="/sso/redirect"
+              class="w-full flex items-center justify-center py-3 px-4 border border-zinc-700 rounded-xl text-base font-medium text-white bg-zinc-800 hover:bg-zinc-700 transition-all shadow-lg transform hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+              </svg>
+              Login dengan SSO Karanganyar
+            </a>
+          </div>
+
           <!-- Register Link -->
           <div class="pt-2 text-center">
             <p class="text-zinc-400 text-sm">
