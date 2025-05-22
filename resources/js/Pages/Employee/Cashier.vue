@@ -126,213 +126,258 @@ onMounted(fetchProducts);
 </script>
 
 <template>
-    
     <Head title="Kasir" />
     <AuthenticatedLayout>
-       
+        <div class="flex min-h-screen bg-gray-100">
+            <!-- Sidebar -->
+            <aside
+                :class="[
+                    'bg-white shadow-lg flex flex-col items-center pt-6 fixed inset-y-0 left-0 transition-transform z-30',
+                    showSidebar ? 'translate-x-0' : '-translate-x-full',
+                    'md:translate-x-0 md:static md:w-24 w-64',
+                    'safe-area-inset-left'
+                ]"
+            >
+                <nav class="flex flex-col items-center gap-10 mt-8 flex-1">
+                    <!-- Dashboard -->
+                    <a href="/dashboard" class="flex flex-col items-center">
+                        <div class="p-3 rounded-md text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+                            </svg>
+                        </div>
+                        <span class="text-xs mt-2">Dashboard</span>
+                    </a>
 
-      <!-- SIDEBAR -->
-      <div
-        :class="[
-          'bg-gray-300 h-[calc(100vh-4rem)] flex flex-col items-center pt-5 fixed left-0 top-16 z-40 transition-all duration-300',
-          showSidebar ? 'w-48' : 'w-0 lg:w-48',
-          showSidebar ? 'opacity-100' : 'opacity-0 lg:opacity-100'
-        ]"
-      >
-        <div class="w-full flex flex-col gap-4 px-4 overflow-hidden">
-          <a href="/dashboard">
+                    <!-- Transaksi -->
+                    <a href="" class="flex flex-col items-center">
+                        <div class="p-3 rounded-md bg-purple-100 text-purple-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                        </div>
+                        <span class="text-xs mt-2">Transaksi</span>
+                    </a>
+                </nav>
+                
+
+                <!-- Logout Button -->
+                <button @click="logout" class="flex flex-col items-center mt-auto mb-6">
+                    <div class="p-3 rounded-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </div>
+                    <span class="text-xs mt-2">Logout</span>
+                </button>
+            </aside>
+
+            <!-- Overlay mobile -->
             <div
-              :class="[
-                'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
-                showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none'
-              ]"
-            >
-              <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              </svg>
-              <span class="font-bold text-sm mt-2">Dashboard</span>
-            </div>
-          </a>
+                v-if="showSidebar"
+                @click="showSidebar = false"
+                class="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+            ></div>
 
-          <a href="">
-            <div
-              :class="[
-                'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
-                showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none',
-                'transition-transform delay-100'
-              ]"
-            >
-              <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-              <span class="font-bold text-sm mt-2">Transaksi</span>
-            </div>
-          </a>
+            <!-- Main content -->
+            <div class="flex-1 md:ml-24 w-full overflow-x-hidden">
+                <!-- Mobile header -->
+                <header class="flex items-center justify-between bg-white p-4 shadow md:hidden safe-area-inset-top">
+                    <button @click="showSidebar = !showSidebar" class="p-2 -m-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    <h1 class="text-lg font-semibold">Kasir</h1>
+                    <div class="w-8 h-8 rounded-full bg-gray-300"></div>
+                </header>
 
-          <!-- <a href="/Setting">
-            <div
-              :class="[
-                'bg-purple-400 p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-purple-300 transition-all duration-300',
-                showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none',
-                'transition-transform delay-100'
-              ]"
-            >
-            <img src="/images/sett.png" alt="Pengaturan" class="w-11 h-11" />
-              <span class="font-bold text-sm mt-1">Pengaturan</span>
+                <main class="p-3 md:p-6 space-y-4 md:space-y-6 safe-area-inset-bottom">
+                    <!-- Search & Filter Bar -->
+                    <div class="bg-white w-full p-3 rounded-lg shadow-sm flex flex-col md:flex-row justify-between gap-3">
+                        <div class="relative w-full">
+                            <input 
+                                v-model="searchQuery"
+                                type="text" 
+                                placeholder="Search" 
+                                class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-300 text-base"
+                            />
+                            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <div class="flex items-center">
+                            <button class="p-2.5 rounded-lg text-gray-500 hover:bg-gray-100 active:bg-gray-200">
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div class="flex space-x-2 overflow-x-auto py-2 -mx-3 px-3 md:mx-0 md:px-0">
+                        <button 
+                            v-for="category in categories" 
+                            :key="category.name"
+                            @click="setActiveCategory(category.name)"
+                            :class="[
+                                'px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap',
+                                activeCategory === category.name ? 'bg-purple-400 text-white' : 'bg-white text-gray-800 hover:bg-gray-100 active:bg-gray-200'
+                            ]"
+                        >
+                            {{ category.name }}
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col lg:flex-row gap-4">
+                        <!-- List Produk -->
+                        <div class="w-full lg:w-2/3">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4">
+                                <div 
+                                    v-for="product in filteredProducts" 
+                                    :key="product.id" 
+                                    class="bg-purple-300 rounded-lg p-2 md:p-4 hover:shadow-lg transition cursor-pointer flex flex-col justify-between h-24 md:h-32 active:bg-purple-400"
+                                    @click="addToCart(product)"
+                                >
+                                    <h4 class="font-semibold text-xs md:text-base line-clamp-2">{{ product.name }}</h4>
+                                    <div>
+                                        <p class="text-xs text-gray-600">Stok: {{ product.stock }}</p>
+                                        <p class="font-bold text-xs md:text-base">{{ Number(product.selling_price).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Keranjang Belanja -->
+                        <div class="w-full lg:w-1/3 bg-white shadow-md rounded-lg p-3 sticky bottom-0 lg:top-20 max-h-[calc(100vh-4rem)] md:max-h-[calc(100vh-8rem)] overflow-auto">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-base font-semibold">Pesanan baru</h3>
+                                <button 
+                                    v-if="cartItems.length > 0" 
+                                    class="text-gray-500 hover:text-red-500 active:text-red-600 p-2 -m-2" 
+                                    @click="cartItems = []"
+                                >
+                                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div v-if="cartItems.length === 0" class="text-gray-500 text-center py-6">
+                                Keranjang kosong
+                            </div>
+                            <div v-else class="space-y-3">
+                                <div 
+                                    v-for="item in cartItems" 
+                                    :key="item.id" 
+                                    class="flex justify-between items-center border-b pb-3"
+                                >
+                                    <div class="flex-grow pr-2">
+                                        <h4 class="font-semibold text-sm">{{ item.name }}</h4>
+                                        <p class="text-xs text-gray-600">{{ Number(item.selling_price).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }) }}</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <button 
+                                            @click.stop="decrementQuantity(item)"
+                                            class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 active:bg-gray-300"
+                                        >
+                                            <svg class="w-3 h-3 md:w-4 md:h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                            </svg>
+                                        </button>
+                                        <span class="w-6 text-center text-sm">{{ item.quantity }}</span>
+                                        <button 
+                                            @click.stop="incrementQuantity(item)"
+                                            class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-purple-300 flex items-center justify-center text-white active:bg-purple-400"
+                                        >
+                                            <svg class="w-3 h-3 md:w-4 md:h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                            </svg>
+                                        </button>
+                                        <button 
+                                            @click.stop="removeFromCart(item.id)"
+                                            class="ml-1 text-gray-400 hover:text-red-500 active:text-red-600 p-1 -m-1"
+                                        >
+                                            <svg class="w-3 h-3 md:w-4 md:h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- Total -->
+                                <div class="mt-3 pt-2 border-t">
+                                    <div class="flex justify-between font-semibold text-base">
+                                        <span>Total</span>
+                                        <span>Rp {{ Number(cartTotal).toLocaleString('id-ID') }}</span>
+                                    </div>
+                                    <button 
+                                        @click="proceedToPayment"
+                                        class="mt-3 w-full bg-purple-400 text-white py-2.5 rounded-lg hover:bg-purple-500 active:bg-purple-600 transition text-base flex items-center justify-center"
+                                    >
+                                        <span>Bayar</span>
+                                        <svg class="w-4 h-4 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
             </div>
-          </a> -->
         </div>
-
-        <!-- Tombol Logout -->
-        <div 
-          :class="[
-            'mt-auto mb-20 bg-white p-4 rounded-lg flex flex-col items-center cursor-pointer hover:bg-gray-100 transition-all duration-300 mx-4',
-            showSidebar ? 'transform-none' : 'transform -translate-x-full lg:transform-none',
-            'transition-transform delay-200'
-          ]"
-          @click="logout"
-        >
-          <svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
-          <span class="font-bold text-sm mt-1">Logout</span>
-        </div>
-      </div>
-
-      <!-- KONTEN UTAMA -->
-      <div class="pt-7 pl-40 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col gap-4">          
-          <!-- Search & Filter Bar -->
-          <div class="bg-white w-full p-4 rounded-lg shadow-sm flex justify-between">
-            <div class="relative w-96">
-              <input 
-                v-model="searchQuery"
-                type="text" 
-                placeholder="Search" 
-                class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-300"
-              />
-              <svg class="w-5 h-5 text-gray-400 absolute left-3 top-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            <div class="flex items-center">
-              <button class="p-2 rounded-lg text-gray-500 hover:bg-gray-100">
-                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- Category Filter -->
-          <div class="flex space-x-2 overflow-x-auto py-2">
-            <button 
-              v-for="category in categories" 
-              :key="category.name"
-              @click="setActiveCategory(category.name)"
-              :class="[
-                'px-6 py-2 rounded-lg text-sm font-medium whitespace-nowrap',
-                activeCategory === category.name ? 'bg-purple-400 text-white' : 'bg-white text-gray-800 hover:bg-gray-100'
-              ]"
-            >
-              {{ category.name }}
-            </button>
-          </div>
-          
-          <div class="flex gap-6">
-            <!-- List Produk -->
-            <div class="w-2/3">
-              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <div 
-                  v-for="product in filteredProducts" 
-                  :key="product.id" 
-                  class="bg-purple-300 rounded-lg p-4 hover:shadow-lg transition cursor-pointer flex flex-col justify-between h-32"
-                  @click="addToCart(product)"
-                >
-                  <h4 class="font-semibold">{{ product.name }}</h4>
-                  <div>
-                    <p class="text-xs text-gray-600">Stok: {{ product.stock }}</p>
-                    <p class="font-bold">{{ Number(product.selling_price).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }) }}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Bagian yang diubah hanya pada komponen Keranjang Belanja -->
-<div class="w-1/3 bg-white shadow-md rounded-lg p-4 sticky top-20 max-h-[calc(100vh-8rem)] overflow-auto">
-  <div class="flex justify-between items-center mb-4">
-    <h3 class="text-lg font-semibold">Pesanan baru</h3>
-    <button 
-      v-if="cartItems.length > 0" 
-      class="text-gray-500 hover:text-red-500" 
-      @click="cartItems = []"
-    >
-      <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-      </svg>
-    </button>
-  </div>
-  <div v-if="cartItems.length === 0" class="text-gray-500 text-center py-8">
-    Keranjang kosong
-  </div>
-  <div v-else class="space-y-4">
-    <div 
-      v-for="item in cartItems" 
-      :key="item.id" 
-      class="flex justify-between items-center border-b pb-3"
-    >
-      <div class="flex-grow pr-4">
-        <h4 class="font-semibold">{{ item.name }}</h4>
-        <p class="text-sm text-gray-600">{{ Number(item.selling_price).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }) }}</p>
-      </div>
-      <div class="flex items-center">
-        <button 
-          @click.stop="decrementQuantity(item)"
-          class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-700"
-        >
-          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-          </svg>
-        </button>
-        <span class="w-8 text-center">{{ item.quantity }}</span>
-        <button 
-          @click.stop="incrementQuantity(item)"
-          class="w-8 h-8 rounded-full bg-purple-300 flex items-center justify-center text-white"
-        >
-          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-        </button>
-        <button 
-          @click.stop="removeFromCart(item.id)"
-          class="ml-2 text-gray-400 hover:text-red-500"
-        >
-          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-        </button>
-      </div>
-    </div>
-    <!-- Total -->
-    <div class="mt-4 pt-2 border-t">
-      <div class="flex justify-between font-semibold text-lg">
-        <span>Total</span>
-        <span>Rp {{ Number(cartTotal).toLocaleString('id-ID') }}</span>
-      </div>
-      <button 
-        @click="proceedToPayment"
-        class="mt-4 w-full bg-purple-400 text-white py-3 rounded-lg hover:bg-purple-500 transition text-lg flex items-center justify-center"
-      >
-        <span>Bayar</span>
-        <svg class="w-5 h-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
-    </div>
-  </div>
-</div>
-          </div>
-        </div>
-      </div>
     </AuthenticatedLayout>
 </template>
+
+<style>
+/* Add safe area insets for iOS devices */
+.safe-area-inset-top {
+    padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-inset-left {
+    padding-left: env(safe-area-inset-left);
+}
+
+/* Improve touch targets for mobile */
+@media (max-width: 768px) {
+    button, 
+    a {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    input,
+    select {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}
+
+/* Prevent pull-to-refresh on mobile */
+body {
+    overscroll-behavior-y: none;
+}
+
+/* Improve scrolling on iOS */
+.overflow-auto {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent horizontal scroll */
+.w-full {
+    max-width: 100%;
+}
+
+/* Ensure content fits within viewport */
+@media (max-width: 768px) {
+    .w-full {
+        width: 100vw;
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+}
+</style>

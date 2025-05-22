@@ -39,9 +39,9 @@
     <!-- Mobile Menu -->
     <div v-if="isMobileMenuOpen" class="md:hidden bg-white shadow-md">
       <div class="px-4 py-4 flex flex-col gap-4">
-        <a href="/LandingPage" class="text-lg text-black">Home</a>
+        <a href="/" class="text-lg text-black">Home</a>
         <a href="/FAQ" class="hover:text-black">FAQ</a>
-        <a href="/Blog" class="hover:text-black">Blog</a>
+        <a href="/blog" class="hover:text-black">Blog</a>
         <a href="/Aboutus" class="hover:text-black">About Us</a>
         <div class="flex flex-col gap-2">
           <a href="/login" class="text-neutral-400 hover:text-black text-left">Login</a>
