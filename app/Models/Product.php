@@ -19,11 +19,11 @@ class Product extends Model
         'name',
         'stock',
         'average_price',
-        'markup',
         'selling_price',
         'category',
         'unit',
-        'user_id'  // Added user_id to fillable array
+        'user_id', // Added user_id to fillable array
+         'profit'
     ];
 
     /**

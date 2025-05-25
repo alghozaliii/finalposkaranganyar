@@ -21,33 +21,32 @@ class ProductController extends Controller
     }
     
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'code' => 'required|unique:products,code',
-            'name' => 'required',
-            'stock' => 'required|integer',
-            'average_price' => 'required|numeric',
-            'markup' => 'required|numeric',
-            'selling_price' => 'required|numeric',
-            'category' => 'nullable|string',
-            'unit' => 'nullable|string',
-        ]);
+{
+    $validated = $request->validate([
+        'code' => 'required|unique:products,code',
+        'name' => 'required',
+        'stock' => 'required|integer',
+        'average_price' => 'required|numeric',
+        'selling_price' => 'required|numeric',
+        'category' => 'nullable|string',
+        'unit' => 'nullable|string',
+    ]);
 
-        // Get the current user
-        $user = auth()->user();
-        
-        if ($user->role_id === 3 && $user->employees_role === 'stock' && $user->owner_id) {
-            // If user is a stock employee, set the user_id to be the owner's ID
-            $validated['user_id'] = $user->owner_id;
-        } elseif ($user->role_id === 2) {
-            // If user is an owner, set the user_id to their own ID
-            $validated['user_id'] = $user->id;
-        }
+    // Hitung profit (keuntungan per produk)
+    $validated['profit'] = $validated['selling_price'] - $validated['average_price'];
 
-        Product::create($validated);
-
-        return redirect()->back()->with('success', 'Produk berhasil ditambahkan');
+    // Get the current user
+    $user = auth()->user();
+    if ($user->role_id === 3 && $user->employees_role === 'stock' && $user->owner_id) {
+        $validated['user_id'] = $user->owner_id;
+    } elseif ($user->role_id === 2) {
+        $validated['user_id'] = $user->id;
     }
+
+    Product::create($validated);
+
+    return redirect()->back()->with('success', 'Produk berhasil ditambahkan');
+}
     
 
         public function index()

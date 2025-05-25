@@ -9,33 +9,32 @@ use Illuminate\Support\Facades\Auth;
 
 class CashierController extends Controller
 {
+public function getProducts()
+{
+    // Mendapatkan pengguna yang sedang login
+    $user = Auth::user();
+    
+    // Pastikan pengguna adalah seorang employee (role 3) atau owner (role 2)
+    if ($user->role_id === 3) {
+        // Jika employee, ambil produk berdasarkan owner_id yang terkait dengan employee
+        $products = Product::where('user_id', $user->owner_id)
+            ->select('id', 'code', 'name', 'stock', 'average_price', 'selling_price', 'profit', 'category', 'unit')
+            ->get();
 
-    public function getProducts()
-    {
-        // Mendapatkan pengguna yang sedang login
-        $user = Auth::user();
-        
-        // Pastikan pengguna adalah seorang employee (role 3) atau owner (role 2)
-        if ($user->role_id === 3) {
-            // Jika employee, ambil produk berdasarkan owner_id yang terkait dengan employee
-            $products = Product::where('user_id', $user->owner_id)
-                ->select('id', 'name', 'stock', 'average_price', 'markup', 'selling_price', 'category')
-                ->get();
+        return response()->json($products);
+    } 
+    elseif ($user->role_id === 2) {
+        // Jika owner, ambil produk miliknya sendiri
+        $products = Product::where('user_id', $user->id)
+            ->select('id', 'code', 'name', 'stock', 'average_price', 'selling_price', 'profit', 'category', 'unit')
+            ->get();
 
-            return response()->json($products);
-        } 
-        elseif ($user->role_id === 2) {
-            // Jika owner, ambil produk miliknya sendiri
-            $products = Product::where('user_id', $user->id)
-                ->select('id', 'name', 'stock', 'average_price', 'markup', 'selling_price', 'category')
-                ->get();
-
-            return response()->json($products);
-        }
-
-        // Jika bukan employee atau owner, beri respon error
-        return response()->json(['message' => 'Akses ditolak.'], 403);
+        return response()->json($products);
     }
+
+    // Jika bukan employee atau owner, beri respon error
+    return response()->json(['message' => 'Akses ditolak.'], 403);
+}
     
     public function checkout(Request $request)
     {

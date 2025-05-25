@@ -31,7 +31,6 @@ const fetchProducts = async () => {
         console.error('Gagal mengambil data produk:', error);
     }
 };
-
 // Filter produk berdasarkan kategori dan pencarian
 const filteredProducts = computed(() => {
     let filtered = products.value;

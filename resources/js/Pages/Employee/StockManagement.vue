@@ -236,57 +236,57 @@ onMounted(() => {
                         <div class="product-table">
                         <table>
                             <thead>
-                                <tr>
-                                    <th width="30">
-                                        <input type="checkbox" @change="selectAll" v-model="allSelected">
-                                    </th>
-                                    <th>ID Barang</th>
-                                    <th>Nama Barang</th>
-                                    <th>Stock</th>
-                                    <th>Harga Rata-rata</th>
-                                    <th>Markup (%)</th>
-                                    <th>Harga Jual</th>
-                                    <th>Category</th>
-                                    <th>Unit</th>
-                                    <th>Status</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                                <tbody>
-                                    <tr v-if="products.length === 0">
-                                        <td colspan="11" class="py-4 px-4 border-b text-center">
-                                            Tidak ada produk tersedia
-                                        </td>
-                                    </tr>
-                                    <tr v-for="(product, index) in displayedProducts" :key="product.id">
-                                        <td>
-                                            <input type="checkbox" v-model="product.selected">
-                                        </td>
-                                        <td>{{ product.code }}</td>
-                                        <td>{{ product.name }}</td>
-                                        <td>{{ product.stock }}</td>
-                                        <td>Rp {{ Number(product.average_price).toLocaleString() }}</td>
-                                        <td>{{ product.markup }}%</td>
-                                        <td>Rp {{ Number(product.selling_price).toLocaleString() }}</td>
-                                        <td>{{ product.category || '-' }}</td>
-                                        <td>{{ product.unit || '-' }}</td>
-                                        <td>
-                                            <span class="status-badge" :class="{ 'available': product.stock > 0 }">
-                                                {{ product.stock > 0 ? 'Avail' : 'Out of Stock' }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                        <button class="action-button" @click="openActionMenu(index)">
-                                            <i class="fas fa-ellipsis-h"></i>
-                                        </button>
-                                        <div class="action-menu" v-if="activeActionMenu === index">
-                                            <button @click="editProduct(product)">Edit</button>
-                                            <button @click="deleteProduct(product)">Delete</button>
-                                            <button @click="viewDetails(product)">View Details</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
+    <tr>
+        <th width="30">
+            <input type="checkbox" @change="selectAll" v-model="allSelected">
+        </th>
+        <th>ID Barang</th>
+        <th>Nama Barang</th>
+        <th>Stock</th>
+        <th>Harga Rata-rata</th>
+        <th>Keuntungan/Produk</th> <!-- Ganti Markup (%) jadi Keuntungan/Produk -->
+        <th>Harga Jual</th>
+        <th>Category</th>
+        <th>Unit</th>
+        <th>Status</th>
+        <th></th>
+    </tr>
+</thead>
+<tbody>
+    <tr v-if="products.length === 0">
+        <td colspan="11" class="py-4 px-4 border-b text-center">
+            Tidak ada produk tersedia
+        </td>
+    </tr>
+    <tr v-for="(product, index) in displayedProducts" :key="product.id">
+        <td>
+            <input type="checkbox" v-model="product.selected">
+        </td>
+        <td>{{ product.code }}</td>
+        <td>{{ product.name }}</td>
+        <td>{{ product.stock }}</td>
+        <td>Rp {{ Number(product.average_price).toLocaleString() }}</td>
+        <td>Rp {{ Number(product.profit).toLocaleString() }}</td> <!-- Tampilkan profit -->
+        <td>Rp {{ Number(product.selling_price).toLocaleString() }}</td>
+        <td>{{ product.category || '-' }}</td>
+        <td>{{ product.unit || '-' }}</td>
+        <td>
+            <span class="status-badge" :class="{ 'available': product.stock > 0 }">
+                {{ product.stock > 0 ? 'Avail' : 'Out of Stock' }}
+            </span>
+        </td>
+        <td>
+            <button class="action-button" @click="openActionMenu(index)">
+                <i class="fas fa-ellipsis-h"></i>
+            </button>
+            <div class="action-menu" v-if="activeActionMenu === index">
+                <button @click="editProduct(product)">Edit</button>
+                <button @click="deleteProduct(product)">Delete</button>
+                <button @click="viewDetails(product)">View Details</button>
+            </div>
+        </td>
+    </tr>
+</tbody>
                         </table>
                         </div>
 
