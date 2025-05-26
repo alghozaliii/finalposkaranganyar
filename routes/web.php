@@ -13,6 +13,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\CashierController;
 use App\Http\Controllers\Owner\SalesController;
 use App\Http\Controllers\SalesRecommendationController;
+use App\Http\Controllers\OwnerDashboardController;
 
 // Route untuk mengambil data produk dari database
 Route::get('/cashier/products', [CashierController::class, 'getProducts']);
@@ -195,3 +196,8 @@ Route::get('/sales-recommendation/export', [SalesRecommendationController::class
 Route::get('/sso/redirect', [App\Http\Controllers\Auth\SSOController::class, 'redirect'])->name('sso.redirect');
 Route::get('/sso/callback', [App\Http\Controllers\Auth\SSOController::class, 'callback'])->name('sso.callback');
 Route::post('/sso/register/store', [App\Http\Controllers\Auth\SSOController::class, 'registerStore'])->name('sso.register.store');
+Route::post('/profit/store', [SalesRecommendationController::class, 'storeProfit'])->name('profit.store');
+
+Route::middleware(['auth', 'role:owner'])->group(function () {
+    Route::get('/owner/dashboard', [OwnerDashboardController::class, 'index'])->name('owner.dashboard');
+});

@@ -122,26 +122,38 @@
                               </div>
 
                               <!-- Data Table -->
-                              <div v-if="sales.length > 0">
-                                  <table class="min-w-full divide-y divide-gray-200">
-                                      <thead class="bg-gray-50">
-                                          <tr>
-                                              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
-                                              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Produk</th>
-                                              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Kuantitas</th>
-                                              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Penjualan</th>
-                                          </tr>
-                                      </thead>
-                                      <tbody class="bg-white divide-y divide-gray-200">
-                                          <tr v-for="(item, index) in sales" :key="item.product_name">
-                                              <td class="px-6 py-4">{{ index + 1 }}</td>
-                                              <td class="px-6 py-4">{{ item.product_name }}</td>
-                                              <td class="px-6 py-4">{{ item.total_quantity }}</td>
-                                              <td class="px-6 py-4">Rp {{ parseInt(item.total_sales).toLocaleString('id-ID') }}</td>
-                                          </tr>
-                                      </tbody>
-                                  </table>
-                              </div>
+                              <!-- ...existing code... -->
+<div v-if="sales.length > 0">
+    <table class="min-w-full divide-y divide-gray-200">
+       <thead class="bg-gray-50">
+    <tr>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Produk</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Kuantitas</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Penjualan</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Profit per Produk</th> <!-- Tambahan -->
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Profit</th>
+    </tr>
+</thead>
+<tbody class="bg-white divide-y divide-gray-200">
+    <tr v-for="(item, index) in sales" :key="item.product_name">
+        <td class="px-6 py-4">{{ index + 1 }}</td>
+        <td class="px-6 py-4">{{ item.product_name }}</td>
+        <td class="px-6 py-4">{{ item.total_quantity }}</td>
+        <td class="px-6 py-4">Rp {{ parseInt(item.total_sales).toLocaleString('id-ID') }}</td>
+        <td class="px-6 py-4">
+            Rp {{ Number(item.profit_per_product ?? 0).toLocaleString('id-ID', {minimumFractionDigits: 2}) }}
+        </td>
+        <td class="px-6 py-4">
+            Rp {{
+                (Number(item.profit_per_product ?? 0) * Number(item.total_quantity ?? 0)).toLocaleString('id-ID', {minimumFractionDigits: 2})
+            }}
+        </td>
+    </tr>
+</tbody>
+    </table>
+</div>
+<!-- ...existing code... -->
                               <div v-else class="text-gray-500">
                                   Tidak ada data penjualan.
                               </div>
