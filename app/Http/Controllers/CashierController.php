@@ -40,6 +40,7 @@ public function getProducts()
     {
         $order = $request->input('order');
         $paymentMethod = $request->input('payment_method');
+        $invoiceNumber = $request->input('invoice_number');
 
         DB::beginTransaction();
         try {
@@ -53,8 +54,9 @@ public function getProducts()
             // Masukkan transaksi ke tabel purchase
             foreach ($order as $item) {
                 DB::table('purchase')->insert([
+                    'invoice_number' => $invoiceNumber,
                     'product_id' => $item['id'],
-                    'product_name' => $item['name'], // Tambahkan ini
+                    'product_name' => $item['name'],
                     'quantity' => $item['quantity'],
                     'total_price' => $item['quantity'] * $item['selling_price'],
                     'payment_method' => $paymentMethod,

@@ -75,9 +75,11 @@ const confirmPayment = async () => {
     return alert('Uang diterima kurang.');
   }
   try {
+    const invoiceNumber = `INV-${Date.now().toString().slice(-8)}`;
     await axios.post('/cashier/checkout', {
       order: order.value,
       payment_method: paymentMethod.value,
+      invoice_number: invoiceNumber,
     });
     const invoiceData = {
       items: order.value,
@@ -86,7 +88,7 @@ const confirmPayment = async () => {
       change: change.value,
       paymentMethod: paymentMethod.value,
       date: new Date().toLocaleString('id-ID'),
-      invoiceNumber: `INV-${Date.now().toString().slice(-8)}`,
+      invoiceNumber: invoiceNumber,
     };
     localStorage.setItem('invoiceData', JSON.stringify(invoiceData));
     localStorage.removeItem('order');
