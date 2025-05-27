@@ -127,22 +127,57 @@
                                         <thead class="bg-gray-50">
                                             <tr>
                                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Produk</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Harga</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Metode Pembayaran</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. Invoice</th>
                                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Metode Pembayaran</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Item</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Harga</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detail</th>
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
-                                            <tr v-for="(item, index) in sales" :key="item.id">
-                                                <td class="px-6 py-4 whitespace-nowrap">{{ index + 1 }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">{{ item.product_name }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">{{ item.quantity }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">Rp {{ parseInt(item.total_price).toLocaleString('id-ID') }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap capitalize">{{ item.payment_method }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">{{ item.created_at }}</td>
-                                            </tr>
+                                            <template v-for="(invoice, index) in sales" :key="invoice.invoice_number">
+                                                <tr>
+                                                    <td class="px-6 py-4 whitespace-nowrap">{{ index + 1 }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">{{ invoice.invoice_number }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">{{ invoice.date }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap capitalize">{{ invoice.payment_method }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">{{ invoice.total_items }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">Rp {{ parseInt(invoice.total_amount).toLocaleString('id-ID') }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <button 
+                                                            @click="toggleInvoiceDetails(invoice.invoice_number)"
+                                                            class="text-purple-600 hover:text-purple-900"
+                                                        >
+                                                            {{ expandedInvoices.includes(invoice.invoice_number) ? 'Sembunyikan' : 'Lihat' }}
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <!-- Expanded Details -->
+                                                <tr v-if="expandedInvoices.includes(invoice.invoice_number)">
+                                                    <td colspan="7" class="px-6 py-4 bg-gray-50">
+                                                        <div class="space-y-2">
+                                                            <h4 class="font-semibold">Detail Item:</h4>
+                                                            <table class="min-w-full divide-y divide-gray-200">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Produk</th>
+                                                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Jumlah</th>
+                                                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Harga</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr v-for="item in invoice.items" :key="item.product_name">
+                                                                        <td class="px-4 py-2">{{ item.product_name }}</td>
+                                                                        <td class="px-4 py-2">{{ item.quantity }}</td>
+                                                                        <td class="px-4 py-2">Rp {{ parseInt(item.total_price).toLocaleString('id-ID') }}</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </template>
                                         </tbody>
                                     </table>
                                 </div>
@@ -173,6 +208,7 @@ const month = ref('');
 const year = ref('');
 const mobileMenuOpen = ref(false);
 const activeSection = ref('laporan');
+const expandedInvoices = ref([]);
 
 // Navigation functions
 const goToDashboard = () => router.get(route('owner.dashboard'));
@@ -186,6 +222,16 @@ const logout = () => router.post(route('logout'));
 // Toggle mobile menu
 const toggleMobileMenu = (force) => {
     mobileMenuOpen.value = force === false ? false : !mobileMenuOpen.value;
+};
+
+// Toggle invoice details
+const toggleInvoiceDetails = (invoiceNumber) => {
+    const index = expandedInvoices.value.indexOf(invoiceNumber);
+    if (index === -1) {
+        expandedInvoices.value.push(invoiceNumber);
+    } else {
+        expandedInvoices.value.splice(index, 1);
+    }
 };
 
 // Ambil query string saat komponen dimount
