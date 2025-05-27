@@ -147,9 +147,15 @@
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <button 
                                                             @click="toggleInvoiceDetails(invoice.invoice_number)"
-                                                            class="text-purple-600 hover:text-purple-900"
+                                                            class="text-purple-600 hover:text-purple-900 mr-2"
                                                         >
                                                             {{ expandedInvoices.includes(invoice.invoice_number) ? 'Sembunyikan' : 'Lihat' }}
+                                                        </button>
+                                                        <button 
+                                                            @click="printInvoice(invoice)"
+                                                            class="text-blue-600 hover:text-blue-900"
+                                                        >
+                                                            Cetak
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -191,12 +197,36 @@
             </div>
         </div>
     </AuthenticatedLayout>
+
+    <!-- Print Invoice Modal -->
+    <div v-if="showPrintModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg max-w-3xl w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Cetak Invoice</h3>
+                <button @click="showPrintModal = false" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <InvoicePrint :invoice="selectedInvoice" />
+            <div class="mt-4 flex justify-end">
+                <button 
+                    @click="printSelectedInvoice"
+                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                >
+                    Cetak
+                </button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
+import InvoicePrint from '@/Pages/Employee/InvoicePrint.vue';
 
 defineProps({
     sales: Array,
@@ -209,6 +239,8 @@ const year = ref('');
 const mobileMenuOpen = ref(false);
 const activeSection = ref('laporan');
 const expandedInvoices = ref([]);
+const showPrintModal = ref(false);
+const selectedInvoice = ref(null);
 
 // Navigation functions
 const goToDashboard = () => router.get(route('owner.dashboard'));
@@ -216,7 +248,7 @@ const goToCashier = () => router.get(route('owner.cashier'));
 const goToStock = () => router.get(route('owner.stock'));
 const goToEmployees = () => router.get(route('owner.employees'));
 const goToFAQ = () => router.get('/helpdeskowner');
-const goToLaporan = () => router.get(route('owner.dashboard'));
+const goToLaporan = () => router.get(route('owner.sales'));
 const logout = () => router.post(route('logout'));
 
 // Toggle mobile menu
@@ -267,5 +299,20 @@ const downloadCSV = () => {
 
     // Redirect untuk mengunduh file CSV
     window.location.href = url.toString();
+};
+
+// Print invoice functions
+const printInvoice = (invoice) => {
+    selectedInvoice.value = {
+        ...invoice,
+        cashier_name: 'Kasir', // You might want to get this from the backend
+        received_amount: invoice.total_amount, // You might want to get this from the backend
+        change: 0 // You might want to get this from the backend
+    };
+    showPrintModal.value = true;
+};
+
+const printSelectedInvoice = () => {
+    window.print();
 };
 </script>
