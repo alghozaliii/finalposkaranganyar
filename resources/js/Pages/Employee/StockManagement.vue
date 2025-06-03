@@ -36,6 +36,7 @@ const activeActionMenu = ref(null);
 const showImportModal = ref(false);
 const showAddProductModal = ref(false);
 const selectedFile = ref(null);
+const showSidebar = ref(false);
 
 const viewDetails = (product) => {
     // Implement view details functionality
@@ -207,223 +208,284 @@ onMounted(() => {
     <Head title="Stock Management" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Stock Management</h2>
-        </template>
-
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900">
-                    <div class="stock-management">
-                        <div class="header">
-                            <h2 class="title">Product</h2>
-                            <div class="actions">
-                                <div class="showing">
-                                    Showing
-                                <select v-model="itemsPerPage" class="page-select">
-                                    <option :value="2">2</option>
-                                    <option :value="5">5</option>
-                                    <option :value="10">10</option>
-                                    <option :value="25">25</option>
-                                    <option :value="50">50</option>
-                                </select>
-                                </div>
-                                <button class="btn-filter">
-                                    <i class="fas fa-filter"></i> Filter
-                                </button>
-                                
-                                
-                                <!-- Integration with your original links -->
-                                <Link 
-                                    v-if="addProductRoute"
-                                    :href="addProductRoute"
-                                    class="btn-add"
-                                >
-                                    Tambah Produk
-                                </Link>
-                            </div>
-                        </div>
-
-                        <div class="product-table">
-                        <table>
-                            <thead>
-    <tr>
-        <th width="30">
-            <input type="checkbox" @change="selectAll" v-model="allSelected">
-        </th>
-        <th>ID Barang</th>
-        <th>Nama Barang</th>
-        <th>Stock</th>
-        <th>Harga Rata-rata</th>
-        <th>Keuntungan/Produk</th> <!-- Ganti Markup (%) jadi Keuntungan/Produk -->
-        <th>Harga Jual</th>
-        <th>Category</th>
-        <th>Unit</th>
-        <th>Status</th>
-        <th></th>
-    </tr>
-</thead>
-<tbody>
-    <tr v-if="products.length === 0">
-        <td colspan="11" class="py-4 px-4 border-b text-center">
-            Tidak ada produk tersedia
-        </td>
-    </tr>
-    <tr v-for="(product, index) in displayedProducts" :key="product.id">
-        <td>
-            <input type="checkbox" v-model="product.selected">
-        </td>
-        <td>{{ product.code }}</td>
-        <td>{{ product.name }}</td>
-        <td>{{ product.stock }}</td>
-        <td>Rp {{ Number(product.average_price).toLocaleString() }}</td>
-        <td>Rp {{ Number(product.profit).toLocaleString() }}</td> <!-- Tampilkan profit -->
-        <td>Rp {{ Number(product.selling_price).toLocaleString() }}</td>
-        <td>{{ product.category || '-' }}</td>
-        <td>{{ product.unit || '-' }}</td>
-        <td>
-            <select 
-                :value="product.is_active ? 'active' : 'inactive'"
-                @change="toggleStatus(product)"
-                class="px-3 py-1 rounded text-sm font-medium border"
-                :class="{
-                    'bg-green-100 text-green-600': product.is_active,
-                    'bg-red-100 text-red-600': !product.is_active
-                }"
+        <div class="flex min-h-screen bg-gray-100">
+            <!-- Sidebar -->
+            <aside
+                :class="[
+                    'bg-white shadow-lg flex flex-col items-center pt-6 fixed inset-y-0 left-0 transition-transform z-30',
+                    showSidebar ? 'translate-x-0' : '-translate-x-full',
+                    'md:translate-x-0 md:static md:w-24 w-64',
+                    'safe-area-inset-left'
+                ]"
             >
-                <option value="active">Aktif</option>
-                <option value="inactive">Nonaktif</option>
-            </select>
-        </td>
-        <td>
-            <button class="action-button" @click="openActionMenu(index)">
-                <i class="fas fa-ellipsis-h"></i>
-            </button>
-            <div class="action-menu" v-if="activeActionMenu === index">
-                <button @click="editProduct(product)">Edit</button>
-                <button @click="deleteProduct(product)">Delete</button>
-                <button @click="viewDetails(product)">View Details</button>
-            </div>
-        </td>
-    </tr>
-</tbody>
-                        </table>
+                <nav class="flex flex-col items-center gap-10 mt-8 flex-1">
+                    <!-- Dashboard -->
+                    <a href="/dashboard" class="flex flex-col items-center">
+                        <div class="p-3 rounded-md text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+                            </svg>
                         </div>
+                        <span class="text-xs mt-2">Dashboard</span>
+                    </a>
 
-                        <div class="pagination">
-                            <div class="pagination-info">
-                                {{ currentPage }} of {{ totalPages }}
-                            </div>
-                            <div class="pagination-controls">
-                                <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1">
-                                    <i class="fas fa-chevron-left"></i>
-                                </button>
-                                <button 
-                                    v-for="page in paginationNumbers" 
-                                    :key="page" 
-                                    @click="goToPage(page)"
-                                    :class="{ active: currentPage === page }"
-                                >
-                                    {{ page }}
-                                </button>
-                                <button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages">
-                                    <i class="fas fa-chevron-right"></i>
-                                </button>
-                            </div>
+                    <!-- Stock Management -->
+                    <a href="/stock-management" class="flex flex-col items-center">
+                        <div class="p-3 rounded-md bg-purple-100 text-purple-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
                         </div>
+                        <span class="text-xs mt-2">Stock Barang</span>
+                    </a>
+                </nav>
 
-                        <!-- Import Modal -->
-                        <div class="modal" v-if="showImportModal">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h3>Import Data Produk</h3>
-                                    <button class="close-btn" @click="showImportModal = false">&times;</button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="import-instructions">
-                                        <p>Silahkan upload file Excel (.xlsx) atau CSV untuk mengimpor data produk.</p>
-                                        <p>Download template: 
-                                            <a href="#" @click.prevent="downloadTemplate">template-import-produk.xlsx</a>
-                                        </p>
+                <!-- Logout Button -->
+                <button @click="logout" class="flex flex-col items-center mt-auto mb-6">
+                    <div class="p-3 rounded-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </div>
+                    <span class="text-xs mt-2">Logout</span>
+                </button>
+            </aside>
+
+            <!-- Overlay mobile -->
+            <div
+                v-if="showSidebar"
+                @click="showSidebar = false"
+                class="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+            ></div>
+
+            <!-- Main content -->
+            <div class="flex-1 md:ml-24 w-full overflow-x-hidden">
+                <!-- Mobile header -->
+                <header class="flex items-center justify-between bg-white p-4 shadow md:hidden safe-area-inset-top">
+                    <button @click="showSidebar = !showSidebar" class="p-2 -m-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    <h1 class="text-lg font-semibold">Stock Management</h1>
+                    <div class="w-8 h-8 rounded-full bg-gray-300"></div>
+                </header>
+
+                <div class="py-12">
+                    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900">
+                            <div class="stock-management">
+                                <div class="header">
+                                    <h2 class="title">Product</h2>
+                                    <div class="actions">
+                                        <div class="showing">
+                                            Showing
+                                        <select v-model="itemsPerPage" class="page-select">
+                                            <option :value="2">2</option>
+                                            <option :value="5">5</option>
+                                            <option :value="10">10</option>
+                                            <option :value="25">25</option>
+                                            <option :value="50">50</option>
+                                        </select>
+                                        </div>
+                                        <button class="btn-filter">
+                                            <i class="fas fa-filter"></i> Filter
+                                        </button>
+                                        
+                                        
+                                        <!-- Integration with your original links -->
+                                        <Link 
+                                            v-if="addProductRoute"
+                                            :href="addProductRoute"
+                                            class="btn-add"
+                                        >
+                                            Tambah Produk
+                                        </Link>
                                     </div>
-                                    <div class="file-upload">
-                                        <input type="file" id="fileInput" @change="handleFileChange" accept=".xlsx,.xls,.csv">
-                                        <div class="upload-zone" @click="triggerFileInput" @dragover.prevent @drop.prevent="handleFileDrop">
-                                            <i class="fas fa-cloud-upload-alt"></i>
-                                            <p>Drag and drop file atau klik untuk memilih</p>
-                                            <span v-if="selectedFile">File terpilih: {{ selectedFile.name }}</span>
+                                </div>
+
+                                <div class="product-table">
+                                <table>
+                                    <thead>
+        <tr>
+            <th width="30">
+                <input type="checkbox" @change="selectAll" v-model="allSelected">
+            </th>
+            <th>ID Barang</th>
+            <th>Nama Barang</th>
+            <th>Stock</th>
+            <th>Harga Rata-rata</th>
+            <th>Keuntungan/Produk</th> <!-- Ganti Markup (%) jadi Keuntungan/Produk -->
+            <th>Harga Jual</th>
+            <th>Category</th>
+            <th>Unit</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr v-if="products.length === 0">
+            <td colspan="11" class="py-4 px-4 border-b text-center">
+                Tidak ada produk tersedia
+            </td>
+        </tr>
+        <tr v-for="(product, index) in displayedProducts" :key="product.id">
+            <td>
+                <input type="checkbox" v-model="product.selected">
+            </td>
+            <td>{{ product.code }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.stock }}</td>
+            <td>Rp {{ Number(product.average_price).toLocaleString() }}</td>
+            <td>Rp {{ Number(product.profit).toLocaleString() }}</td> <!-- Tampilkan profit -->
+            <td>Rp {{ Number(product.selling_price).toLocaleString() }}</td>
+            <td>{{ product.category || '-' }}</td>
+            <td>{{ product.unit || '-' }}</td>
+            <td>
+                <select 
+                    :value="product.is_active ? 'active' : 'inactive'"
+                    @change="toggleStatus(product)"
+                    class="px-3 py-1 rounded text-sm font-medium border"
+                    :class="{
+                        'bg-green-100 text-green-600': product.is_active,
+                        'bg-red-100 text-red-600': !product.is_active
+                    }"
+                >
+                    <option value="active">Aktif</option>
+                    <option value="inactive">Nonaktif</option>
+                </select>
+            </td>
+            <td>
+                <button class="action-button" @click="openActionMenu(index)">
+                    <i class="fas fa-ellipsis-h"></i>
+                </button>
+                <div class="action-menu" v-if="activeActionMenu === index">
+                    <button @click="editProduct(product)">Edit</button>
+                    <button @click="deleteProduct(product)">Delete</button>
+                    <button @click="viewDetails(product)">View Details</button>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+                                </table>
+                                </div>
+
+                                <div class="pagination">
+                                    <div class="pagination-info">
+                                        {{ currentPage }} of {{ totalPages }}
+                                    </div>
+                                    <div class="pagination-controls">
+                                        <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </button>
+                                        <button 
+                                            v-for="page in paginationNumbers" 
+                                            :key="page" 
+                                            @click="goToPage(page)"
+                                            :class="{ active: currentPage === page }"
+                                        >
+                                            {{ page }}
+                                        </button>
+                                        <button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Import Modal -->
+                                <div class="modal" v-if="showImportModal">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h3>Import Data Produk</h3>
+                                            <button class="close-btn" @click="showImportModal = false">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="import-instructions">
+                                                <p>Silahkan upload file Excel (.xlsx) atau CSV untuk mengimpor data produk.</p>
+                                                <p>Download template: 
+                                                    <a href="#" @click.prevent="downloadTemplate">template-import-produk.xlsx</a>
+                                                </p>
+                                            </div>
+                                            <div class="file-upload">
+                                                <input type="file" id="fileInput" @change="handleFileChange" accept=".xlsx,.xls,.csv">
+                                                <div class="upload-zone" @click="triggerFileInput" @dragover.prevent @drop.prevent="handleFileDrop">
+                                                    <i class="fas fa-cloud-upload-alt"></i>
+                                                    <p>Drag and drop file atau klik untuk memilih</p>
+                                                    <span v-if="selectedFile">File terpilih: {{ selectedFile.name }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn-cancel" @click="showImportModal = false">Batal</button>
+                                            <button class="btn-import" @click="importData" :disabled="!selectedFile">Import</button>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button class="btn-cancel" @click="showImportModal = false">Batal</button>
-                                    <button class="btn-import" @click="importData" :disabled="!selectedFile">Import</button>
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Add Product Modal -->
-                        <div class="modal" v-if="showAddProductModal">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h3>Tambah Produk Baru</h3>
-                                    <button class="close-btn" @click="showAddProductModal = false">&times;</button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="productId">ID Barang</label>
-                                        <input type="text" id="productId" v-model="newProduct.id" placeholder="ID Barang">
+                                <!-- Add Product Modal -->
+                                <div class="modal" v-if="showAddProductModal">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h3>Tambah Produk Baru</h3>
+                                            <button class="close-btn" @click="showAddProductModal = false">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="productId">ID Barang</label>
+                                                <input type="text" id="productId" v-model="newProduct.id" placeholder="ID Barang">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="productName">Nama Barang</label>
+                                                <input type="text" id="productName" v-model="newProduct.name" placeholder="Nama Barang">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="productStock">Stock</label>
+                                                <input type="number" id="productStock" v-model="newProduct.stock" placeholder="Stock">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="productPrice">Price (Rp)</label>
+                                                <input type="number" id="productPrice" v-model="newProduct.price" placeholder="Price">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="productCategory">Category</label>
+                                                <select id="productCategory" v-model="newProduct.category">
+                                                    <option value="">Pilih Kategori</option>
+                                                    <option value="Sembako">Sembako</option>
+                                                    <option value="Makanan Instan & Siap Saji">Makanan Instan & Siap Saji</option>
+                                                    <option value="Camilan & Snack">Camilan & Snack</option>
+                                                    <option value="Minuman">Minuman</option>
+                                                    <option value="Produk Susu">Produk Susu</option>
+                                                    <option value="Bumbu Dapur">Bumbu Dapur</option>
+                                                    <option value="Produk Beku & Dingin">Produk Beku & Dingin</option>
+                                                    <option value="Rokok & Aksesoris">Rokok & Aksesoris</option>
+                                                    <option value="Kebutuhan Kebersihan">Kebutuhan Kebersihan</option>
+                                                    <option value="Lainnya">Lainnya</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="productStatus">Status</label>
+                                                <select id="productStatus" v-model="newProduct.status">
+                                                    <option value="Avail">Avail</option>
+                                                    <option value="Out of Stock">Out of Stock</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn-cancel" @click="showAddProductModal = false">Batal</button>
+                                            <button class="btn-save" @click="saveNewProduct">Simpan</button>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="productUnit">Unit</label>
+                                            <select id="productUnit" v-model="newProduct.unit">
+                                                <option value="">Pilih Unit</option>
+                                                <option value="pcs">pcs</option>
+                                                <option value="box">box</option>
+                                                <option value="kg">kg</option>
+                                                <option value="liter">liter</option>
+                                                <option value="pack">pack</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="productName">Nama Barang</label>
-                                        <input type="text" id="productName" v-model="newProduct.name" placeholder="Nama Barang">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="productStock">Stock</label>
-                                        <input type="number" id="productStock" v-model="newProduct.stock" placeholder="Stock">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="productPrice">Price (Rp)</label>
-                                        <input type="number" id="productPrice" v-model="newProduct.price" placeholder="Price">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="productCategory">Category</label>
-                                        <select id="productCategory" v-model="newProduct.category">
-                                            <option value="">Pilih Kategori</option>
-                                            <option value="Sembako">Sembako</option>
-                                            <option value="Makanan Instan & Siap Saji">Makanan Instan & Siap Saji</option>
-                                            <option value="Camilan & Snack">Camilan & Snack</option>
-                                            <option value="Minuman">Minuman</option>
-                                            <option value="Produk Susu">Produk Susu</option>
-                                            <option value="Bumbu Dapur">Bumbu Dapur</option>
-                                            <option value="Produk Beku & Dingin">Produk Beku & Dingin</option>
-                                            <option value="Rokok & Aksesoris">Rokok & Aksesoris</option>
-                                            <option value="Kebutuhan Kebersihan">Kebutuhan Kebersihan</option>
-                                            <option value="Lainnya">Lainnya</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="productStatus">Status</label>
-                                        <select id="productStatus" v-model="newProduct.status">
-                                            <option value="Avail">Avail</option>
-                                            <option value="Out of Stock">Out of Stock</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn-cancel" @click="showAddProductModal = false">Batal</button>
-                                    <button class="btn-save" @click="saveNewProduct">Simpan</button>
-                                </div>
-                                <div class="form-group">
-                                    <label for="productUnit">Unit</label>
-                                    <select id="productUnit" v-model="newProduct.unit">
-                                        <option value="">Pilih Unit</option>
-                                        <option value="pcs">pcs</option>
-                                        <option value="box">box</option>
-                                        <option value="kg">kg</option>
-                                        <option value="liter">liter</option>
-                                        <option value="pack">pack</option>
-                                    </select>
                                 </div>
                             </div>
                         </div>

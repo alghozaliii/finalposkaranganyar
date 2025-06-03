@@ -8,15 +8,15 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
-            // $table->boolean('is_active')->default(true);
+        Schema::table('users', function (Blueprint $table) {
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            // $table->dropColumn('is_active');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('deleted_at');
         });
     }
-};
+}; 
