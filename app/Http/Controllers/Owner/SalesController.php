@@ -62,11 +62,11 @@ class SalesController extends Controller
         // Get monthly sales for chart
         $monthlySales = DB::table('purchase')
             ->select(
-                DB::raw('MONTH(created_at) as month'),
+                DB::raw('EXTRACT(MONTH FROM created_at) as month'),
                 DB::raw('SUM(total_price) as total_revenue')
             )
             ->whereYear('created_at', $year ?: date('Y'))
-            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->groupBy(DB::raw('EXTRACT(MONTH FROM created_at)'))
             ->orderBy('month')
             ->get();
 

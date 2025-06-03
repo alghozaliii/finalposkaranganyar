@@ -19,9 +19,22 @@ class VerificatorController extends Controller
         $pendingUsers = User::where('is_approved', false)
                            ->where('role_id', 2)
                            ->get();
+
+        // Ambil daftar pengguna yang sudah disetujui (Owner)
+        $acceptedUsers = User::where('is_approved', true)
+                           ->where('role_id', 2)
+                           ->get();
+
+        // Ambil daftar pengguna yang ditolak (Owner) - menggunakan withTrashed untuk mendapatkan soft deleted users
+        $rejectedUsers = User::withTrashed()
+                           ->where('role_id', 2)
+                           ->whereNotNull('deleted_at')
+                           ->get();
                            
         return Inertia::render('Dashboard', [
-            'pendingUsers' => $pendingUsers
+            'pendingUsers' => $pendingUsers,
+            'acceptedUsers' => $acceptedUsers,
+            'rejectedUsers' => $rejectedUsers
         ]);
     }
     

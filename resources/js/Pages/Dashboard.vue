@@ -177,11 +177,76 @@
               </div>
             </div>
 
-            <div v-else-if="selectedTab === 'accepted' || selectedTab === 'rejected'" class="text-center py-8">
-              <svg class="w-16 h-16 mx-auto text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p class="text-gray-500 mt-4">No items to display in this category</p>
+            <div v-else-if="selectedTab === 'accepted'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div
+                v-for="user in filteredUsers"
+                :key="user.id"
+                class="bg-gray-100 p-4 rounded-lg shadow text-center transition-all duration-200 hover:shadow-md"
+              >
+                <div class="mb-3 flex justify-center">
+                  <img 
+                    :src="getImageUrl(user.selfie_photo)" 
+                    class="w-12 h-12 rounded-full object-cover border-2 border-green-400" 
+                    alt="Profile" 
+                    @error="handleImageError"
+                  />
+                </div>
+                <h3 class="font-bold">{{ user.name }}</h3>
+                <p class="text-sm"><strong>NIK:</strong> {{ user.nik }}</p>
+                <p class="text-sm">
+                  <strong>Email:</strong>
+                  <a :href="'mailto:' + user.email" class="text-blue-500">{{ user.email }}</a>
+                </p>
+                <p class="text-sm"><strong>Nomor HP:</strong> {{ user.phone }}</p>
+                <p class="text-sm text-gray-700 truncate" :title="user.address">
+                  <strong>Alamat:</strong> {{ user.address }}
+                </p>
+                
+                <div class="flex gap-2 justify-center mt-3">
+                  <button
+                    class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm transition-colors"
+                    @click="showDetails(user)"
+                  >
+                    🔍 Detail
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div v-else-if="selectedTab === 'rejected'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div
+                v-for="user in filteredUsers"
+                :key="user.id"
+                class="bg-gray-100 p-4 rounded-lg shadow text-center transition-all duration-200 hover:shadow-md"
+              >
+                <div class="mb-3 flex justify-center">
+                  <img 
+                    :src="getImageUrl(user.selfie_photo)" 
+                    class="w-12 h-12 rounded-full object-cover border-2 border-red-400" 
+                    alt="Profile" 
+                    @error="handleImageError"
+                  />
+                </div>
+                <h3 class="font-bold">{{ user.name }}</h3>
+                <p class="text-sm"><strong>NIK:</strong> {{ user.nik }}</p>
+                <p class="text-sm">
+                  <strong>Email:</strong>
+                  <a :href="'mailto:' + user.email" class="text-blue-500">{{ user.email }}</a>
+                </p>
+                <p class="text-sm"><strong>Nomor HP:</strong> {{ user.phone }}</p>
+                <p class="text-sm text-gray-700 truncate" :title="user.address">
+                  <strong>Alamat:</strong> {{ user.address }}
+                </p>
+                
+                <div class="flex gap-2 justify-center mt-3">
+                  <button
+                    class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm transition-colors"
+                    @click="showDetails(user)"
+                  >
+                    🔍 Detail
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -273,6 +338,8 @@ export default {
   
   props: {
     pendingUsers: Array,
+    acceptedUsers: Array,
+    rejectedUsers: Array,
   },
 
   data() {
@@ -282,8 +349,6 @@ export default {
       showProfile: false,
       showModal: false,
       selectedUser: {},
-      acceptedUsers: [],
-      rejectedUsers: [],
       fallbackImage: '/images/profile.png',
       activeSection: 'dashboard',
       mobileMenuOpen: false
@@ -295,9 +360,9 @@ export default {
       if (this.selectedTab === 'request') {
         return this.pendingUsers || [];
       } else if (this.selectedTab === 'accepted') {
-        return this.acceptedUsers;
+        return this.acceptedUsers || [];
       } else if (this.selectedTab === 'rejected') {
-        return this.rejectedUsers;
+        return this.rejectedUsers || [];
       }
       return [];
     }
