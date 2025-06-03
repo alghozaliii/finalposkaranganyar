@@ -118,7 +118,12 @@
                                         <option value="">Pilih Tahun</option>
                                         <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
                                     </select>
-                                    <button @click="downloadCSV" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Download CSV</button>
+                                    <button @click="downloadExcel" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        Download Excel
+                                    </button>
                                 </div>
 
                                 <!-- Data Table -->
@@ -291,13 +296,13 @@ const filterData = () => {
     window.location.href = url.toString();
 };
 
-// Fungsi untuk mengunduh CSV berdasarkan bulan dan tahun yang dipilih
-const downloadCSV = () => {
-    const url = new URL('/sales/export', window.location.origin);
+// Fungsi untuk mengunduh Excel berdasarkan bulan dan tahun yang dipilih
+const downloadExcel = () => {
+    const url = new URL('/export-sales', window.location.origin);
     if (month.value) url.searchParams.append('month', month.value);
     if (year.value) url.searchParams.append('year', year.value);
-
-    // Redirect untuk mengunduh file CSV
+    
+    // Download Excel file
     window.location.href = url.toString();
 };
 

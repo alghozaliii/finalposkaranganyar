@@ -44,7 +44,7 @@
 
           <!-- Karyawan -->
           <button @click="activateSection('employees')" class="flex flex-col items-center">
-            <div class="p-3 rounded-md" :class="activeSection==='employees' ? 'bg-purple-100 text-purple-700' : 'text-gray-500'">
+            <div class="p-3 rounded-md" :class="eactiveSection==='employees' ? 'bg-purple-100 text-purple-700' : 'text-gray-500'">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" :class="activeSection==='employees' ? 'text-purple-700' : 'text-gray-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
@@ -174,21 +174,16 @@
               <div class="lg:col-span-2 bg-white rounded-lg border p-6">
                 <div class="flex justify-between items-center mb-4">
                   <h3 class="text-lg font-medium">Total Revenue</h3>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/>
-                  </svg>
                 </div>
                 <div class="h-64 flex items-end justify-between gap-2">
-                  <div class="h-1/2 w-16 bg-purple-200 rounded-t-lg"></div>
-                  <div class="h-2/3 w-16 bg-purple-200 rounded-t-lg"></div>
-                  <div class="h-1/3 w-16 bg-purple-200 rounded-t-lg"></div>
-                  <div class="h-5/6 w-16 bg-purple-200 rounded-t-lg"></div>
-                  <div class="h-2/5 w-16 bg-purple-200 rounded-t-lg"></div>
-                  <div class="h-3/4 w-16 bg-purple-200 rounded-t-lg"></div>
-                  <div class="h-4/5 w-16 bg-purple-700 rounded-t-lg"></div>
+                  <div v-for="(revenue, index) in monthlyRevenue" :key="index" 
+                       class="w-16 rounded-t-lg transition-all duration-300"
+                       :class="currentMonth === index + 1 ? 'bg-purple-700' : 'bg-purple-200'"
+                       :style="{ height: `${getBarHeight(revenue)}%` }"
+                  ></div>
                 </div>
                 <div class="flex justify-between mt-2 text-sm text-gray-500">
-                  <div>Feb</div><div>March</div><div>April</div><div>May</div><div>June</div><div>July</div><div>August</div>
+                  <div v-for="(month, index) in chartLabels" :key="index">{{ month }}</div>
                 </div>
               </div>
               <!-- Top Products -->
@@ -730,21 +725,42 @@ const endDate = ref(props.endDate);
 const activeTab = ref(props.activeTab);
 
 // Additional data for Laporan Penjualan section
-const dateRange = ref('9 August 2025 - 15 August 2025');
-const chartPeriod = ref('Week');
-const averageSale = ref(50400);
-const topItem = ref('Beras');
-const topItemAmount = ref(51.2);
-const chartLabels = ref(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']);
-const paymentMethodsData = ref({
-  qris: 50,
-  cash: 50
-});
-const topStockChanges = ref([
-  { name: 'Aqua 1500ml', amount: 120 },
-  { name: 'Beras Premium', amount: 85 },
-  { name: 'Minyak Goreng', amount: 64 }
+const dateRange = computed(() => `${startDate.value} - ${endDate.value}`);
+const chartPeriod = ref('Month');
+const averageSale = computed(() => totalRevenue.value / totalSales.value || 0);
+const topItem = computed(() => topProducts.value?.[0]?.name || 'No data');
+const topItemAmount = computed(() => topProducts.value?.[0]?.total_quantity || 0);
+const chartLabels = ref([
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
 ]);
+
+// Payment methods data
+const paymentMethodsData = ref({
+  qris: 0,
+  cash: 0
+});
+
+// Update payment methods calculation when transaction history changes
+watch(() => transactionHistory.value, (transactions) => {
+  if (!transactions?.length) return;
+  
+  const total = transactions.length;
+  const qrisCount = transactions.filter(t => t.payment_method === 'qris').length;
+  
+  paymentMethodsData.value = {
+    qris: Math.round((qrisCount / total) * 100),
+    cash: Math.round(((total - qrisCount) / total) * 100)
+  };
+}, { immediate: true });
+
+// Top stock changes based on top products
+const topStockChanges = computed(() => 
+  topProducts.value?.slice(0, 3).map(product => ({
+    name: product.name,
+    amount: product.total_quantity
+  })) || []
+);
 
 // Computed property for products to display
 const recommendedProducts = computed(() => {
@@ -1131,7 +1147,6 @@ const fetchProducts = async () => {
 // Sinkronisasi data saat mounted
 onMounted(async () => {
   try {
-    // Mendapatkan data sales
     const { data } = await axios.get('/owner/sales');
     totalRevenue.value       = data.totalRevenue       ?? totalRevenue.value;
     totalSales.value         = data.totalSales         ?? totalSales.value;
@@ -1146,8 +1161,45 @@ onMounted(async () => {
     if (data.startDate)   startDate.value = data.startDate;
     if (data.endDate)     endDate.value   = data.endDate;
     if (data.activeTab)   activeTab.value = data.activeTab;
+
+    // Update chart labels based on data
+    if (data.chartLabels) {
+      chartLabels.value = data.chartLabels;
+    }
+
+    // Calculate payment methods distribution
+    if (data.transactionHistory?.length) {
+      const total = data.transactionHistory.length;
+      const qrisCount = data.transactionHistory.filter(t => t.payment_method === 'qris').length;
+      
+      paymentMethodsData.value = {
+        qris: Math.round((qrisCount / total) * 100),
+        cash: Math.round(((total - qrisCount) / total) * 100)
+      };
+    }
+
+    // Update monthly revenue data
+    if (data.chartData) {
+      const revenueData = Array(12).fill(0);
+      data.chartData.forEach(item => {
+        revenueData[item.month - 1] = item.total_revenue;
+      });
+      monthlyRevenue.value = revenueData;
+    }
+
   } catch (e) {
     console.error('Gagal sinkronisasi data sales:', e);
   }
 });
+
+// Tambahkan reactive properties ini:
+const monthlyRevenue = ref(Array(12).fill(0));
+const currentMonth = ref(new Date().getMonth() + 1);
+
+// Tambahkan helper function untuk menghitung tinggi bar
+const getBarHeight = (revenue) => {
+  const maxRevenue = Math.max(...monthlyRevenue.value);
+  if (maxRevenue === 0) return 0;
+  return (revenue / maxRevenue) * 100;
+};
 </script>

@@ -14,6 +14,10 @@ use App\Http\Controllers\CashierController;
 use App\Http\Controllers\Owner\SalesController;
 use App\Http\Controllers\SalesRecommendationController;
 use App\Http\Controllers\OwnerDashboardController;
+use App\Exports\SalesExport;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Sale;
+use Illuminate\Http\Request; // Tambahkan ini di bagian atas file
 
 // Route untuk mengambil data produk dari database
 Route::get('/cashier/products', [CashierController::class, 'getProducts']);
@@ -172,7 +176,6 @@ Route::get('/payment', function () {
 });
 
 Route::post('/cashier/checkout', [CashierController::class, 'checkout']);
-
 Route::get('/owner/sales', [SalesController::class, 'index'])->name('owner.sales');
 
 
@@ -201,3 +204,22 @@ Route::post('/profit/store', [SalesRecommendationController::class, 'storeProfit
 Route::middleware(['auth', 'role:owner'])->group(function () {
     Route::get('/owner/dashboard', [OwnerDashboardController::class, 'index'])->name('owner.dashboard');
 });
+
+// Route untuk export Excel
+Route::get('/export-sales', [SalesController::class, 'exportSales'])
+    ->middleware(['auth'])
+    ->name('sales.export');
+
+// Route untuk export Excel purchase
+Route::get('/export-purchase', function (Request $request) {
+    $user = Auth::user();
+    
+    return Excel::download(
+        new SalesExport(
+            $user->id, 
+            $request->month, 
+            $request->year
+        ), 
+        'laporan-pembelian.xlsx'
+    );
+})->middleware(['auth'])->name('purchase.export');

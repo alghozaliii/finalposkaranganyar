@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Exports\SalesExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SalesController extends Controller
 {
@@ -16,6 +16,7 @@ class SalesController extends Controller
         $month = $request->input('month');
         $year = $request->input('year');
         
+        // Base query
         $query = DB::table('purchase')
             ->select(
                 'invoice_number',
@@ -45,16 +46,47 @@ class SalesController extends Controller
             $invoice->items = $items;
         }
 
+        // Get top products
+        $topProducts = DB::table('purchase')
+            ->select(
+                'product_name as name',
+                DB::raw('SUM(quantity) as total_quantity'),
+                DB::raw('COUNT(*) as sales'),
+                DB::raw('SUM(total_price) as total_sales')
+            )
+            ->groupBy('product_name')
+            ->orderByDesc('total_quantity')
+            ->limit(5)
+            ->get();
+
+        // Get monthly sales for chart
+        $monthlySales = DB::table('purchase')
+            ->select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('SUM(total_price) as total_revenue')
+            )
+            ->whereYear('created_at', $year ?: date('Y'))
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->orderBy('month')
+            ->get();
+
+        $chartLabels = collect(range(1, 12))->map(function($month) {
+            return date('F', mktime(0, 0, 0, $month, 1));
+        });
+
         return Inertia::render('Owner/Sales', [
             'sales' => $data,
+            'topProducts' => $topProducts,
+            'chartLabels' => $chartLabels,
+            'chartData' => $monthlySales,
             'months' => ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
-            'years' => ['2023', '2024', '2025', '2026', '2027', '2028', '2029','2030','2031','2032','2033','2034','2035','2036','2037','2038','2039','2040']
+            'years' => ['2023', '2024', '2025', '2026', '2027', '2028', '2029','2030']
         ]);
     }
 
-    public function export()
+    public function exportSales(Request $request)
     {
-        $data = DB::table('purchase')
+        $query = DB::table('purchase')
             ->select(
                 'invoice_number',
                 DB::raw('MIN(created_at) as date'),
@@ -62,36 +94,26 @@ class SalesController extends Controller
                 DB::raw('SUM(total_price) as total_amount'),
                 DB::raw('COUNT(*) as total_items')
             )
-            ->groupBy('invoice_number')
-            ->orderBy('date', 'desc')
-            ->get();
+            ->groupBy('invoice_number');
 
-        $csvData = [];
-        $csvData[] = ['No. Invoice', 'Tanggal', 'Metode Pembayaran', 'Total Item', 'Total Harga']; // Header
-
-        foreach ($data as $invoice) {
-            $csvData[] = [
-                $invoice->invoice_number,
-                $invoice->date,
-                $invoice->payment_method,
-                $invoice->total_items,
-                $invoice->total_amount
-            ];
+        if ($request->month) {
+            $query->whereMonth('created_at', $request->month);
+        }
+        if ($request->year) {
+            $query->whereYear('created_at', $request->year);
         }
 
-        $filename = 'sales_data_' . date('Y-m-d_H-i-s') . '.csv';
+        $data = $query->orderBy('date', 'desc')->get();
 
-        $response = new StreamedResponse(function () use ($csvData) {
-            $handle = fopen('php://output', 'w');
-            foreach ($csvData as $row) {
-                fputcsv($handle, $row);
-            }
-            fclose($handle);
-        });
+        // Get items for each invoice
+        foreach ($data as $invoice) {
+            $items = DB::table('purchase')
+                ->where('invoice_number', $invoice->invoice_number)
+                ->select('product_name', 'quantity', 'total_price')
+                ->get();
+            $invoice->items = $items;
+        }
 
-        $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment;filename="' . $filename . '"');
-
-        return $response;
+        return Excel::download(new SalesExport($data), 'laporan-penjualan.xlsx');
     }
 }
