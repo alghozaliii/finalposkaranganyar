@@ -29,7 +29,8 @@ class User extends Authenticatable
         'nik',
         'phone', 
         'ktp_photo', 
-        'selfie_photo'
+        'selfie_photo',
+        'username' // Add username field
     ];
 
     /**
@@ -89,5 +90,13 @@ class User extends Authenticatable
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    /**
+     * Add custom authentication using username
+     */
+    public function username()
+    {
+        return 'username';
     }
 }

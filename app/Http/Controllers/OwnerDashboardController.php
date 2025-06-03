@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Models\Profit;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\User;
 
 class OwnerDashboardController extends Controller
 {
@@ -15,6 +16,20 @@ class OwnerDashboardController extends Controller
         $currentMonth = Carbon::now()->month;
         $currentYear = Carbon::now()->year;
         $lastMonth = Carbon::now()->subMonth();
+
+        // Get employees data
+        $employees = User::where('owner_id', auth()->id())
+            ->where('role_id', 3)
+            ->select('id', 'name', 'employees_role', 'created_at') // Changed username to name
+            ->get()
+            ->map(function($employee) {
+                return [
+                    'id' => $employee->id,
+                    'name' => $employee->name, // Using name instead of username
+                    'employees_role' => $employee->employees_role,
+                    'created_at' => $employee->created_at->format('d/m/Y H:i'),
+                ];
+            });
 
         // Calculate total revenue for current month
         $totalRevenue = DB::table('purchase')
@@ -137,6 +152,7 @@ class OwnerDashboardController extends Controller
             : 0;
 
         return Inertia::render('OwnerDashboard', [
+            'employees' => $employees,
             'totalRevenue' => $totalRevenue,
             'totalSales' => $totalSales,
             'totalCustomers' => $totalCustomers,

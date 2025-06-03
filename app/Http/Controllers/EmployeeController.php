@@ -32,23 +32,22 @@ class EmployeeController extends Controller
         }
         
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'username' => 'required|string|max:255|unique:users,username',
             'password' => 'required|string|min:6',
-            'employees_role' => 'required|in:cashier,stock' // Hanya bisa cashier atau stock
+            'employees_role' => 'required|in:cashier,stock'
         ]);
 
         User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'username' => $request->username,
+            'name' => $request->username, // Set name same as username
             'password' => Hash::make($request->password),
-            'role_id' => 3, // Role utama employees
-            'employees_role' => $request->employees_role, // Sub-role (cashier/stock)
-            'owner_id' => auth()->id(), // Owner yang menambahkan pegawai ini
-            'is_approved' => true, // Pegawai langsung disetujui
+            'role_id' => 3,
+            'employees_role' => $request->employees_role,
+            'owner_id' => auth()->id(),
+            'is_approved' => true
         ]);
 
-        return redirect()->back()->with('success', 'Employee successfully added.');
+        return redirect()->back();
     }
     
     /**
@@ -191,12 +190,24 @@ class EmployeeController extends Controller
             abort(403, 'Only owners can access this page');
         }
         
+        // Get employees for this owner
         $employees = User::where('owner_id', auth()->id())
                          ->where('role_id', 3)
-                         ->get();
-        
+                         ->select('id', 'name', 'email', 'employees_role', 'created_at')
+                         ->get()
+                         ->map(function($employee) {
+                             return [
+                                 'id' => $employee->id,
+                                 'name' => $employee->name,
+                                 'email' => $employee->email,
+                                 'employees_role' => $employee->employees_role,
+                                 'created_at' => $employee->created_at->format('d/m/Y H:i'),
+                             ];
+                         });
+
         return Inertia::render('OwnerDashboard', [
-            'employees' => $employees
+            'employees' => $employees,
+            'initialPage' => 'dashboard'
         ]);
     }
 }

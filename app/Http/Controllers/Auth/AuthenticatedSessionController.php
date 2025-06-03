@@ -23,16 +23,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi input login
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'login' => ['required', 'string'],
             'password' => ['required'],
         ]);
 
-        // Cek apakah login berhasil
-        if (!Auth::attempt($credentials, $request->filled('remember'))) {
+        // Try to authenticate using either email or username
+        if (!Auth::attempt(['email' => $credentials['login'], 'password' => $credentials['password']], $request->filled('remember')) &&
+            !Auth::attempt(['username' => $credentials['login'], 'password' => $credentials['password']], $request->filled('remember'))) {
             throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
+                'login' => __('auth.failed'),
             ]);
         }
 
@@ -48,19 +48,16 @@ class AuthenticatedSessionController extends Controller
         if ($user->role_id === 1) {
             return redirect()->route('verificator.dashboard');
         } elseif ($user->role_id === 2) {
-            return redirect()->route('employees.index');
+            return redirect()->route('owner.dashboard');
         } elseif ($user->role_id === 3) {
-            // Employees dibagi menjadi cashier dan stock
             if ($user->employees_role === 'cashier') {
                 return redirect()->route('employee.cashier');
             } elseif ($user->employees_role === 'stock') {
                 return redirect()->route('employee.stock');
-            } else {
-                return redirect()->route('employee.dashboard');
             }
+            return redirect()->route('employee.dashboard');
         }
 
-        // Jika tidak memiliki role valid
         return redirect('/dashboard');
     }
 

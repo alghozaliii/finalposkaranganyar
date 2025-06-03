@@ -44,7 +44,7 @@
 
           <!-- Karyawan -->
           <button @click="activateSection('employees')" class="flex flex-col items-center">
-            <div class="p-3 rounded-md" :class="eactiveSection==='employees' ? 'bg-purple-100 text-purple-700' : 'text-gray-500'">
+            <div class="p-3 rounded-md" :class="activeSection==='employees' ? 'bg-purple-100 text-purple-700' : 'text-gray-500'">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" :class="activeSection==='employees' ? 'text-purple-700' : 'text-gray-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
@@ -595,19 +595,12 @@
             <!-- Form Tambah Employee -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
               <h3 class="text-lg font-medium text-gray-900 mb-4">Tambah Karyawan</h3>
-              <form @submit.prevent="submitForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <form v-on:submit.prevent="submitForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label for="name" class="block text-sm font-medium text-gray-700">Nama</label>
-                  <input id="name" v-model="form.name" type="text" required
+                  <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                  <input id="username" v-model="form.username" type="text" required
                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"/>
-                  <div v-if="form.errors.name" class="text-red-500 text-sm mt-1">{{ form.errors.name }}</div>
-                </div>
-
-                <div>
-                  <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                  <input id="email" v-model="form.email" type="email" required
-                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"/>
-                  <div v-if="form.errors.email" class="text-red-500 text-sm mt-1">{{ form.errors.email }}</div>
+                  <div v-if="form.errors.username" class="text-red-500 text-sm mt-1">{{ form.errors.username }}</div>
                 </div>
 
                 <div>
@@ -621,13 +614,12 @@
                   <label for="employees_role" class="block text-sm font-medium text-gray-700">Role</label>
                   <select id="employees_role" v-model="form.employees_role"
                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    <option value="cashier">Cashier</option>
+                    <option value="cashier">Kasir</option>
                     <option value="stock">Stock Admin</option>
                   </select>
-                  <div v-if="form.errors.employees_role" class="text-red-500 text-sm mt-1">{{ form.errors.employees_role }}</div>
                 </div>
 
-                <div class="md:col-span-4">
+                <div class="md:col-span-3">
                   <button type="submit" :disabled="form.processing"
                           class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     Tambah Karyawan
@@ -639,36 +631,29 @@
             <!-- Tabel Daftar Karyawan -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
               <h3 class="text-lg font-medium text-gray-900 mb-4">Daftar Karyawan</h3>
-              <div v-if="employees.length" class="overflow-x-auto">
+              <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                   <thead class="bg-gray-50">
                     <tr>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dibuat</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Username</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dibuat</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
                     </tr>
                   </thead>
                   <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-if="employees.length===0">
-                      <td colspan="7" class="px-6 py-4 text-center text-gray-500">Belum ada karyawan terdaftar.</td>
+                    <tr v-if="!employees.length">
+                      <td colspan="5" class="px-6 py-4 text-center text-gray-500">Belum ada karyawan terdaftar.</td>
                     </tr>
                     <tr v-for="(emp, idx) in employees" :key="emp.id">
-                      <td class="px-6 py-4 whitespace-nowrap">{{ idx+1 }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap">{{ idx + 1 }}</td>
                       <td class="px-6 py-4 whitespace-nowrap">{{ emp.name }}</td>
-                      <td class="px-6 py-4 whitespace-nowrap">{{ emp.email }}</td>
                       <td class="px-6 py-4 whitespace-nowrap capitalize">{{ emp.employees_role }}</td>
                       <td class="px-6 py-4 whitespace-nowrap">{{ emp.created_at }}</td>
                       <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 inline-flex text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                          Aktif
-                        </span>
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap">
-                        <button @click="deleteEmployee(emp.id)" class="text-red-600 hover:text-red-900">
+                        <button @click="deleteEmployee(emp.id)" 
+                                class="text-red-600 hover:text-red-900">
                           Hapus
                         </button>
                       </td>
@@ -776,8 +761,7 @@ const activeSection = ref('dashboard'); // 'dashboard', 'laporan', or 'employees
 
 // Form karyawan
 const form = useForm({
-  name: '',
-  email: '',
+  username: '',
   password: '',
   employees_role: 'cashier'
 });
@@ -809,8 +793,22 @@ const formatNumber = number => number.toString().replace(/\B(?=(\d{3})+(?!\d))/g
 // Submit tambah karyawan
 const submitForm = () => {
   form.post(route('employees.store'), {
-    onSuccess: () => form.reset()
+    onSuccess: () => {
+      form.reset();
+      // Reload employees list
+      reloadEmployees();
+    }
   });
+};
+
+// Add function to reload employees
+const reloadEmployees = async () => {
+  try {
+    const response = await axios.get(route('owner.dashboard'));
+    employees.value = response.data.employees;
+  } catch (error) {
+    console.error('Error loading employees:', error);
+  }
 };
 
 // Hapus karyawan

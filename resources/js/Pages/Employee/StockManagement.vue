@@ -177,7 +177,18 @@ const saveNewProduct = async () => {
     }
 };
 
-
+// Add toggle status function
+const toggleStatus = async (product) => {
+    try {
+        await axios.patch(`/api/products/${product.id}/toggle-status`);
+        product.is_active = !product.is_active;
+        // Refresh product list to reflect changes
+        await fetchProducts();
+    } catch (error) {
+        console.error('Error toggling product status:', error);
+        alert('Gagal mengubah status produk');
+    }
+};
 
 // Lifecycle hooks
 onMounted(() => {
@@ -271,9 +282,18 @@ onMounted(() => {
         <td>{{ product.category || '-' }}</td>
         <td>{{ product.unit || '-' }}</td>
         <td>
-            <span class="status-badge" :class="{ 'available': product.stock > 0 }">
-                {{ product.stock > 0 ? 'Avail' : 'Out of Stock' }}
-            </span>
+            <select 
+                :value="product.is_active ? 'active' : 'inactive'"
+                @change="toggleStatus(product)"
+                class="px-3 py-1 rounded text-sm font-medium border"
+                :class="{
+                    'bg-green-100 text-green-600': product.is_active,
+                    'bg-red-100 text-red-600': !product.is_active
+                }"
+            >
+                <option value="active">Aktif</option>
+                <option value="inactive">Nonaktif</option>
+            </select>
         </td>
         <td>
             <button class="action-button" @click="openActionMenu(index)">
@@ -505,17 +525,32 @@ tbody td {
     border-bottom: 1px solid #ddd;
 }
 
-.status-badge {
+.status-toggle {
     display: inline-block;
+}
+
+.status-badge {
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 12px;
-    background-color: #e74c3c;
-    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .status-badge.available {
     background-color: #2ecc71;
+    color: white;
+}
+
+.status-badge.unavailable {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.status-badge:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
 }
 
 .action-button {

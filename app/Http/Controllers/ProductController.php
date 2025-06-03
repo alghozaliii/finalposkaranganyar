@@ -72,4 +72,15 @@ class ProductController extends Controller
     ]);
     }
     
+    public function toggleStatus($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->is_active = !$product->is_active;
+        $product->save();
+
+        return response()->json([
+            'status' => $product->is_active ? 'active' : 'inactive',
+            'message' => 'Status produk berhasil diubah'
+        ]);
+    }
 }

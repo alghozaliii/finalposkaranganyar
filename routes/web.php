@@ -203,6 +203,8 @@ Route::post('/profit/store', [SalesRecommendationController::class, 'storeProfit
 
 Route::middleware(['auth', 'role:owner'])->group(function () {
     Route::get('/owner/dashboard', [OwnerDashboardController::class, 'index'])->name('owner.dashboard');
+    Route::post('/owner/employees', [EmployeeController::class, 'store'])->name('employees.store');
+    Route::delete('/owner/employees/{id}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
 });
 
 // Route untuk export Excel
@@ -223,3 +225,16 @@ Route::get('/export-purchase', function (Request $request) {
         'laporan-pembelian.xlsx'
     );
 })->middleware(['auth'])->name('purchase.export');
+
+Route::middleware(['auth'])->group(function () {
+    // Route untuk halaman Rekomendasi Penjualan
+    Route::get('/owner/salesrecommendation', [SalesRecommendationController::class, 'index'])->name('owner.sales.recommendation');
+    
+    Route::patch('/api/products/{id}/toggle-status', [ProductController::class, 'toggleStatus'])
+        ->name('products.toggle-status');
+});
+
+// Route tambahan untuk toggle status produk
+Route::post('/products/{id}/toggle-status', [ProductController::class, 'toggleStatus'])
+    ->name('products.toggle-status')
+    ->middleware(['auth']);

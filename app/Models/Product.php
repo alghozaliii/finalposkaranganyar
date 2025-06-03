@@ -23,7 +23,12 @@ class Product extends Model
         'category',
         'unit',
         'user_id', // Added user_id to fillable array
-         'profit'
+         'profit',
+         'status', // Add this if not exists
+    ];
+
+    protected $attributes = [
+        'status' => 'active' // Default status
     ];
 
     /**
@@ -33,4 +38,8 @@ class Product extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    
+    // Add status constants
+    const STATUS_ACTIVE = 'active';
+    const STATUS_INACTIVE = 'inactive';
 }

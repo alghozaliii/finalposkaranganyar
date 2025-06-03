@@ -48,28 +48,27 @@
         </div>
 
         <form @submit.prevent="submit" class="space-y-6 bg-zinc-900/60 p-6 rounded-2xl border border-zinc-800 backdrop-blur-sm shadow-xl">
-          <!-- Email Input -->
+          <!-- Single Login Input -->
           <div>
-            <InputLabel for="email" value="Email" class="block text-base font-medium text-white mb-2" />
+            <InputLabel for="login" value="Email or Username" class="block text-base font-medium text-white mb-2" />
             <div class="relative">
               <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
               <TextInput
-                id="email"
-                type="email"
-                v-model="form.email"
+                id="login"
+                type="text"
+                v-model="form.login"
                 required
                 autofocus
-                autocomplete="username"
-                placeholder="Enter your email"
+                placeholder="Enter your email or username"
                 class="w-full pl-10 pr-4 py-3 rounded-xl bg-zinc-800 text-white placeholder-zinc-400 border border-zinc-700 focus:border-violet-400 focus:ring focus:ring-violet-300 focus:ring-opacity-50 transition-all"
               />
             </div>
-            <InputError class="mt-2 text-rose-400" :message="form.errors.email" />
+            <InputError class="mt-2 text-rose-400" :message="form.errors.login" />
           </div>
 
           <!-- Password Input -->
@@ -204,9 +203,9 @@ defineProps({
 })
 
 const form = useForm({
-  email: '',
-  password: '',
-  remember: false,
+    login: '',
+    password: '',
+    remember: false,
 })
 
 const showPassword = ref(false)

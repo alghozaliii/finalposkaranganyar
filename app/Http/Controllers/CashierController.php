@@ -18,6 +18,7 @@ public function getProducts()
     if ($user->role_id === 3) {
         // Jika employee, ambil produk berdasarkan owner_id yang terkait dengan employee
         $products = Product::where('user_id', $user->owner_id)
+            ->where('is_active', true) // Hanya ambil produk yang aktif
             ->select('id', 'code', 'name', 'stock', 'average_price', 'selling_price', 'profit', 'category', 'unit')
             ->get();
 
@@ -26,6 +27,7 @@ public function getProducts()
     elseif ($user->role_id === 2) {
         // Jika owner, ambil produk miliknya sendiri
         $products = Product::where('user_id', $user->id)
+            ->where('is_active', true) // Hanya ambil produk yang aktif
             ->select('id', 'code', 'name', 'stock', 'average_price', 'selling_price', 'profit', 'category', 'unit')
             ->get();
 
