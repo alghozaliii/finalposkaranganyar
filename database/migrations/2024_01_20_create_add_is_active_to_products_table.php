@@ -9,14 +9,14 @@ return new class extends Migration
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            // $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->default(true);
         });
     }
 
     public function down()
     {
         Schema::table('products', function (Blueprint $table) {
-            // $table->dropColumn('is_active');
+            $table->dropColumn('is_active');
         });
     }
 };

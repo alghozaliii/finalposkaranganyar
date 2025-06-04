@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3'; // Add router here
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { usePage } from '@inertiajs/vue3';
@@ -189,6 +189,11 @@ const toggleStatus = async (product) => {
         console.error('Error toggling product status:', error);
         alert('Gagal mengubah status produk');
     }
+};
+
+// Add logout method
+const logout = () => {
+    router.post(route('logout'));
 };
 
 // Lifecycle hooks
