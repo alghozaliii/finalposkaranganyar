@@ -10,6 +10,11 @@
           {{ status }}
         </div>
 
+        <!-- Error Message -->
+        <div v-if="$page.props.flash.error" class="mb-4 p-3 bg-red-900/40 border border-red-500 rounded-lg text-sm font-medium text-red-400">
+          {{ $page.props.flash.error }}
+        </div>
+
         <!-- Header dengan Logo GWL -->
         <div class="flex flex-col items-center mb-8">
           <!-- Container Logo dengan efek -->

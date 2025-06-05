@@ -63,6 +63,11 @@ class SSOController extends Controller
             ]);
         }
 
+        // Check if user is approved
+        if (!$user->is_approved) {
+            return redirect()->route('login')->with('error', 'Akun Anda masih menunggu persetujuan dari verifikator.');
+        }
+
         // Check if user is an owner
         if ($user->role_id === 2) { // Assuming 2 is the role_id for owners
             if (!$user->store_name) {
