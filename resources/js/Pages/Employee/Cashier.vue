@@ -11,9 +11,10 @@ const showSidebar = ref(true);
 const searchQuery = ref('');
 const activeCategory = ref('Semua');
 
+// Barcode scan
+const barcode = ref('');
+const barcodeInput = ref(null);
 
-
-// Kategori produk
 const categories = [
   { name: 'Semua', active: true },
   { name: 'Chairs', active: false },
@@ -31,40 +32,31 @@ const fetchProducts = async () => {
         console.error('Gagal mengambil data produk:', error);
     }
 };
-// Filter produk berdasarkan kategori dan pencarian
+
 const filteredProducts = computed(() => {
     let filtered = products.value;
-    
-    // Filter berdasarkan kategori
     if (activeCategory.value !== 'Semua') {
         filtered = filtered.filter(product => product.category === activeCategory.value);
     }
-    
-    // Filter berdasarkan pencarian
     if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase();
         filtered = filtered.filter(product => 
             product.name.toLowerCase().includes(query)
         );
     }
-    
     return filtered;
 });
 
-// Set kategori aktif
 const setActiveCategory = (category) => {
     activeCategory.value = category;
 };
 
-// Total harga pesanan
 const cartTotal = computed(() => {
     return cartItems.value.reduce((total, item) => total + item.quantity * item.selling_price, 0);
 });
 
-// Menambahkan produk ke keranjang
 const addToCart = (product) => {
     const existingItem = cartItems.value.find(item => item.id === product.id);
-    
     if (existingItem) {
         if (existingItem.quantity < product.stock) {
             existingItem.quantity += 1;
@@ -79,7 +71,6 @@ const addToCart = (product) => {
     }
 };
 
-// Increment jumlah produk di keranjang
 const incrementQuantity = (item) => {
     const product = products.value.find(p => p.id === item.id);
     if (item.quantity < product.stock) {
@@ -87,33 +78,27 @@ const incrementQuantity = (item) => {
     }
 };
 
-// Decrement jumlah produk di keranjang
 const decrementQuantity = (item) => {
     if (item.quantity > 1) {
         item.quantity -= 1;
     }
 };
 
-// Update jumlah produk di keranjang
 const updateQuantity = (item, newQuantity) => {
     const product = products.value.find(p => p.id === item.id);
-    
     if (newQuantity > 0 && newQuantity <= product.stock) {
         item.quantity = newQuantity;
     }
 };
 
-// Hapus item dari keranjang
 const removeFromCart = (itemId) => {
     cartItems.value = cartItems.value.filter(item => item.id !== itemId);
 };
 
-// Logout function
 const logout = () => {
     router.post('/logout');
 };
 
-// Lanjut ke pembayaran
 const proceedToPayment = () => {
     if (cartItems.value.length > 0) {
         localStorage.setItem('order', JSON.stringify(cartItems.value));
@@ -121,13 +106,45 @@ const proceedToPayment = () => {
     }
 };
 
-onMounted(fetchProducts);
+// Barcode scan handler
+const handleBarcodeScan = () => {
+    if (!barcode.value) return;
+    const product = products.value.find(p => String(p.code) === barcode.value.trim());
+    if (product) {
+        addToCart(product);
+    }
+    barcode.value = '';
+    barcodeInput.value && barcodeInput.value.focus();
+};
+
+// Tombol untuk fokus ke input barcode
+const focusBarcodeInput = () => {
+    barcodeInput.value && barcodeInput.value.focus();
+};
+
+onMounted(() => {
+    fetchProducts();
+    setTimeout(() => {
+        barcodeInput.value && barcodeInput.value.focus();
+    }, 300);
+});
 </script>
 
 <template>
     <Head title="Kasir" />
     <AuthenticatedLayout>
         <div class="flex min-h-screen bg-gray-100">
+            <!-- Input untuk barcode scanner (hidden) -->
+            <input
+                ref="barcodeInput"
+                v-model="barcode"
+                @keyup.enter="handleBarcodeScan"
+                type="text"
+                class="absolute opacity-0 pointer-events-none"
+                tabindex="-1"
+                autocomplete="off"
+            />
+
             <!-- Sidebar -->
             <aside
                 :class="[
@@ -147,7 +164,6 @@ onMounted(fetchProducts);
                         </div>
                         <span class="text-xs mt-2">Dashboard</span>
                     </a>
-
                     <!-- Transaksi -->
                     <a href="" class="flex flex-col items-center">
                         <div class="p-3 rounded-md bg-purple-100 text-purple-700">
@@ -158,8 +174,6 @@ onMounted(fetchProducts);
                         <span class="text-xs mt-2">Transaksi</span>
                     </a>
                 </nav>
-                
-
                 <!-- Logout Button -->
                 <button @click="logout" class="flex flex-col items-center mt-auto mb-6">
                     <div class="p-3 rounded-md">
@@ -192,6 +206,14 @@ onMounted(fetchProducts);
                 </header>
 
                 <main class="p-3 md:p-6 space-y-4 md:space-y-6 safe-area-inset-bottom">
+                    <!-- Tombol Scan Barcode -->
+                    <button
+                        @click="focusBarcodeInput"
+                        class="mb-2 px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+                    >
+                        Scan Barcode
+                    </button>
+
                     <!-- Search & Filter Bar -->
                     <div class="bg-white w-full p-3 rounded-lg shadow-sm flex flex-col md:flex-row justify-between gap-3">
                         <div class="relative w-full">
@@ -204,13 +226,6 @@ onMounted(fetchProducts);
                             <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
-                        </div>
-                        <div class="flex items-center">
-                            <button class="p-2.5 rounded-lg text-gray-500 hover:bg-gray-100 active:bg-gray-200">
-                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                                </svg>
-                            </button>
                         </div>
                     </div>
 
@@ -329,54 +344,23 @@ onMounted(fetchProducts);
 </template>
 
 <style>
-/* Add safe area insets for iOS devices */
 .safe-area-inset-top {
     padding-top: env(safe-area-inset-top);
 }
-
 .safe-area-inset-bottom {
     padding-bottom: env(safe-area-inset-bottom);
 }
-
 .safe-area-inset-left {
     padding-left: env(safe-area-inset-left);
 }
-
-/* Improve touch targets for mobile */
 @media (max-width: 768px) {
-    button, 
-    a {
-        min-height: 44px;
-        min-width: 44px;
-    }
-    
-    input,
-    select {
-        font-size: 16px; /* Prevents zoom on iOS */
-    }
+    button, a { min-height: 44px; min-width: 44px; }
+    input, select { font-size: 16px; }
 }
-
-/* Prevent pull-to-refresh on mobile */
-body {
-    overscroll-behavior-y: none;
-}
-
-/* Improve scrolling on iOS */
-.overflow-auto {
-    -webkit-overflow-scrolling: touch;
-}
-
-/* Prevent horizontal scroll */
-.w-full {
-    max-width: 100%;
-}
-
-/* Ensure content fits within viewport */
+body { overscroll-behavior-y: none; }
+.overflow-auto { -webkit-overflow-scrolling: touch; }
+.w-full { max-width: 100%; }
 @media (max-width: 768px) {
-    .w-full {
-        width: 100vw;
-        max-width: 100vw;
-        overflow-x: hidden;
-    }
+    .w-full { width: 100vw; max-width: 100vw; overflow-x: hidden; }
 }
 </style>
