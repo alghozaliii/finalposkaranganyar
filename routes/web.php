@@ -114,6 +114,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         
     });
+
+    // **Route untuk Admin**
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', function () {
+            return Inertia::render('Admin/AdminDashboard');
+        })->name('dashboard');
+    });
+
     Route::get('/helpdeskowner', function () {
         return Inertia::render('HelpdeskOwner');
     })->name('helpdeskowner');

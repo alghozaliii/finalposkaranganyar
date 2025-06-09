@@ -56,6 +56,8 @@ class AuthenticatedSessionController extends Controller
                 return redirect()->route('employee.stock');
             }
             return redirect()->route('employee.dashboard');
+        } elseif ($user->role_id === 4) {
+            return redirect()->route('admin.dashboard');
         }
 
         return redirect('/dashboard');
