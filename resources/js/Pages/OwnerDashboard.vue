@@ -169,21 +169,24 @@
             </div>
             
             <!-- Revenue Chart and Top Products -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
               <!-- Revenue Chart -->
-              <div class="lg:col-span-2 bg-white rounded-lg border p-6">
+              <div class="lg:col-span-2 bg-white rounded-lg border p-4 md:p-6">
                 <div class="flex justify-between items-center mb-4">
                   <h3 class="text-lg font-medium">Total Revenue</h3>
                 </div>
-                <div class="h-64 flex items-end justify-between gap-2">
-                  <div v-for="(revenue, index) in monthlyRevenue" :key="index" 
-                       class="w-16 rounded-t-lg transition-all duration-300"
+                <div class="h-48 md:h-64 flex items-end justify-between gap-1 md:gap-2 overflow-x-auto pb-2">
+                  <div v-for="(monthData, index) in monthlyRevenueData" :key="index" 
+                       class="w-8 md:w-16 rounded-t-lg transition-all duration-300 min-w-[2rem]"
                        :class="currentMonth === index + 1 ? 'bg-purple-700' : 'bg-purple-200'"
-                       :style="{ height: `${getBarHeight(revenue)}%` }"
-                  ></div>
+                       :style="{ height: `${getBarHeight(monthData.total_revenue)}%` }"
+                       :title="`${monthData.month}: Rp ${formatCurrency(monthData.total_revenue)}`">
+                  </div>
                 </div>
-                <div class="flex justify-between mt-2 text-sm text-gray-500">
-                  <div v-for="(month, index) in chartLabels" :key="index">{{ month }}</div>
+                <div class="flex justify-between mt-2 text-[10px] md:text-sm text-gray-500 overflow-x-auto">
+                  <div v-for="(month, index) in chartLabels" :key="index" class="min-w-[2rem] text-center">
+                    {{ month.substring(0,3) }}
+                  </div>
                 </div>
               </div>
               <!-- Top Products -->
@@ -217,35 +220,63 @@
 
             <!-- Transaction History -->
             <div class="bg-white rounded-lg border p-6 overflow-x-auto">
-              <h3 class="text-lg font-medium mb-4">History</h3>
-              <table class="w-full min-w-full">
-                <thead>
-                  <tr class="text-left text-gray-500 text-sm">
-                    <th class="pb-3">ID</th><th class="pb-3">Date</th><th class="pb-3">Cashier</th><th class="pb-3">Total Item</th><th class="pb-3">Total Price</th><th class="pb-3">Status</th><th class="pb-3"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="transaction in transactionHistory" :key="transaction.id" class="border-t">
-                    <td class="py-3">{{ transaction.id }}</td>
-                    <td class="py-3">{{ transaction.date }}</td>
-                    <td class="py-3">{{ transaction.cashier }}</td>
-                    <td class="py-3">{{ transaction.totalItem }}</td>
-                    <td class="py-3">Rp {{ formatCurrency(transaction.totalPrice) }}</td>
-                    <td class="py-3">
-                      <span class="px-3 py-1 rounded-full text-xs" :class="transaction.status==='Success'? 'bg-green-100 text-green-600':'bg-red-100 text-red-600'">
-                        {{ transaction.status }}
-                      </span>
-                    </td>
-                    <td class="py-3 text-center">
-                      <button class="text-gray-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
-                        </svg>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <h3 class="text-lg font-medium mb-4">History Transaksi</h3>
+              
+              <div v-if="transactionHistory.length > 0">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. Invoice</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Metode Pembayaran</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Item</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Harga</th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    <template v-for="(invoice, index) in transactionHistory" :key="invoice.invoice_number">
+                      <tr @click="handleRowClick(invoice)" style="cursor: pointer">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">{{ index + 1 }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">{{ invoice.invoice_number }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">{{ formatDate(invoice.created_at || invoice.date) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap capitalize text-sm">{{ invoice.payment_method }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">{{ invoice.total_items || invoice.items?.length || 0 }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">Rp {{ formatCurrency(invoice.total_amount || invoice.total_price || 0) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        </td>
+                      </tr>
+                      <!-- Expanded Details -->
+                      <tr v-if="expandedInvoices.includes(invoice.invoice_number)">
+                        <td colspan="7" class="px-6 py-4 bg-gray-50">
+                          <div class="space-y-2">
+                            <h4 class="font-semibold">Detail Item:</h4>
+                            <table class="min-w-full divide-y divide-gray-200">
+                              <thead>
+                                <tr>
+                                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Produk</th>
+                                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Jumlah</th>
+                                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Harga</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr v-for="item in invoice.items" :key="item.product_name">
+                                  <td class="px-4 py-2 text-sm">{{ item.product_name }}</td>
+                                  <td class="px-4 py-2 text-sm">{{ item.quantity }}</td>
+                                  <td class="px-4 py-2 text-sm">Rp {{ formatCurrency(item.total_price) }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+              <div v-else class="text-gray-500 text-center py-4">
+                Tidak ada data transaksi.
+              </div>
             </div>
           </div>
           
@@ -316,47 +347,38 @@
                 <div class="flex justify-between items-center mb-5">
                   <div class="font-bold">Total Revenue</div>
                   <div class="flex gap-2">
-                    <select 
-                      class="border border-gray-200 rounded px-3 py-1 text-sm"
-                      v-model="chartPeriod"
-                    >
-                      <option>Week</option>
+                    <select v-model="chartPeriod" class="border border-gray-200 rounded px-3 py-1 text-sm">
                       <option>Month</option>
                       <option>Year</option>
                     </select>
-                    <button class="border border-gray-200 rounded px-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                        <rect x="7" y="7" width="3" height="10" />
-                        <rect x="14" y="7" width="3" height="10" />
-                      </svg>
-                    </button>
-                    <button class="border border-gray-200 rounded px-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="1" />
-                        <circle cx="19" cy="12" r="1" />
-                        <circle cx="5" cy="12" r="1" />
-                      </svg>
-                    </button>
                   </div>
                 </div>
-                  
                 <div class="relative h-48">
                   <svg width="100%" height="200" viewBox="0 0 800 200">
+                    <!-- Generate path dynamically -->
                     <path
-                      d="M0,180 Q80,100 150,150 T300,80 T450,40 T600,90 T800,50"
+                      :d="generateLinePath(monthlyRevenueData)"
                       fill="none"
                       stroke="#A78BFA"
                       stroke-width="3"
                     />
-                    <circle cx="150" cy="150" r="6" fill="white" stroke="#A78BFA" stroke-width="2" />
-                    <circle cx="300" cy="80" r="6" fill="white" stroke="#A78BFA" stroke-width="2" />
-                    <circle cx="450" cy="40" r="6" fill="white" stroke="#A78BFA" stroke-width="2" />
-                    <circle cx="600" cy="90" r="6" fill="white" stroke="#A78BFA" stroke-width="2" />
-                    <circle cx="800" cy="50" r="6" fill="white" stroke="#A78BFA" stroke-width="2" />
+                    <!-- Plot points -->
+                    <template v-for="(point, index) in getChartPoints(monthlyRevenueData)" :key="index">
+                      <circle
+                        :cx="point.x"
+                        :cy="point.y"
+                        r="6"
+                        fill="white"
+                        stroke="#A78BFA"
+                        stroke-width="2"
+                        :title="`${point.month}: Rp ${formatCurrency(point.value)}`"
+                      />
+                    </template>
                   </svg>
                   <div class="flex justify-between mt-2">
-                    <div class="text-xs text-gray-500" v-for="month in chartLabels" :key="month">{{ month }}</div>
+                    <div v-for="month in chartLabels" :key="month" class="text-xs text-gray-500">
+                      {{ month.substring(0,3) }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -590,38 +612,40 @@
   </div>
 </div>
 
-          <!-- Employees Section -->
-          <div v-if="activeSection==='employees'" class="space-y-6">
+        <!-- Employees Section -->
+          <div v-if="activeSection==='employees'" class="space-y-4 md:space-y-6 px-2 md:px-6">
             <!-- Form Tambah Employee -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 md:p-6">
               <h3 class="text-lg font-medium text-gray-900 mb-4">Tambah Karyawan</h3>
-              <form v-on:submit.prevent="submitForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                  <input id="username" v-model="form.username" type="text" required
-                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"/>
-                  <div v-if="form.errors.username" class="text-red-500 text-sm mt-1">{{ form.errors.username }}</div>
+              <form v-on:submit.prevent="submitForm" class="grid grid-cols-1 gap-4">
+                <div class="space-y-4">
+                  <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    <input id="username" v-model="form.username" type="text" required
+                           class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"/>
+                    <div v-if="form.errors.username" class="text-red-500 text-xs mt-1">{{ form.errors.username }}</div>
+                  </div>
+
+                  <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input id="password" v-model="form.password" type="password" required
+                           class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"/>
+                    <div v-if="form.errors.password" class="text-red-500 text-xs mt-1">{{ form.errors.password }}</div>
+                  </div>
+
+                  <div>
+                    <label for="employees_role" class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                    <select id="employees_role" v-model="form.employees_role"
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                      <option value="cashier">Kasir</option>
+                      <option value="stock">Stock Admin</option>
+                    </select>
+                  </div>
                 </div>
 
-                <div>
-                  <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                  <input id="password" v-model="form.password" type="password" required
-                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"/>
-                  <div v-if="form.errors.password" class="text-red-500 text-sm mt-1">{{ form.errors.password }}</div>
-                </div>
-
-                <div>
-                  <label for="employees_role" class="block text-sm font-medium text-gray-700">Role</label>
-                  <select id="employees_role" v-model="form.employees_role"
-                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    <option value="cashier">Kasir</option>
-                    <option value="stock">Stock Admin</option>
-                  </select>
-                </div>
-
-                <div class="md:col-span-3">
+                <div class="mt-2">
                   <button type="submit" :disabled="form.processing"
-                          class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                          class="w-full md:w-auto bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
                     Tambah Karyawan
                   </button>
                 </div>
@@ -629,37 +653,41 @@
             </div>
 
             <!-- Tabel Daftar Karyawan -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 md:p-6">
               <h3 class="text-lg font-medium text-gray-900 mb-4">Daftar Karyawan</h3>
-              <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                  <thead class="bg-gray-50">
-                    <tr>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Username</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dibuat</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-if="!employees.length">
-                      <td colspan="5" class="px-6 py-4 text-center text-gray-500">Belum ada karyawan terdaftar.</td>
-                    </tr>
-                    <tr v-for="(emp, idx) in employees" :key="emp.id">
-                      <td class="px-6 py-4 whitespace-nowrap">{{ idx + 1 }}</td>
-                      <td class="px-6 py-4 whitespace-nowrap">{{ emp.name }}</td>
-                      <td class="px-6 py-4 whitespace-nowrap capitalize">{{ emp.employees_role }}</td>
-                      <td class="px-6 py-4 whitespace-nowrap">{{ emp.created_at }}</td>
-                      <td class="px-6 py-4 whitespace-nowrap">
-                        <button @click="deleteEmployee(emp.id)" 
-                                class="text-red-600 hover:text-red-900">
-                          Hapus
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div class="overflow-x-auto -mx-4 md:mx-0">
+                <div class="min-w-full inline-block align-middle">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th class="p-3 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase">No</th>
+                        <th class="p-3 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase">Username</th>
+                        <th class="p-3 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                        <th class="hidden md:table-cell p-3 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase">Dibuat</th>
+                        <th class="p-3 md:px-6 md:py-3 text-right text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                      <tr v-if="!employees.length">
+                        <td colspan="5" class="p-3 md:px-6 md:py-4 text-center text-gray-500 text-sm">
+                          Belum ada karyawan terdaftar.
+                        </td>
+                      </tr>
+                      <tr v-for="(emp, idx) in employees" :key="emp.id" class="hover:bg-gray-50">
+                        <td class="p-3 md:px-6 md:py-4 whitespace-nowrap text-sm">{{ idx + 1 }}</td>
+                        <td class="p-3 md:px-6 md:py-4 whitespace-nowrap text-sm">{{ emp.name }}</td>
+                        <td class="p-3 md:px-6 md:py-4 whitespace-nowrap text-sm capitalize">{{ emp.employees_role }}</td>
+                        <td class="hidden md:table-cell p-3 md:px-6 md:py-4 whitespace-nowrap text-sm">{{ emp.created_at }}</td>
+                        <td class="p-3 md:px-6 md:py-4 whitespace-nowrap text-right text-sm">
+                          <button @click="deleteEmployee(emp.id)" 
+                                  class="text-red-600 hover:text-red-900 text-sm font-medium">
+                            Hapus
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -1178,11 +1206,7 @@ onMounted(async () => {
 
     // Update monthly revenue data
     if (data.chartData) {
-      const revenueData = Array(12).fill(0);
-      data.chartData.forEach(item => {
-        revenueData[item.month - 1] = item.total_revenue;
-      });
-      monthlyRevenue.value = revenueData;
+      chartData.value = data.chartData;
     }
 
   } catch (e) {
@@ -1190,14 +1214,112 @@ onMounted(async () => {
   }
 });
 
-// Tambahkan reactive properties ini:
-const monthlyRevenue = ref(Array(12).fill(0));
-const currentMonth = ref(new Date().getMonth() + 1);
+// Initialize expandedInvoices before it's used
+const expandedInvoices = ref([]);
 
-// Tambahkan helper function untuk menghitung tinggi bar
+// Add toggle function for expanding invoice details
+const toggleInvoiceDetails = (invoiceNumber) => {
+  const index = expandedInvoices.value.indexOf(invoiceNumber);
+  if (index === -1) {
+    expandedInvoices.value.push(invoiceNumber);
+  } else {
+    expandedInvoices.value.splice(index, 1);
+  }
+};
+
+// Add a click handler to the invoice row in the template
+const handleRowClick = (invoice) => {
+  toggleInvoiceDetails(invoice.invoice_number);
+};
+
+// Replace the monthlyRevenueData computed property:
+const monthlyRevenueData = computed(() => {
+  if (!chartData.value || !chartData.value.length) {
+    return chartLabels.value.map(month => ({
+      month,
+      total_revenue: 0
+    }));
+  }
+  return chartLabels.value.map((month, index) => {
+    const monthData = chartData.value.find(d => d.month === (index + 1));
+    return {
+      month,
+      total_revenue: monthData?.total_revenue || 0
+    };
+  });
+});
+
+// Add these reactive refs:
+const chartData = ref([]);
+
+// Update the onMounted section:
+onMounted(async () => {
+  try {
+    const { data } = await axios.get('/owner/sales');
+    totalRevenue.value       = data.totalRevenue       ?? totalRevenue.value;
+    totalSales.value         = data.totalSales         ?? totalSales.value;
+    totalCustomers.value     = data.totalCustomers     ?? totalCustomers.value;
+    revenueGrowth.value      = data.revenueGrowth      ?? revenueGrowth.value;
+    salesGrowth.value        = data.salesGrowth        ?? salesGrowth.value;
+    customerGrowth.value     = data.customerGrowth     ?? customerGrowth.value;
+    topProducts.value        = data.topProducts        ?? topProducts.value;
+    salesrecommendation.value = data.salesrecommendation ?? salesrecommendation.value;
+    transactionHistory.value = data.transactionHistory ?? transactionHistory.value;
+    employees.value          = data.employees          ?? employees.value;
+    if (data.startDate)   startDate.value = data.startDate;
+    if (data.endDate)     endDate.value   = data.endDate;
+    if (data.activeTab)   activeTab.value = data.activeTab;
+
+    // Update chart data properly
+    if (data.chartData) {
+      chartData.value = data.chartData;
+    }
+
+  } catch (e) {
+    console.error('Gagal sinkronisasi data sales:', e);
+  }
+});
+
+// Update the helper functions:
 const getBarHeight = (revenue) => {
-  const maxRevenue = Math.max(...monthlyRevenue.value);
+  const maxRevenue = Math.max(...monthlyRevenueData.value.map(d => d.total_revenue), 1);
   if (maxRevenue === 0) return 0;
-  return (revenue / maxRevenue) * 100;
+  return Math.min((revenue / maxRevenue) * 100, 100);
+};
+
+const generateLinePath = (data) => {
+  if (!data.length) return '';
+  const points = getChartPoints(data);
+  return points.reduce((path, point, i) => 
+    `${path}${i === 0 ? 'M' : 'L'} ${point.x},${point.y}`, '');
+};
+
+const getChartPoints = (data) => {
+  const maxRevenue = Math.max(...data.map(d => d.total_revenue), 1);
+  const width = 800;
+  const height = 200;
+  const padding = 20;
+  
+  return data.map((point, index) => ({
+    x: padding + (index * ((width - (padding * 2)) / (data.length - 1))),
+    y: height - (padding + ((point.total_revenue / maxRevenue) * (height - (padding * 2)))),
+    month: point.month,
+    value: point.total_revenue
+  }));
+};
+
+// Replace the format date helper with this implementation
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const options = {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  };
+  return new Intl.DateTimeFormat('id-ID', options).format(date);
 };
 </script>

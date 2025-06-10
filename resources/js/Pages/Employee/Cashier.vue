@@ -17,10 +17,6 @@ const barcodeInput = ref(null);
 
 const categories = [
   { name: 'Semua', active: true },
-  { name: 'Chairs', active: false },
-  { name: 'Desks', active: false },
-  { name: 'Beds', active: false },
-  { name: 'Furnitures', active: false }
 ];
 
 // Ambil data produk dari backend saat komponen dimuat

@@ -135,7 +135,6 @@
                                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. Invoice</th>
                                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
                                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Metode Pembayaran</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Item</th>
                                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Harga</th>
                                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detail</th>
                                             </tr>
@@ -147,7 +146,6 @@
                                                     <td class="px-6 py-4 whitespace-nowrap">{{ invoice.invoice_number }}</td>
                                                     <td class="px-6 py-4 whitespace-nowrap">{{ invoice.date }}</td>
                                                     <td class="px-6 py-4 whitespace-nowrap capitalize">{{ invoice.payment_method }}</td>
-                                                    <td class="px-6 py-4 whitespace-nowrap">{{ invoice.total_items }}</td>
                                                     <td class="px-6 py-4 whitespace-nowrap">Rp {{ parseInt(invoice.total_amount).toLocaleString('id-ID') }}</td>
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <button 
