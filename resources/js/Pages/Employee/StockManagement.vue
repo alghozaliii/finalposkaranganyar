@@ -38,11 +38,26 @@ const showAddProductModal = ref(false);
 const selectedFile = ref(null);
 const showSidebar = ref(false);
 
+// Tambahkan state untuk modal edit dan produk yang sedang diedit
+const showEditModal = ref(false);
+const editingProduct = ref({
+    id: '',
+    code: '',
+    name: '',
+    stock: 0,
+    average_price: 0,
+    selling_price: 0,
+    category: '',
+    unit: '',
+});
+
+// Fungsi untuk melihat detail produk
 const viewDetails = (product) => {
     // Implement view details functionality
     console.log('View details for product:', product);
     activeActionMenu.value = null;
 };
+
 // Tambahkan definisi newProduct
 const newProduct = ref({
     id: '',
@@ -127,15 +142,15 @@ const goToPage = (page) => {
 };
 
 // CRUD Operations
-const editProduct = async (product) => {
-    try {
-        const response = await axios.put(`/api/products/${product.id}`, product);
-        if (response.status === 200) {
-            await fetchProducts();
-        }
-    } catch (error) {
-        console.error('Error updating product:', error);
+const editProduct = (product) => {
+    if (!isOwner.value) {
+        alert('Hanya owner yang dapat mengedit produk');
+        return;
     }
+    
+    // Set data produk yang akan diedit
+    editingProduct.value = { ...product };
+    showEditModal.value = true;
     activeActionMenu.value = null;
 };
 
@@ -175,6 +190,20 @@ const saveNewProduct = async () => {
         };
     } catch (error) {
         console.error('Error creating product:', error);
+    }
+};
+
+// Tambahkan fungsi untuk menyimpan perubahan
+const saveEditedProduct = async () => {
+    try {
+        const response = await axios.put(`/api/products/${editingProduct.value.id}`, editingProduct.value);
+        if (response.status === 200) {
+            await fetchProducts();
+            showEditModal.value = false;
+        }
+    } catch (error) {
+        console.error('Error updating product:', error);
+        alert('Gagal mengupdate produk');
     }
 };
 
@@ -330,7 +359,7 @@ onMounted(() => {
     </thead>
     <tbody>
         <tr v-if="products.length === 0">
-            <td colspan="11" class="py-4 px-4 border-b text-center">
+            <td colspan="12" class="py-4 px-4 border-b text-center"> <!-- Update colspan dari 11 ke 12 -->
                 Tidak ada produk tersedia
             </td>
         </tr>
@@ -365,9 +394,13 @@ onMounted(() => {
                     <i class="fas fa-ellipsis-h"></i>
                 </button>
                 <div class="action-menu" v-if="activeActionMenu === index">
-                    <button @click="editProduct(product)">Edit</button>
-                    <button @click="deleteProduct(product)">Delete</button>
-                    <button @click="viewDetails(product)">View Details</button>
+                    <button 
+                        @click="editProduct(product)"
+                        :class="{ 'disabled': !isOwner }"
+                        :title="!isOwner ? 'Hanya owner yang dapat mengedit produk' : ''"
+                    >
+                        {{ isOwner ? 'Edit' : 'Edit (Owner Only)' }}
+                    </button>
                 </div>
             </td>
         </tr>
@@ -492,6 +525,80 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Edit Product Modal -->
+                                <div class="modal" v-if="showEditModal">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h3>Edit Produk</h3>
+                                            <button class="close-btn" @click="showEditModal = false">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label>Kode Produk</label>
+                                                <input type="text" v-model="editingProduct.code" disabled>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Nama Produk</label>
+                                                <input type="text" v-model="editingProduct.name" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Stok</label>
+                                                <input type="number" v-model="editingProduct.stock" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Harga Rata-rata</label>
+                                                <input type="number" v-model="editingProduct.average_price" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Harga Jual</label>
+                                                <input type="number" v-model="editingProduct.selling_price" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Kategori</label>
+                                                <select v-model="editingProduct.category">
+                                                    <option value="">Pilih Kategori</option>
+                                                    <option value="Sembako">Sembako</option>
+                                                    <option value="Makanan Instan & Siap Saji">Makanan Instan & Siap Saji</option>
+                                                    <option value="Camilan & Snack">Camilan & Snack</option>
+                                                    <option value="Minuman">Minuman</option>
+                                                    <option value="Produk Susu">Produk Susu</option>
+                                                    <option value="Bumbu Dapur">Bumbu Dapur</option>
+                                                    <option value="Produk Beku & Dingin">Produk Beku & Dingin</option>
+                                                    <option value="Rokok & Aksesoris">Rokok & Aksesoris</option>
+                                                    <option value="Kebutuhan Kebersihan">Kebutuhan Kebersihan</option>
+                                                    <option value="Lainnya">Lainnya</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Unit</label>
+                                                <select v-model="editingProduct.unit">
+                                                    <option value="">Pilih Unit</option>
+                                                    <option value="pcs">pcs</option>
+                                                    <option value="box">box</option>
+                                                    <option value="kg">kg</option>
+                                                    <option value="liter">liter</option>
+                                                    <option value="pack">pack</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Table</label>
+                                                <select v-model="editingProduct.table">
+                                                    <option value="">Pilih Table</option>
+                                                    <option value="1">Table 1</option>
+                                                    <option value="2">Table 2</option>
+                                                    <option value="3">Table 3</option>
+                                                    <option value="4">Table 4</option>
+                                                    <option value="5">Table 5</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn-cancel" @click="showEditModal = false">Batal</button>
+                                            <button class="btn-save" @click="saveEditedProduct">Simpan Perubahan</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -573,10 +680,6 @@ onMounted(() => {
     margin-bottom: 20px;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
 
 thead th {
     padding: 12px 15px;
@@ -648,6 +751,17 @@ tbody td {
 
 .action-menu button:hover {
     background-color: #f1f1f1;
+}
+
+.action-menu button.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    color: #666;
+    background-color: #f5f5f5;
+}
+
+.action-menu button.disabled:hover {
+    background-color: #f5f5f5;
 }
 
 .pagination {
@@ -816,13 +930,16 @@ tbody td {
     font-weight: 500;
 }
 
-.form-group input, .form-group select {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
+/* Add this if you want to style inputs/selects inside .form-group */
+.form-group input,
+.form-group select {
     border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    width: 100%;
 }
 
-/* Adding Font Awesome CDN in case you need it */
+</style>
+<style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 </style>

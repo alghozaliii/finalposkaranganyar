@@ -238,6 +238,11 @@ Route::middleware(['auth'])->group(function () {
     
     Route::patch('/api/products/{id}/toggle-status', [ProductController::class, 'toggleStatus'])
         ->name('products.toggle-status');
+    
+    // Add new route for updating products
+    Route::put('/api/products/{id}', [ProductController::class, 'update'])
+        ->name('products.update')
+        ->middleware('role:owner');
 });
 
 // Route tambahan untuk toggle status produk
