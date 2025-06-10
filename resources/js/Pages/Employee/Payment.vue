@@ -8,6 +8,21 @@ import axios from 'axios';
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 
+// Fungsi untuk mendapatkan URL gambar (mirip dengan verifikator)
+const getImageUrl = (photoPath) => {
+  if (!photoPath) return '/images/default.png';
+  
+  if (photoPath.startsWith('http')) {
+    return photoPath;
+  }
+  
+  if (!photoPath.startsWith('/storage/')) {
+    return `/storage/${photoPath}`;
+  }
+  
+  return photoPath;
+};
+
 // Get the return route if provided
 const props = defineProps({
   returnRoute: {
@@ -186,10 +201,11 @@ const confirmPayment = async () => {
           <!-- QRIS -->
           <div v-if="paymentMethod==='qris'" class="mt-6 text-center">
             <img
-              src="/images/Qris.jpg"
+              :src="getImageUrl(user.qris_photo)"
               alt="QRIS Code"
               class="mx-auto w-60 rounded-lg shadow"
-            />
+              @error="(e) => e.target.src = '/images/Qris.jpg'" />
+            <p v-if="!user.qris_photo" class="text-red-500 mt-2">Owner belum mengunggah foto QRIS.</p>
           </div>
 
           <!-- Bottom bar -->

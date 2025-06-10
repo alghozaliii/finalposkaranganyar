@@ -3,7 +3,11 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
-import { Head } from '@inertiajs/vue3';
+import UploadQrisPhotoForm from './Partials/UploadQrisPhotoForm.vue';
+import { Head, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+
+const user = computed(() => usePage().props.auth.user);
 
 defineProps({
     mustVerifyEmail: {
@@ -49,6 +53,13 @@ defineProps({
                     class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
                 >
                     <DeleteUserForm class="max-w-xl" />
+                </div>
+
+                <div
+                    v-if="user.role_id === 2"
+                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
+                >
+                    <UploadQrisPhotoForm class="max-w-xl" />
                 </div>
             </div>
         </div>

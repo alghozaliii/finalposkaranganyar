@@ -31,6 +31,7 @@ class User extends Authenticatable
         'phone', 
         'ktp_photo', 
         'selfie_photo',
+        'qris_photo',
         'username' // Add username field
     ];
 

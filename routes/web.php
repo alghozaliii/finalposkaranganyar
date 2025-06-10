@@ -114,6 +114,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         })->name('invoice');
     });
 
+    // Route khusus untuk Owner (upload QRIS)
+    Route::middleware(['role:owner'])->group(function () {
+        Route::post('/owner/profile/upload-qris', [App\Http\Controllers\OwnerProfileController::class, 'uploadQrisPhoto'])->name('owner.profile.uploadQrisPhoto');
+    });
+
     // **Route untuk Admin**
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
