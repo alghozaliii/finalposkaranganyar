@@ -34,6 +34,7 @@ class ProductController extends Controller
 
     // Hitung profit (keuntungan per produk)
     $validated['profit'] = $validated['selling_price'] - $validated['average_price'];
+    $validated['status'] = 'active'; // Tambahkan status default
 
     // Get the current user
     $user = auth()->user();
@@ -81,6 +82,44 @@ class ProductController extends Controller
         return response()->json([
             'status' => $product->is_active ? 'active' : 'inactive',
             'message' => 'Status produk berhasil diubah'
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        // Check if user is owner
+        if (auth()->user()->role_id !== 2) {
+            return response()->json([
+                'message' => 'Hanya owner yang dapat mengedit produk'
+            ], 403);
+        }
+
+        $product = Product::findOrFail($id);
+
+        // Verify owner owns this product
+        if ($product->user_id !== auth()->id()) {
+            return response()->json([
+                'message' => 'Anda tidak memiliki akses untuk mengedit produk ini'
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required',
+            'stock' => 'required|integer',
+            'average_price' => 'required|numeric',
+            'selling_price' => 'required|numeric',
+            'category' => 'nullable|string',
+            'unit' => 'nullable|string',
+        ]);
+
+        // Hitung ulang profit
+        $validated['profit'] = $validated['selling_price'] - $validated['average_price'];
+
+        $product->update($validated);
+
+        return response()->json([
+            'message' => 'Produk berhasil diperbarui',
+            'product' => $product
         ]);
     }
 }
