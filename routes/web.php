@@ -252,3 +252,8 @@ Route::post('/products/{id}/toggle-status', [ProductController::class, 'toggleSt
 
    
 Route::get('/employee/stock/check', [ProductController::class, 'check']);
+
+// Add route for stock history
+Route::get('/employee/stock/history', [ProductController::class, 'showStockHistory'])
+    ->name('employee.stock.history')
+    ->middleware(['auth']);

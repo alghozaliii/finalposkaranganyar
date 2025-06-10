@@ -335,6 +335,14 @@ onMounted(() => {
                                         >
                                             Tambah Produk
                                         </Link>
+
+                                        <!-- Add Stock History Link -->
+                                        <Link 
+                                            :href="route('employee.stock.history')"
+                                            class="btn-view"
+                                        >
+                                            Riwayat Stok
+                                        </Link>
                                     </div>
                                 </div>
 

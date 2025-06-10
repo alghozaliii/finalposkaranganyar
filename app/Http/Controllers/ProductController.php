@@ -6,12 +6,14 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\ProductStockHistory;
 
 class ProductController extends Controller
 {
     public function create()
     {
         // Check if user is a stock employee or owner
+        /** @var \App\Models\User $user */
         $user = auth()->user();
         if (($user->role_id === 3 && $user->employees_role === 'stock') || $user->role_id === 2) {
             return Inertia::render('Employee/AddProduct');
@@ -32,23 +34,30 @@ class ProductController extends Controller
         'unit' => 'nullable|string',
     ]);
 
+    /** @var \App\Models\User $user */
     $user = auth()->user();
+    $user_id_for_product = null;
     if ($user->role_id === 3 && $user->employees_role === 'stock' && $user->owner_id) {
-        $validated['user_id'] = $user->owner_id;
+        $user_id_for_product = $user->owner_id;
     } elseif ($user->role_id === 2) {
-        $validated['user_id'] = $user->id;
+        $user_id_for_product = $user->id;
     }
 
+    $validated['user_id'] = $user_id_for_product;
     // Hitung profit per produk
     $validated['profit'] = $validated['selling_price'] - $validated['average_price'];
     $validated['status'] = 'active';
 
     // Cek apakah produk dengan kode sama sudah ada
-    $existing = \App\Models\Product::where('code', $validated['code'])
-        ->where('user_id', $validated['user_id'])
+    $existing = Product::where('code', $validated['code'])
+        ->where('user_id', $user_id_for_product)
         ->first();
 
+    $old_stock = 0;
+    $type = 'initial';
+
     if ($existing) {
+        $old_stock = $existing->stock;
         // Update stok dan harga
         $existing->stock += $validated['stock'];
         $existing->average_price = $validated['average_price'];
@@ -57,9 +66,22 @@ class ProductController extends Controller
         $existing->category = $validated['category'];
         $existing->unit = $validated['unit'];
         $existing->save();
+        $product = $existing; // Set product to existing for history logging
+        $type = 'add';
     } else {
-        \App\Models\Product::create($validated);
+        $product = Product::create($validated);
     }
+
+    // Log stock history
+    ProductStockHistory::create([
+        'product_id' => $product->id,
+        'user_id' => $user->id,
+        'old_stock' => $old_stock,
+        'new_stock' => $product->stock,
+        'change_amount' => $validated['stock'],
+        'type' => $type,
+        'notes' => 'Stock ' . ($type === 'initial' ? 'added initially' : 'increased') . ' through add product form.',
+    ]);
 
     return redirect()->back()->with('success', 'Produk berhasil disimpan');
 }
@@ -67,6 +89,7 @@ class ProductController extends Controller
 
         public function index()
         {
+            /** @var \App\Models\User $user */
             $user = auth()->user();
             
             if ($user->role_id === 3 && $user->employees_role === 'stock') {
@@ -103,7 +126,9 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         // Check if user is owner
-        if (auth()->user()->role_id !== 2) {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+        if (!$user || $user->role_id !== 2) {
             return response()->json([
                 'message' => 'Hanya owner yang dapat mengedit produk'
             ], 403);
@@ -112,7 +137,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         // Verify owner owns this product
-        if ($product->user_id !== auth()->id()) {
+        if ($product->user_id !== $user->id) {
             return response()->json([
                 'message' => 'Anda tidak memiliki akses untuk mengedit produk ini'
             ], 403);
@@ -127,10 +152,28 @@ class ProductController extends Controller
             'unit' => 'nullable|string',
         ]);
 
+        $old_stock = $product->stock;
+
         // Hitung ulang profit
         $validated['profit'] = $validated['selling_price'] - $validated['average_price'];
 
         $product->update($validated);
+
+        $new_stock = $product->stock;
+        $change_amount = $new_stock - $old_stock;
+
+        // Log stock history if stock has changed
+        if ($change_amount !== 0) {
+            ProductStockHistory::create([
+                'product_id' => $product->id,
+                'user_id' => $user->id,
+                'old_stock' => $old_stock,
+                'new_stock' => $new_stock,
+                'change_amount' => $change_amount,
+                'type' => ($change_amount > 0 ? 'add' : 'deduct'),
+                'notes' => 'Stock adjusted via edit product form.',
+            ]);
+        }
 
         return response()->json([
             'message' => 'Produk berhasil diperbarui',
@@ -140,10 +183,41 @@ class ProductController extends Controller
     public function check(Request $request)
 {
     $code = $request->query('code');
+    /** @var \App\Models\User $user */
     $user = auth()->user();
     $product = Product::where('code', $code)
         ->where('user_id', $user->role_id === 3 ? $user->owner_id : $user->id)
         ->first();
     return response()->json(['product' => $product]);
 }
+
+    public function showStockHistory()
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+        $userId = null;
+
+        if ($user->role_id === 3 && $user->employees_role === 'stock') {
+            $userId = $user->owner_id;
+        } elseif ($user->role_id === 2) {
+            $userId = $user->id;
+        } else {
+            abort(403, 'Unauthorized access');
+        }
+
+        $stockHistories = \App\Models\ProductStockHistory::whereHas('product', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })
+        ->with('product')
+        ->orderByDesc('created_at')
+        ->get();
+
+        // Get all products related to this user to pass to the frontend for mapping product IDs to names
+        $products = \App\Models\Product::where('user_id', $userId)->get();
+
+        return Inertia::render('Employee/ProductStockHistory', [
+            'stockHistories' => $stockHistories,
+            'products' => $products // Pass products as an array, not mapped
+        ]);
+    }
 }
