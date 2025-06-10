@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-purple-50">
     <AuthenticatedLayout>
-      <div class="flex min-h-screen bg-gray-100">
+      <div class="flex min-h-screen bg-purple-50">
         <!-- Sidebar -->
         <aside
           :class="[
@@ -103,9 +103,9 @@
           </header>
 
           <!-- Main Container -->
-          <div class="container mx-auto px-4 py-16 mt-16">
+          <div class="container mx-auto px-4 py-8 mt-8">
             <!-- Header Area -->
-            <div class="text-center mb-12">
+            <div class="text-center mb-8">
               <h1 class="text-4xl font-bold text-gray-800 mb-4">Frequently Asked Questions</h1>
               <p class="text-gray-600">Find answers to common questions about our POS system</p>
             </div>
@@ -354,4 +354,4 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.5);
 }
-</style> 
+</style>

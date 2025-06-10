@@ -105,24 +105,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route untuk melihat daftar produk
         Route::get('/stock/products', [ProductController::class, 'index'])->name('stock.products');
 
- 
+        // Route untuk FAQ
+        Route::get('/faq', [HelpdeskController::class, 'ownerFaq'])->name('HelpdeskOwner');
         
         // Route untuk halaman invoice pembayaran
         Route::get('/invoice', function () {
             return Inertia::render('Employee/InvoicePembayaran');
         })->name('invoice');
-
-        
     });
 
     // **Route untuk Admin**
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     });
-
-    Route::get('/helpdeskowner', function () {
-        return Inertia::render('HelpdeskOwner');
-    })->name('helpdeskowner');
 
     // **Verifikator**
     Route::prefix('verificator')->name('verificator.')->group(function () {

@@ -806,11 +806,12 @@ const activateSection = (section) => {
 };
 
 // Navigation
-const goToFAQ = () => router.get('/helpdeskowner');
+const goToDashboard = () => router.get(route('owner.dashboard'));
 const goToCashier = () => router.get(route('owner.cashier'));
 const goToStock = () => router.get(route('owner.stock'));
-const goToSales = () => router.get(route('owner.sales'));
-const goToSalesRecommendation = () => router.get(route('owner.sales.recommendation'));
+const goToEmployees = () => router.get(route('owner.employees'));
+const goToFAQ = () => router.get(route('owner.HelpdeskOwner'));
+const goToLaporan = () => router.get(route('owner.laporan'));
 const logout = () => router.post(route('logout'));
 const setActiveTab = t => activeTab.value = t;
 

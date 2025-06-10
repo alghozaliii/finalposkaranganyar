@@ -59,6 +59,7 @@ class HelpdeskController extends Controller
         $faqs = FAQ::whereNotNull('answer')->get();
         return Inertia::render('FAQ', ['faqs' => $faqs]);
     }
+    
 
     public function create()
     {
@@ -70,5 +71,11 @@ class HelpdeskController extends Controller
     {
         $faqs = FAQ::whereNotNull('answer')->get();
         return Inertia::render('FAQguest', ['faqs' => $faqs]);
+    }
+
+    public function ownerFaq()
+    {
+        $faqs = FAQ::whereNotNull('answer')->get();
+        return Inertia::render('HelpdeskOwner', ['faqs' => $faqs]);
     }
 }
