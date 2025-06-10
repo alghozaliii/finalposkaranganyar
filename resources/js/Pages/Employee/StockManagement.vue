@@ -589,17 +589,6 @@ onMounted(() => {
                                                     <option value="pack">pack</option>
                                                 </select>
                                             </div>
-                                            <div class="form-group">
-                                                <label>Table</label>
-                                                <select v-model="editingProduct.table">
-                                                    <option value="">Pilih Table</option>
-                                                    <option value="1">Table 1</option>
-                                                    <option value="2">Table 2</option>
-                                                    <option value="3">Table 3</option>
-                                                    <option value="4">Table 4</option>
-                                                    <option value="5">Table 5</option>
-                                                </select>
-                                            </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button class="btn-cancel" @click="showEditModal = false">Batal</button>
