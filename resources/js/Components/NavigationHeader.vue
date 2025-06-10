@@ -3,7 +3,7 @@
     <div class="max-w-[1180px] mx-auto px-4 py-4 flex items-center justify-between">
       <!-- Logo -->
       <h1 class="text-4xl font-bold text-stone-900">
-        GWL
+        SIKARA
       </h1>
 
       <!-- Desktop Menu -->

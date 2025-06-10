@@ -6,7 +6,7 @@
         <section class="fixed inset-0 bg-black flex justify-center items-start overflow-y-auto pt-20 md:pt-24 pb-10">   
             <div class="w-full max-w-2xl px-4 my-8">
                 <form @submit.prevent="submit" enctype="multipart/form-data" class="bg-zinc-900 rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl border border-zinc-800">
-                    <!-- Header dengan Logo GWL yang Ditingkatkan -->
+                    <!-- Header dengan Logo SIKARA yang Ditingkatkan -->
                     <div class="flex flex-col items-center mb-8">
                         <!-- Container Logo dengan efek lebih kuat -->
                         <div class="shrink-0 h-16 w-[140px] mb-6 relative overflow-hidden">
@@ -16,10 +16,10 @@
                             <!-- Lingkaran efek di belakang logo -->
                             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-br from-violet-700/40 to-indigo-600/40 rounded-full blur-md"></div>
                             
-                            <!-- GWL Text dengan efek yang lebih kaya -->
+                            <!-- SIKARA Text dengan efek yang lebih kaya -->
                             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
                                 <a href="/" class="block">
-                                    <span class="text-5xl font-extrabold tracking-widest text-center inline-block bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-white to-purple-500 animate-shimmer drop-shadow-lg">GWL</span>
+                                    <span class="text-3xl font-extrabold tracking-widest inline-block bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-white to-purple-500 animate-shimmer drop-shadow-lg">SIKARA</span>
                                 </a>
                             </div>
                             
@@ -382,7 +382,7 @@ input[type="file"] {
     50%     { opacity: 0.85; }
 }
 
-/* Shimmer animation for GWL text */
+/* Shimmer animation for SIKARA text */
 @keyframes shimmer {
     0% { background-position: -100% 0; }
     100% { background-position: 200% 0; }

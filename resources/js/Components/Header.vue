@@ -10,7 +10,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        <div class="text-xl md:text-2xl font-extrabold text-purple-600 tracking-wide pl-4">GWL</div>
+        <div class="text-xl md:text-2xl font-extrabold text-purple-600 tracking-wide pl-4">SIKARA</div>
         <span class="hidden sm:inline text-gray-600 pl-28">Admin /</span>
       </div>
       <!-- Search Bar -->

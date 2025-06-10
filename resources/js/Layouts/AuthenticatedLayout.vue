@@ -39,12 +39,12 @@ const storeName = computed(() => {
               <!-- Logo -->
               <div class="flex shrink-0 items-center">
                 <Link :href="route('dashboard')" class="block">
-                  <div class="shrink-0 h-10 w-24 relative overflow-hidden">
+                  <div class="shrink-0 h-10 w-32 relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/30 via-purple-600/30 to-violet-600/30 rounded-lg blur-xl animate-pulse"></div>
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-gradient-to-br from-violet-700/40 to-indigo-600/40 rounded-full blur-md"></div>
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
                       <span class="text-3xl font-extrabold tracking-widest inline-block bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-gray-700 to-purple-500 drop-shadow-lg">
-                        GWL
+                        SIKARA
                       </span>
                     </div>
                     <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-0.5 bg-gradient-to-r from-violet-500 to-indigo-500"></div>

@@ -40,7 +40,7 @@ class EmployeeController extends Controller
         User::create([
             'username' => $request->username,
             'name' => $request->username, // Set name same as username
-            'email' => $request->username . '@gwl.com', // Add email using username
+            'email' => $request->username . '@sikara.com', // Add email using username
             'password' => Hash::make($request->password),
             'role_id' => 3,
             'employees_role' => $request->employees_role,

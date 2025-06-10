@@ -43,19 +43,19 @@
       </a>
     </div>
     
-    <!-- GWL Kasir Promotional Section -->
+    <!-- SIKARA Kasir Promotional Section -->
     <div class="mt-24 bg-purple-50 rounded-lg p-8">
       <div class="grid md:grid-cols-2 gap-8 items-center mb-12">
         <div class="order-2 md:order-1">
           <img 
             src="/images/asset.avif" 
-            alt="Mengelola usaha dengan Aplikasi Kasir GWL" 
+            alt="Mengelola usaha dengan Aplikasi Kasir SIKARA" 
             class="rounded-3xl shadow-lg w-full max-w-md"
             loading="lazy"
           />
         </div>
         <div class="order-1 md:order-2">
-          <h3 class="text-3xl font-bold text-stone-900 mb-4">Mengelola usaha lebih mudah dengan Aplikasi Kasir GWL</h3>
+          <h3 class="text-3xl font-bold text-stone-900 mb-4">Mengelola usaha lebih mudah dengan Aplikasi Kasir SIKARA</h3>
           <p class="text-base mb-6">Kami membantu Anda menyajikan data-data penting dari transaksi Anda sehingga Anda bisa membuat keputusan terbaik.</p>
           <a 
             href="/register" 
@@ -66,7 +66,7 @@
         </div>
       </div>
       
-      <h3 class="text-3xl font-bold text-center mb-12">GWL Hadir dengan solusi</h3>
+      <h3 class="text-3xl font-bold text-center mb-12">SIKARA Hadir dengan solusi</h3>
       
       <div class="grid md:grid-cols-2 gap-8 items-center">
         <div class="space-y-8">
@@ -122,7 +122,7 @@
         <div class="flex justify-center">
           <img 
             src="/images/asset2.avif" 
-            alt="Staff menggunakan aplikasi Kasir GWL" 
+            alt="Staff menggunakan aplikasi Kasir SIKARA" 
             class="rounded-3xl shadow-lg w-full max-w-md"
             loading="lazy"
           />
