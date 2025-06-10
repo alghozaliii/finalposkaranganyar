@@ -132,35 +132,35 @@
             </div>
             
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
               <!-- Total Revenue Card --> 
-              <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-6 text-white">
-                <h3 class="text-lg mb-4">Total Revenue</h3>
-                <div class="text-3xl sm:text-4xl font-bold mb-4">Rp {{ formatCurrency(totalRevenue) }}</div>
-                <div class="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-4 sm:p-6 text-white">
+                <h3 class="text-base sm:text-lg mb-2 sm:mb-4">Total Revenue</h3>
+                <div class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4">Rp {{ formatCurrency(totalRevenue) }}</div>
+                <div class="flex items-center text-sm sm:text-base">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                   </svg>
                   <span>{{ revenueGrowth }}% from last month</span>
                 </div>
               </div>
               <!-- Total Sales Card -->
-              <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-6 text-white">
-                <h3 class="text-lg mb-4">Total Sales</h3>
-                <div class="text-3xl sm:text-4xl font-bold mb-4">{{ totalSales }}</div>
-                <div class="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-4 sm:p-6 text-white">
+                <h3 class="text-base sm:text-lg mb-2 sm:mb-4">Total Sales</h3>
+                <div class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4">{{ totalSales }}</div>
+                <div class="flex items-center text-sm sm:text-base">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                   </svg>
                   <span>{{ salesGrowth }}% from last month</span>
                 </div>
               </div>
               <!-- Customer Card -->
-              <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-6 text-white">
-                <h3 class="text-lg mb-4">Customer</h3>
-                <div class="text-3xl sm:text-4xl font-bold mb-4">{{ totalCustomers }}</div>
-                <div class="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-4 sm:p-6 text-white">
+                <h3 class="text-base sm:text-lg mb-2 sm:mb-4">Customer</h3>
+                <div class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4">{{ totalCustomers }}</div>
+                <div class="flex items-center text-sm sm:text-base">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                   </svg>
                   <span>{{ customerGrowth }}% from last Month</span>
@@ -171,111 +171,67 @@
             <!-- Revenue Chart and Top Products -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
               <!-- Revenue Chart -->
-              <div class="lg:col-span-2 bg-white rounded-lg border p-4 md:p-6">
-                <div class="flex justify-between items-center mb-4">
-                  <h3 class="text-lg font-medium">Total Revenue</h3>
-                </div>
-                <div class="h-48 md:h-64 flex items-end justify-between gap-1 md:gap-2 overflow-x-auto pb-2">
-                  <div v-for="(monthData, index) in monthlyRevenueData" :key="index" 
-                       class="w-8 md:w-16 rounded-t-lg transition-all duration-300 min-w-[2rem]"
-                       :class="currentMonth === index + 1 ? 'bg-purple-700' : 'bg-purple-200'"
-                       :style="{ height: `${getBarHeight(monthData.total_revenue)}%` }"
-                       :title="`${monthData.month}: Rp ${formatCurrency(monthData.total_revenue)}`">
+              <div class="lg:col-span-2 bg-white rounded-lg border p-3 sm:p-4 md:p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+                  <h3 class="text-base sm:text-lg font-medium">Total Revenue</h3>
+                  <div class="flex gap-2 text-sm">
+                    <select v-model="chartPeriod" class="border rounded px-2 py-1">
+                      <option>Month</option>
+                      <option>Year</option>
+                    </select>
                   </div>
                 </div>
-                <div class="flex justify-between mt-2 text-[10px] md:text-sm text-gray-500 overflow-x-auto">
-                  <div v-for="(month, index) in chartLabels" :key="index" class="min-w-[2rem] text-center">
-                    {{ month.substring(0,3) }}
-                  </div>
+                <div class="h-40 sm:h-48 md:h-64 relative">
+                  <!-- Chart content -->
                 </div>
               </div>
+              
               <!-- Top Products -->
-              <div class="bg-white rounded-lg border p-6">
-                <h3 class="text-lg font-medium mb-4">Top Products</h3>
-                <div class="space-y-4">
-                  <div v-for="(product, index) in recommendedProducts" :key="index" class="border-b pb-3 last:border-0">
-                    <div class="flex justify-between items-center">
-                      <div class="text-sm">
-                        <span class="text-gray-500">{{ String(index+1).padStart(2,'0') }}</span>
-                        <span class="ml-2">{{ product.name }}</span>
-                      </div>
-                      <div class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs">{{ product.sales }}%</div>
+              <div class="bg-white rounded-lg border p-4 sm:p-6">
+                <h3 class="text-base sm:text-lg font-medium mb-4">Top Products</h3>
+                <div class="space-y-3 sm:space-y-4">
+                  <div v-for="(product, index) in recommendedProducts" :key="index" 
+                       class="flex justify-between items-center p-2 sm:p-3 border-b last:border-0">
+                    <div class="flex items-center gap-2 text-sm sm:text-base">
+                      <span class="text-gray-500">{{ String(index+1).padStart(2,'0') }}</span>
+                      <span class="truncate max-w-[150px] sm:max-w-[200px]">{{ product.name }}</span>
                     </div>
-                  </div>
-                </div>
-                <div v-if="recommendedProducts && recommendedProducts.length > 0" class="mt-6 bg-blue-100 rounded-lg p-4 flex items-center justify-center">
-                  <div class="text-center">
-                    <div class="text-yellow-500 text-2xl mb-2">👑</div>
-                    <div class="font-bold">Top 1</div>
-                    <div class="text-blue-700 font-semibold">{{ recommendedProducts[0]?.name }}</div>
-                  </div>
-                </div>
-                <div v-else class="mt-6 bg-gray-100 rounded-lg p-4 flex items-center justify-center">
-                  <div class="text-center text-gray-500">
-                    No product data available
+                    <div class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs sm:text-sm">
+                      {{ product.sales }}%
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Transaction History -->
-            <div class="bg-white rounded-lg border p-6 overflow-x-auto">
-              <h3 class="text-lg font-medium mb-4">History Transaksi</h3>
-              
-              <div v-if="transactionHistory.length > 0">
-                <table class="min-w-full divide-y divide-gray-200">
-                  <thead class="bg-gray-50">
-                    <tr>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. Invoice</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Metode Pembayaran</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Item</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Harga</th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-white divide-y divide-gray-200">
-                    <template v-for="(invoice, index) in transactionHistory" :key="invoice.invoice_number">
-                      <tr @click="handleRowClick(invoice)" style="cursor: pointer">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">{{ index + 1 }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">{{ invoice.invoice_number }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">{{ formatDate(invoice.created_at || invoice.date) }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap capitalize text-sm">{{ invoice.payment_method }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">{{ invoice.total_items || invoice.items?.length || 0 }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">Rp {{ formatCurrency(invoice.total_amount || invoice.total_price || 0) }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        </td>
+            <div class="bg-white rounded-lg border p-3 sm:p-4 md:p-6">
+              <h3 class="text-base sm:text-lg font-medium mb-4">History Transaksi</h3>
+              <div class="overflow-x-auto -mx-3 sm:-mx-4 md:-mx-6">
+                <div class="inline-block min-w-full align-middle">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                        <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. Invoice</th>
+                        <th class="hidden sm:table-cell px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                        <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                        <th class="hidden sm:table-cell px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Metode</th>
                       </tr>
-                      <!-- Expanded Details -->
-                      <tr v-if="expandedInvoices.includes(invoice.invoice_number)">
-                        <td colspan="7" class="px-6 py-4 bg-gray-50">
-                          <div class="space-y-2">
-                            <h4 class="font-semibold">Detail Item:</h4>
-                            <table class="min-w-full divide-y divide-gray-200">
-                              <thead>
-                                <tr>
-                                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Produk</th>
-                                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Jumlah</th>
-                                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Harga</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr v-for="item in invoice.items" :key="item.product_name">
-                                  <td class="px-4 py-2 text-sm">{{ item.product_name }}</td>
-                                  <td class="px-4 py-2 text-sm">{{ item.quantity }}</td>
-                                  <td class="px-4 py-2 text-sm">Rp {{ formatCurrency(item.total_price) }}</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                      <tr v-for="(invoice, index) in transactionHistory" :key="invoice.invoice_number" 
+                          @click="handleRowClick(invoice)" 
+                          class="hover:bg-gray-50 cursor-pointer">
+                        <td class="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-sm">{{ index + 1 }}</td>
+                        <td class="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-sm">{{ invoice.invoice_number }}</td>
+                        <td class="hidden sm:table-cell px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-sm">{{ formatDate(invoice.created_at) }}</td>
+                        <td class="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-sm">Rp {{ formatCurrency(invoice.total_price || invoice.total_amount || 0) }}</td>
+                        <td class="hidden sm:table-cell px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap capitalize text-sm">{{ invoice.payment_method }}</td>
                       </tr>
-                    </template>
-                  </tbody>
-                </table>
-              </div>
-              <div v-else class="text-gray-500 text-center py-4">
-                Tidak ada data transaksi.
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>

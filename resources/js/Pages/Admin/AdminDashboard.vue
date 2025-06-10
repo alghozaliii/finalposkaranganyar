@@ -2,13 +2,13 @@
   <Head title="Admin Dashboard" />
 
   <AuthenticatedLayout>
-    <div class="flex min-h-screen bg-gray-100">
-      <!-- Sidebar -->
+    <div class="flex flex-col min-h-screen bg-gray-100">
+      <!-- Sidebar - Made collapsible on mobile -->
       <aside
         :class="[
-          'bg-white shadow-lg flex flex-col items-center pt-6 fixed inset-y-0 left-0 transition-transform z-30',
-          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full',
-          'md:translate-x-0 md:static md:w-24 w-64'
+          'bg-white shadow-lg flex flex-col items-center pt-6 transition-all duration-300 ease-in-out z-30',
+          mobileMenuOpen ? 'fixed inset-y-0 left-0 w-64' : '-translate-x-full fixed inset-y-0 left-0 w-64',
+          'md:translate-x-0 md:static md:w-20 lg:w-24'
         ]"
       >        
         <nav class="flex flex-col items-center gap-10 mt-8 flex-1">
@@ -40,27 +40,31 @@
         class="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
       ></div>
 
-      <!-- Main content -->
-      <div class="flex-1 md:ml-24">
-        <!-- Mobile header -->
-        <header class="flex items-center justify-between bg-white p-4 shadow md:hidden">
-          <button @click="toggleMobileMenu()">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <!-- Main content wrapper -->
+      <div class="flex-1 w-full md:pl-20 lg:pl-24">
+        <!-- Mobile header - Updated styling -->
+        <header class="sticky top-0 bg-white p-4 shadow flex items-center justify-between md:hidden">
+          <button 
+            @click="toggleMobileMenu()"
+            class="p-2 rounded-lg hover:bg-gray-100 focus:outline-none"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
           <h1 class="text-lg font-semibold">Dashboard</h1>
-          <div class="w-8 h-8 rounded-full bg-gray-300"></div>
+          <div class="w-6"></div>
         </header>
 
-        <main class="p-6 space-y-8">
-          <!-- Stats Cards -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+        <!-- Main content area - Updated padding and spacing -->
+        <main class="p-4 md:p-6 space-y-6">
+          <!-- Stats Cards - Updated responsive grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             <!-- Total Owners Card -->
-            <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-6 text-white">
-              <h3 class="text-lg mb-4">Total Owners</h3>
-              <div class="text-3xl sm:text-4xl font-bold mb-4">{{ totalOwners }}</div>
-              <div class="flex items-center">
+            <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-4 md:p-6 text-white">
+              <h3 class="text-base md:text-lg mb-2 md:mb-4">Total Owners</h3>
+              <div class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-4">{{ totalOwners }}</div>
+              <div class="flex items-center text-sm md:text-base">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                 </svg>
@@ -69,10 +73,10 @@
             </div>
 
             <!-- Active Stores Card -->
-            <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-6 text-white">
-              <h3 class="text-lg mb-4">Active Stores</h3>
-              <div class="text-3xl sm:text-4xl font-bold mb-4">0</div>
-              <div class="flex items-center">
+            <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-4 md:p-6 text-white">
+              <h3 class="text-base md:text-lg mb-2 md:mb-4">Active Stores</h3>
+              <div class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-4">0</div>
+              <div class="flex items-center text-sm md:text-base">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                 </svg>
@@ -81,10 +85,10 @@
             </div>
 
             <!-- Total Sales Card -->
-            <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-6 text-white">
-              <h3 class="text-lg mb-4">Total Sales</h3>
-              <div class="text-3xl sm:text-4xl font-bold mb-4">Rp 0</div>
-              <div class="flex items-center">
+            <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-4 md:p-6 text-white">
+              <h3 class="text-base md:text-lg mb-2 md:mb-4">Total Sales</h3>
+              <div class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-4">Rp 0</div>
+              <div class="flex items-center text-sm md:text-base">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                 </svg>
@@ -93,36 +97,48 @@
             </div>
           </div>
 
-          <!-- Store Information Table -->
-          <div class="bg-white rounded-lg border p-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Store Information</h2>
-            <div class="overflow-x-auto">
-              <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                  <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Store Name</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Owner Email</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employees</th>
-                  </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                  <tr v-if="!owners.length">
-                    <td colspan="3" class="px-6 py-4 text-center text-gray-500">No stores registered</td>
-                  </tr>
-                  <tr v-for="owner in owners" :key="owner.id" class="hover:bg-gray-50">
-                    <td class="px-6 py-4 whitespace-nowrap">{{ owner.store_name || '-' }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{ owner.email }}</td>
-                    <td class="px-6 py-4">
-                      <div v-if="owner.employees && owner.employees.length" class="space-y-1">
-                        <div v-for="emp in owner.employees" :key="emp.id" class="text-sm">
-                          {{ emp.name }} ({{ emp.employees_role }})
+          <!-- Store Information Table - Made scrollable on mobile -->
+          <div class="bg-white rounded-lg border overflow-hidden">
+            <div class="p-4 md:p-6">
+              <h2 class="text-lg md:text-xl font-semibold text-gray-900 mb-4">Store Information</h2>
+              <div class="overflow-x-auto -mx-4 md:mx-0">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Store Name
+                      </th>
+                      <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Owner Email
+                      </th>
+                      <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Employees
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    <tr v-if="!owners.length">
+                      <td colspan="3" class="px-3 md:px-6 py-4 text-center text-gray-500">No stores registered</td>
+                    </tr>
+                    <tr v-for="owner in owners" :key="owner.id" class="hover:bg-gray-50">
+                      <td class="px-3 md:px-6 py-4 text-sm">
+                        <div class="break-words">{{ owner.store_name || '-' }}</div>
+                      </td>
+                      <td class="px-3 md:px-6 py-4 text-sm">
+                        <div class="break-words">{{ owner.email }}</div>
+                      </td>
+                      <td class="px-3 md:px-6 py-4 text-sm">
+                        <div v-if="owner.employees && owner.employees.length" class="space-y-1">
+                          <div v-for="emp in owner.employees" :key="emp.id" class="break-words">
+                            {{ emp.name }} ({{ emp.employees_role }})
+                          </div>
                         </div>
-                      </div>
-                      <span v-else class="text-gray-500">No employees</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                        <span v-else class="text-gray-500">No employees</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
 
@@ -176,21 +192,35 @@ const logout = () => router.post(route('logout'));
 </script>
 
 <style scoped>
-/* Custom scrollbar */
+/* Add touch-friendly scrolling for mobile */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Custom scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(39, 39, 42, 0.5);
+  background: rgba(39, 39, 42, 0.1);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.5);
-  border-radius: 4px;
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.7);
+  background: rgba(139, 92, 246, 0.5);
+}
+
+/* Add smooth transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
 }
 </style>
