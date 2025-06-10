@@ -93,6 +93,39 @@
             </div>
           </div>
 
+          <!-- Store Information Table -->
+          <div class="bg-white rounded-lg border p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Store Information</h2>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Store Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Owner Email</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employees</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr v-if="!owners.length">
+                    <td colspan="3" class="px-6 py-4 text-center text-gray-500">No stores registered</td>
+                  </tr>
+                  <tr v-for="owner in owners" :key="owner.id" class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap">{{ owner.store_name || '-' }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ owner.email }}</td>
+                    <td class="px-6 py-4">
+                      <div v-if="owner.employees && owner.employees.length" class="space-y-1">
+                        <div v-for="emp in owner.employees" :key="emp.id" class="text-sm">
+                          {{ emp.name }} ({{ emp.employees_role }})
+                        </div>
+                      </div>
+                      <span v-else class="text-gray-500">No employees</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <!-- Recent Activity -->
           <div class="bg-white rounded-lg border p-6">
             <h2 class="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h2>
@@ -116,6 +149,10 @@ const props = defineProps({
   totalOwners: {
     type: Number,
     default: 0
+  },
+  owners: {
+    type: Array,
+    default: () => []
   }
 });
 
@@ -156,4 +193,4 @@ const logout = () => router.post(route('logout'));
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(139, 92, 246, 0.7);
 }
-</style> 
+</style>

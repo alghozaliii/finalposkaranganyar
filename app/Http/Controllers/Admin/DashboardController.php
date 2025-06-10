@@ -11,10 +11,19 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalOwners = User::where('role_id', 2)->count();
+        // Get all owners with their employees
+        $owners = User::where('role_id', 2)
+            ->with(['employees' => function($query) {
+                $query->select('id', 'name', 'employees_role', 'owner_id');
+            }])
+            ->select('id', 'email', 'store_name')
+            ->get();
+
+        $totalOwners = $owners->count();
         
         return Inertia::render('Admin/AdminDashboard', [
-            'totalOwners' => $totalOwners
+            'totalOwners' => $totalOwners,
+            'owners' => $owners
         ]);
     }
-} 
+}
