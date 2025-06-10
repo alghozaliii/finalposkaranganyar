@@ -65,7 +65,8 @@ class EmployeeController extends Controller
                         ->where('role_id', 3)
                         ->firstOrFail();
         
-        $employee->delete();
+        // Force delete untuk menghapus data secara permanen
+        $employee->forceDelete();
         
         return redirect()->back()->with('success', 'Employee successfully removed.');
     }
