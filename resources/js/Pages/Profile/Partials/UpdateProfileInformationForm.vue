@@ -19,6 +19,9 @@ const user = usePage().props.auth.user;
 const form = useForm({
     name: user.name,
     email: user.email,
+    store_name: user.store_name,
+    address: user.address,
+    phone: user.phone,
 });
 </script>
 
@@ -49,6 +52,7 @@ const form = useForm({
                     required
                     autofocus
                     autocomplete="name"
+                    disabled
                 />
 
                 <InputError class="mt-2" :message="form.errors.name" />
@@ -64,9 +68,55 @@ const form = useForm({
                     v-model="form.email"
                     required
                     autocomplete="username"
+                    disabled
                 />
 
                 <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+
+            <div>
+                <InputLabel for="store_name" value="Store Name" />
+
+                <TextInput
+                    id="store_name"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.store_name"
+                    autocomplete="store_name"
+                    disabled
+                />
+
+                <InputError class="mt-2" :message="form.errors.store_name" />
+            </div>
+
+            <div>
+                <InputLabel for="address" value="Address" />
+
+                <TextInput
+                    id="address"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.address"
+                    autocomplete="address"
+                    disabled
+                />
+
+                <InputError class="mt-2" :message="form.errors.address" />
+            </div>
+
+            <div>
+                <InputLabel for="phone" value="Phone" />
+
+                <TextInput
+                    id="phone"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.phone"
+                    autocomplete="phone"
+                    disabled
+                />
+
+                <InputError class="mt-2" :message="form.errors.phone" />
             </div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">
@@ -88,24 +138,6 @@ const form = useForm({
                 >
                     A new verification link has been sent to your email address.
                 </div>
-            </div>
-
-            <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
-
-                <Transition
-                    enter-active-class="transition ease-in-out"
-                    enter-from-class="opacity-0"
-                    leave-active-class="transition ease-in-out"
-                    leave-to-class="opacity-0"
-                >
-                    <p
-                        v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600"
-                    >
-                        Saved.
-                    </p>
-                </Transition>
             </div>
         </form>
     </section>
