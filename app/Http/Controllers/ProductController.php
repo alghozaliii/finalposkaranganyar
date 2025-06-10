@@ -23,20 +23,15 @@ class ProductController extends Controller
     public function store(Request $request)
 {
     $validated = $request->validate([
-        'code' => 'required|unique:products,code',
+        'code' => 'required',
         'name' => 'required',
-        'stock' => 'required|integer',
-        'average_price' => 'required|numeric',
-        'selling_price' => 'required|numeric',
+        'stock' => 'required|integer|min:1',
+        'average_price' => 'required|numeric|min:0',
+        'selling_price' => 'required|numeric|min:0',
         'category' => 'nullable|string',
         'unit' => 'nullable|string',
     ]);
 
-    // Hitung profit (keuntungan per produk)
-    $validated['profit'] = $validated['selling_price'] - $validated['average_price'];
-    $validated['status'] = 'active'; // Tambahkan status default
-
-    // Get the current user
     $user = auth()->user();
     if ($user->role_id === 3 && $user->employees_role === 'stock' && $user->owner_id) {
         $validated['user_id'] = $user->owner_id;
@@ -44,9 +39,29 @@ class ProductController extends Controller
         $validated['user_id'] = $user->id;
     }
 
-    Product::create($validated);
+    // Hitung profit per produk
+    $validated['profit'] = $validated['selling_price'] - $validated['average_price'];
+    $validated['status'] = 'active';
 
-    return redirect()->back()->with('success', 'Produk berhasil ditambahkan');
+    // Cek apakah produk dengan kode sama sudah ada
+    $existing = \App\Models\Product::where('code', $validated['code'])
+        ->where('user_id', $validated['user_id'])
+        ->first();
+
+    if ($existing) {
+        // Update stok dan harga
+        $existing->stock += $validated['stock'];
+        $existing->average_price = $validated['average_price'];
+        $existing->selling_price = $validated['selling_price'];
+        $existing->profit = $validated['profit'];
+        $existing->category = $validated['category'];
+        $existing->unit = $validated['unit'];
+        $existing->save();
+    } else {
+        \App\Models\Product::create($validated);
+    }
+
+    return redirect()->back()->with('success', 'Produk berhasil disimpan');
 }
     
 
@@ -122,4 +137,13 @@ class ProductController extends Controller
             'product' => $product
         ]);
     }
+    public function check(Request $request)
+{
+    $code = $request->query('code');
+    $user = auth()->user();
+    $product = Product::where('code', $code)
+        ->where('user_id', $user->role_id === 3 ? $user->owner_id : $user->id)
+        ->first();
+    return response()->json(['product' => $product]);
+}
 }

@@ -1,7 +1,8 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { Head, useForm } from '@inertiajs/vue3';
+import { ref, computed, watch } from 'vue';
+import axios from 'axios';
 
 const form = useForm({
   code: '',
@@ -13,34 +14,47 @@ const form = useForm({
   unit: '',
 });
 
-const oldStock = ref(0);
-const oldPrice = ref(0);
-const newStock = ref(0);
-const newPrice = ref(0);
+const existingProduct = ref(null);
 
-const totalStock = computed(() => oldStock.value + newStock.value);
+const keuntunganBaru = computed(() => {
+  return form.selling_price - form.average_price;
+});
+const stokBaru = computed(() => {
+  if (existingProduct.value) {
+    return Number(existingProduct.value.stock) + Number(form.stock);
+  }
+  return form.stock;
+});
 
-const averagePrice = computed(() => {
-  const total = totalStock.value;
-  if (total === 0) return 0;
-  return ((oldStock.value * oldPrice.value) + (newStock.value * newPrice.value)) / total;
+// Cek produk saat kode berubah
+watch(() => form.code, async (newCode) => {
+  if (!newCode) {
+    existingProduct.value = null;
+    return;
+  }
+  try {
+    const res = await axios.get(`/employee/stock/check?code=${encodeURIComponent(newCode)}`);
+    existingProduct.value = res.data.product || null;
+  } catch {
+    existingProduct.value = null;
+  }
+});
+
+// Jika produk ditemukan, isi otomatis nama produk di form
+watch(existingProduct, (val) => {
+  if (val) {
+    form.name = val.name;
+  }
 });
 
 function addProduct() {
-  form.stock = totalStock.value;
-  form.average_price = averagePrice.value.toFixed(2);
-
   form.post('/employee/stock', {
     onSuccess: () => {
-      alert('Produk berhasil ditambahkan!');
       form.reset();
-      oldStock.value = 0;
-      oldPrice.value = 0;
-      newStock.value = 0;
-      newPrice.value = 0;
+      existingProduct.value = null;
     },
     onError: () => {
-      alert('Gagal menambahkan produk. Periksa isian.');
+      // error handling
     }
   });
 }
@@ -48,33 +62,56 @@ function addProduct() {
 
 <template>
   <Head title="Tambah Produk" />
-
   <AuthenticatedLayout>
     <template #header>
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">Tambah Produk</h2>
     </template>
-
     <div class="py-12">
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white shadow-sm rounded-lg p-6 text-gray-900">
           <form @submit.prevent="addProduct" class="space-y-6">
             <div>
               <label class="block mb-1">Kode Produk</label>
               <input v-model="form.code" type="text" class="w-full border p-2 rounded" required />
               <div v-if="form.errors.code" class="text-red-500 text-sm">{{ form.errors.code }}</div>
+              <!-- Info produk lama -->
+              <div v-if="existingProduct" class="p-3 mb-2 bg-yellow-50 border border-yellow-300 rounded">
+                <div class="font-semibold text-yellow-700 mb-1">Produk ditemukan!</div>
+                <div class="text-sm">
+                  <div>Stok lama: <span class="font-bold">{{ existingProduct.stock }}</span></div>
+                  <div>Harga beli lama: <span class="font-bold">Rp {{ Number(existingProduct.average_price).toLocaleString('id-ID') }}</span></div>
+                  <div>Harga jual lama: <span class="font-bold">Rp {{ Number(existingProduct.selling_price).toLocaleString('id-ID') }}</span></div>
+                  <div>Keuntungan lama: <span class="font-bold">Rp {{ Number(existingProduct.selling_price - existingProduct.average_price).toLocaleString('id-ID') }}</span></div>
+                </div>
+              </div>
             </div>
-
             <div>
               <label class="block mb-1">Nama Produk</label>
               <input v-model="form.name" type="text" class="w-full border p-2 rounded" required />
               <div v-if="form.errors.name" class="text-red-500 text-sm">{{ form.errors.name }}</div>
             </div>
             <div>
+              <label class="block mb-1">Stok</label>
+              <input v-model.number="form.stock" type="number" class="w-full border p-2 rounded" required min="1" />
+              <div v-if="existingProduct" class="text-sm mt-1">
+                Stok setelah update: <span class="font-bold text-blue-700">{{ stokBaru }}</span>
+              </div>
+            </div>
+            <div>
+              <label class="block mb-1">Harga Beli</label>
+              <input v-model.number="form.average_price" type="number" class="w-full border p-2 rounded" required min="0" />
+            </div>
+            <div>
+              <label class="block mb-1">Harga Jual</label>
+              <input v-model.number="form.selling_price" type="number" class="w-full border p-2 rounded" required min="0" />
+              <div v-if="form.selling_price && form.average_price" class="text-sm mt-1">
+                Keuntungan per produk baru: <span class="font-bold text-green-700">Rp {{ keuntunganBaru.toLocaleString('id-ID') }}</span>
+              </div>
+            </div>
+            <div>
               <label for="category">Kategori</label>
-              <select v-model="form.category" id="category">
-                <option value="Sembako">Sembako</option>
-                <option value="Makanan Instan & Siap Saji">Makanan Instan & Siap Saji</option>
-                <option value="Camilan & Snack">Camilan & Snack</option>
+              <select v-model="form.category" id="category" class="w-full border p-2 rounded">
+                <option value="">Pilih Kategori</option>
                 <option value="Minuman">Minuman</option>
                 <option value="Produk Susu">Produk Susu</option>
                 <option value="Bumbu Dapur">Bumbu Dapur</option>
@@ -93,9 +130,10 @@ function addProduct() {
                 <option value="Kosmetik Ringan">Kosmetik Ringan</option>
                 <option value="Makanan Hewan">Makanan Hewan</option>
               </select>
-
+            </div>
+            <div>
               <label for="unit">Unit</label>
-              <select v-model="form.unit" id="unit">
+              <select v-model="form.unit" id="unit" class="w-full border p-2 rounded">
                 <option value="" disabled>Pilih unit</option>
                 <option value="pcs">pcs</option>
                 <option value="box">box</option>
@@ -103,37 +141,6 @@ function addProduct() {
                 <option value="liter">liter</option>
               </select>
             </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label>Stok Lama</label>
-                <input v-model.number="oldStock" type="number" class="w-full border p-2 rounded" required />
-              </div>
-              <div>
-                <label>Harga Lama</label>
-                <input v-model.number="oldPrice" type="number" class="w-full border p-2 rounded" required />
-              </div>
-              <div>
-                <label>Stok Baru</label>
-                <input v-model.number="newStock" type="number" class="w-full border p-2 rounded" required />
-              </div>
-              <div>
-                <label>Harga Baru</label>
-                <input v-model.number="newPrice" type="number" class="w-full border p-2 rounded" required />
-              </div>
-            </div>
-
-           <div class="bg-gray-100 p-4 rounded">
-  <p><strong>Total Stok:</strong> {{ totalStock }}</p>
-  <p><strong>Harga Rata-rata:</strong> Rp {{ averagePrice.toLocaleString('id-ID', {minimumFractionDigits: 2}) }}</p>
-  <p><strong>Estimasi Keuntungan per Produk:</strong> Rp {{ (form.selling_price - averagePrice).toLocaleString('id-ID', {minimumFractionDigits: 2}) }}</p>
-</div>
-
-            <div>
-              <label class="block mb-1">Harga Jual</label>
-              <input v-model.number="form.selling_price" type="number" class="w-full border p-2 rounded" required />
-              <div v-if="form.errors.selling_price" class="text-red-500 text-sm">{{ form.errors.selling_price }}</div>
-            </div>
-
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
               Simpan Produk
             </button>

@@ -249,3 +249,6 @@ Route::middleware(['auth'])->group(function () {
 Route::post('/products/{id}/toggle-status', [ProductController::class, 'toggleStatus'])
     ->name('products.toggle-status')
     ->middleware(['auth']);
+
+   
+Route::get('/employee/stock/check', [ProductController::class, 'check']);
