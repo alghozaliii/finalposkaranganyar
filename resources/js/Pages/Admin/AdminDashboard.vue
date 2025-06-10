@@ -56,15 +56,15 @@
         <main class="p-6 space-y-8">
           <!-- Stats Cards -->
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-            <!-- Total Users Card -->
+            <!-- Total Owners Card -->
             <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-6 text-white">
-              <h3 class="text-lg mb-4">Total Users</h3>
-              <div class="text-3xl sm:text-4xl font-bold mb-4">0</div>
+              <h3 class="text-lg mb-4">Total Owners</h3>
+              <div class="text-3xl sm:text-4xl font-bold mb-4">{{ totalOwners }}</div>
               <div class="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                 </svg>
-                <span>0% from last month</span>
+                <span>Total registered owners</span>
               </div>
             </div>
 
@@ -110,6 +110,14 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
+
+// Props
+const props = defineProps({
+  totalOwners: {
+    type: Number,
+    default: 0
+  }
+});
 
 // UI state
 const mobileMenuOpen = ref(false);
