@@ -63,7 +63,7 @@ jobs:
           npm run build
 
       - name: Copy startup script
-        run: cp .github/workflows/startup.sh startup.sh
+        run: cp .github/startup.sh startup.sh
 
       - name: Make startup.sh executable
         run: chmod +x startup.sh
