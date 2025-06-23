@@ -32,6 +32,7 @@ php artisan cache:clear
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
+php artisan key:generate --force
 
 # Cache configuration for production
 echo "Caching configuration..."
