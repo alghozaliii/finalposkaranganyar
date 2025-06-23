@@ -50,7 +50,7 @@ jobs:
           cat > .env << EOF
           APP_NAME=Laravel
           APP_ENV=production
-          APP_KEY=
+          APP_KEY=base64:86GW9tkIkctF2+ytYKeLBFwVxKAQPvizlt24WPr1Gfk=
           APP_DEBUG=false
           APP_URL=https://sikarawebapp.azurewebsites.net
           
