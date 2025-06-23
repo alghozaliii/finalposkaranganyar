@@ -62,6 +62,10 @@ jobs:
           npm ci
           npm run build
 
+      - name: Make startup.sh executable
+        run: chmod +x startup.sh
+
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
