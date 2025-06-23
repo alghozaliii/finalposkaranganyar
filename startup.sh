@@ -1,12 +1,10 @@
 #!/bin/bash
 
-cd /home/site/wwwroot
+echo "Running Laravel startup script"
 
-# Bersihkan dan cache ulang konfigurasi Laravel
-php artisan config:clear
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+# Set permission
+chmod -R 755 /home/site/wwwroot/storage
+chmod -R 755 /home/site/wwwroot/bootstrap/cache
 
-# Jalankan Laravel dari folder public
+# Start php built-in server
 php -S 0.0.0.0:8080 -t public
