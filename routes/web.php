@@ -246,11 +246,12 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Route tambahan untuk toggle status produk
-Route::post('/products/{id}/toggle-status', [ProductController::class, 'toggleStatus'])
-    ->name('products.toggle-status')
-    ->middleware(['auth']);
+// !!! Duplicate route name, comment out or rename to fix route:cache error !!!
+// Route::post('/products/{id}/toggle-status', [ProductController::class, 'toggleStatus'])
+//     ->name('products.toggle-status')
+//     ->middleware(['auth']);
 
-   
+
 Route::get('/employee/stock/check', [ProductController::class, 'check']);
 
 // Add route for stock history
