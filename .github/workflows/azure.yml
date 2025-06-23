@@ -36,21 +36,16 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.2
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, pdo_mysql, zip
 
       - name: Install Composer dependencies
-        run: composer install --no-dev --optimize-autoloader
-      
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
       - name: Copy .env.example to .env
         run: cp .env.example .env
 
       - name: Generate Laravel key
         run: php artisan key:generate --force
-
-      - name: Cache Laravel config
-        run: |
-          php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -62,12 +57,25 @@ jobs:
           npm ci
           npm run build
 
+      - name: Create startup script
+        run: |
+          cat > startup.sh << 'EOF'
+          #!/bin/bash
+          cp /home/site/wwwroot/.env.example /home/site/wwwroot/.env
+          chmod -R 755 /home/site/wwwroot/storage
+          chmod -R 755 /home/site/wwwroot/bootstrap/cache
+          cd /home/site/wwwroot
+          php artisan key:generate --force
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+          EOF
+
       - name: Make startup.sh executable
         run: chmod +x startup.sh
 
-
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: sikarawebapp
           slot-name: production
