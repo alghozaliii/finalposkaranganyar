@@ -209,8 +209,8 @@ Route::post('/profit/store', [SalesRecommendationController::class, 'storeProfit
 
 Route::middleware(['auth', 'role:owner'])->group(function () {
     Route::get('/owner/dashboard', [OwnerDashboardController::class, 'index'])->name('owner.dashboard');
-    Route::post('/owner/employees', [EmployeeController::class, 'store'])->name('employees.store');
-    Route::delete('/owner/employees/{id}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
+    Route::post('/owner/employees', [EmployeeController::class, 'store'])->name('owner.employees.store');
+    Route::delete('/owner/employees/{id}', [EmployeeController::class, 'destroy'])->name('owner.employees.destroy');
 });
 
 // Route untuk export Excel

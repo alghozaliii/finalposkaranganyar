@@ -777,7 +777,7 @@ const formatNumber = number => number.toString().replace(/\B(?=(\d{3})+(?!\d))/g
 
 // Submit tambah karyawan
 const submitForm = () => {
-  form.post(route('employees.store'), {
+  form.post(route('owner.employees.store'), {
     onSuccess: () => {
       form.reset();
       // Reload employees list
@@ -799,7 +799,7 @@ const reloadEmployees = async () => {
 // Hapus karyawan
 const deleteEmployee = async (id) => {
   if (!confirm('Yakin ingin menghapus karyawan ini?')) return;
-  await axios.delete(route('employees.destroy', id));
+  await axios.delete(route('owner.employees.destroy', id));
   employees.value = employees.value.filter(e => e.id !== id);
 };
 
