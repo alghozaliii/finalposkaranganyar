@@ -62,11 +62,12 @@ jobs:
           npm ci
           npm run build
 
+      - name: Copy startup script
+        run: cp .github/workflows/startup.sh startup.sh
+
       - name: Make startup.sh executable
         run: chmod +x startup.sh
 
-      - name: Copy startup script
-        run: cp .github/workflows/startup.sh startup.sh
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
