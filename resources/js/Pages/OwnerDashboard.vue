@@ -768,6 +768,8 @@ const goToStock = () => router.get(route('owner.stock'));
 const goToEmployees = () => router.get(route('owner.employees'));
 const goToFAQ = () => router.get(route('owner.HelpdeskOwner'));
 const goToLaporan = () => router.get(route('owner.laporan'));
+const goToSales = () => router.get(route('owner.sales'));
+const goToSalesRecommendation = () => router.get(route('owner.sales.recommendation'));
 const logout = () => router.post(route('logout'));
 const setActiveTab = t => activeTab.value = t;
 
