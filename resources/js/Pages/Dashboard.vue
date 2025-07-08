@@ -286,6 +286,8 @@
 
         <div class="mb-2"><strong>Nama:</strong> {{ selectedUser.name }}</div>
         <div class="mb-2"><strong>Email:</strong> {{ selectedUser.email }}</div>
+        <div class="mb-2"><strong>Nama Toko:</strong> {{ selectedUser.store_name }}</div>
+        <div class="mb-2"><strong>Alamat Toko:</strong> {{ selectedUser.store_address }}</div>
         <div class="mb-2"><strong>Nomor HP (WA):</strong> {{ selectedUser.phone }}</div>
         <div class="mb-2"><strong>Alamat:</strong> {{ selectedUser.address }}</div>
         <div class="mb-2"><strong>NIK:</strong> {{ selectedUser.nik }}</div>

@@ -96,6 +96,7 @@ class SSOController extends Controller
             'email' => 'required|email|unique:users,email',
             // 'password' => 'required|string|min:6', // Hapus validasi password
             'store_name' => 'required|string|max:255',
+            'store_address' => 'required|string',
             'address' => 'required|string',
             'nik' => 'required|string|unique:users,nik',
             'phone' => 'required|string|max:15',
@@ -121,6 +122,7 @@ class SSOController extends Controller
                 'role_id' => 2, // Role Owner
                 'is_approved' => false, // Harus disetujui dulu oleh verifikator
                 'store_name' => $request->store_name,
+                'store_address' => $request->store_address,
                 'address' => $request->address,
                 'nik' => $request->nik,
                 'phone' => $request->phone,

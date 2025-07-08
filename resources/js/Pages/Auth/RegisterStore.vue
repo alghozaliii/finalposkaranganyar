@@ -96,8 +96,9 @@
                                 <InputError class="mt-1 text-rose-400 text-sm" :message="form.errors.store_name" />
                             </div>
 
+                            <!-- Tambah input alamat toko -->
                             <div class="mb-4">
-                                <InputLabel for="address" value="Alamat" class="block text-sm font-medium text-white mb-1" />
+                                <InputLabel for="store_address" value="Alamat Toko" class="block text-sm font-medium text-white mb-1" />
                                 <div class="relative">
                                     <div class="absolute top-3 left-3 flex items-center pointer-events-none">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -105,10 +106,10 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>
                                     </div>
-                                    <TextInput id="address" type="text" class="w-full pl-10 pr-4 py-2 rounded-xl bg-zinc-800 text-white text-base placeholder-zinc-400 border border-zinc-700 focus:border-violet-400 focus:ring focus:ring-violet-300 focus:ring-opacity-50" 
-                                        v-model="form.address" required placeholder="Masukkan alamat toko" />
+                                    <TextInput id="store_address" type="text" class="w-full pl-10 pr-4 py-2 rounded-xl bg-zinc-800 text-white text-base placeholder-zinc-400 border border-zinc-700 focus:border-violet-400 focus:ring focus:ring-violet-300 focus:ring-opacity-50" 
+                                        v-model="form.store_address" required placeholder="Masukkan alamat toko" />
                                 </div>
-                                <InputError class="mt-1 text-rose-400 text-sm" :message="form.errors.address" />
+                                <InputError class="mt-1 text-rose-400 text-sm" :message="form.errors.store_address" />
                             </div>
 
                             <div class="mb-4">
@@ -188,6 +189,7 @@ const form = useForm({
     name: props.ssoUser.nama,
     email: props.ssoUser.email,
     store_name: '',
+    store_address: '',
     address: props.ssoUser.alamat,
     nik: props.ssoUser.nik,
     phone: props.ssoUser.no_wa,

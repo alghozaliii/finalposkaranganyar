@@ -26,6 +26,7 @@ class User extends Authenticatable
         'is_approved',
         'owner_id',
         'store_name',
+        'store_address', // Tambahkan ini
         'address',
         'nik',
         'phone', 
