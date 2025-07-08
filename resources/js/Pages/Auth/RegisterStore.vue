@@ -76,34 +76,6 @@
                                 </div>
                                 <InputError class="mt-1 text-rose-400 text-sm" :message="form.errors.email" />
                             </div>
-
-                            <div class="mb-4">
-                                <InputLabel for="password" value="Password" class="block text-sm font-medium text-white mb-1" />
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                        </svg>
-                                    </div>
-                                    <TextInput id="password" type="password" class="w-full pl-10 pr-4 py-2 rounded-xl bg-zinc-800 text-white text-base placeholder-zinc-400 border border-zinc-700 focus:border-violet-400 focus:ring focus:ring-violet-300 focus:ring-opacity-50" 
-                                        v-model="form.password" required placeholder="Buat password" />
-                                </div>
-                                <InputError class="mt-1 text-rose-400 text-sm" :message="form.errors.password" />
-                            </div>
-
-                            <div class="mb-4">
-                                <InputLabel for="password_confirmation" value="Konfirmasi Password" class="block text-sm font-medium text-white mb-1" />
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                        </svg>
-                                    </div>
-                                    <TextInput id="password_confirmation" type="password" class="w-full pl-10 pr-4 py-2 rounded-xl bg-zinc-800 text-white text-base placeholder-zinc-400 border border-zinc-700 focus:border-violet-400 focus:ring focus:ring-violet-300 focus:ring-opacity-50" 
-                                        v-model="form.password_confirmation" required placeholder="Konfirmasi password" />
-                                </div>
-                                <InputError class="mt-1 text-rose-400 text-sm" :message="form.errors.password_confirmation" />
-                            </div>
                         </div>
 
                         <!-- Section 2: Informasi Toko -->
@@ -274,8 +246,6 @@ const selfiePreview = ref(null);
 const form = useForm({
     name: props.ssoUser.nama,
     email: props.ssoUser.email,
-    password: '',
-    password_confirmation: '',
     store_name: '',
     address: props.ssoUser.alamat,
     nik: props.ssoUser.nik,
@@ -325,7 +295,6 @@ const submit = () => {
     form.post(route('sso.register.store'), {
         forceFormData: true, // Pastikan dikirim sebagai FormData
         onFinish: () => {
-            form.reset('password', 'password_confirmation');
             // Reset file preview jika registrasi berhasil
             ktpPreview.value = null;
             selfiePreview.value = null;

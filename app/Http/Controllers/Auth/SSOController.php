@@ -94,7 +94,7 @@ class SSOController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
+            // 'password' => 'required|string|min:6', // Hapus validasi password
             'store_name' => 'required|string|max:255',
             'address' => 'required|string',
             'nik' => 'required|string|unique:users,nik',
@@ -116,7 +116,8 @@ class SSOController extends Controller
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
+                // 'password' => Hash::make($request->password), // Hapus password dari request
+                'password' => Hash::make(Str::random(32)), // Set password random agar field tidak null
                 'role_id' => 2, // Role Owner
                 'is_approved' => false, // Harus disetujui dulu oleh verifikator
                 'store_name' => $request->store_name,
