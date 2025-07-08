@@ -44,6 +44,21 @@ class AuthenticatedSessionController extends Controller
             return redirect('/')->with('message', 'Akun Anda masih menunggu persetujuan.');
         }
 
+        // Jika owner dan store_status nonaktif
+        if ($user->role_id === 2 && $user->store_status === 'nonaktif') {
+            Auth::logout();
+            return redirect('/')->with('message', 'Toko Anda sedang nonaktif. Hubungi admin.');
+        }
+
+        // Jika employee, cek owner-nya
+        if ($user->role_id === 3) {
+            $owner = \App\Models\User::find($user->owner_id);
+            if ($owner && $owner->store_status === 'nonaktif') {
+                Auth::logout();
+                return redirect('/')->with('message', 'Toko ini statusnya nonaktif.');
+            }
+        }
+
         // **LOGIKA REDIRECT BERDASARKAN ROLE**
         if ($user->role_id === 1) {
             return redirect()->route('verificator.dashboard');

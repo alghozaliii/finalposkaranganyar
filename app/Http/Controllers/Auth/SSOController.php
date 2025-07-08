@@ -69,6 +69,19 @@ class SSOController extends Controller
             return redirect()->route('login')->with('error', 'Akun Anda masih menunggu persetujuan dari verifikator.');
         }
 
+        // Cek status toko untuk owner
+        if ($user->role_id === 2 && $user->store_status === 'nonaktif') {
+            return redirect()->route('login')->with('error', 'Toko Anda sedang nonaktif. Hubungi admin.');
+        }
+
+        // Cek status toko untuk employee
+        if ($user->role_id === 3) {
+            $owner = \App\Models\User::find($user->owner_id);
+            if ($owner && $owner->store_status === 'nonaktif') {
+                return redirect()->route('login')->with('error', 'Toko ini statusnya nonaktif.');
+            }
+        }
+
         // Check if user is an owner
         if ($user->role_id === 2) { // Assuming 2 is the role_id for owners
             if (!$user->store_name) {
