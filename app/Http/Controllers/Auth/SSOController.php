@@ -99,18 +99,18 @@ class SSOController extends Controller
             'address' => 'required|string',
             'nik' => 'required|string|unique:users,nik',
             'phone' => 'required|string|max:15',
-            'ktp_photo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'selfie_photo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            // 'ktp_photo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            // 'selfie_photo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         try {
             // Simpan file dengan nama unik
-            $ktpFilename = time() . '_ktp.' . $request->file('ktp_photo')->getClientOriginalExtension();
-            $selfieFilename = time() . '_selfie.' . $request->file('selfie_photo')->getClientOriginalExtension();
+            // $ktpFilename = time() . '_ktp.' . $request->file('ktp_photo')->getClientOriginalExtension();
+            // $selfieFilename = time() . '_selfie.' . $request->file('selfie_photo')->getClientOriginalExtension();
 
-            // Simpan ke storage
-            $ktpPath = $request->file('ktp_photo')->storeAs('uploads/ktp', $ktpFilename, 'public');
-            $selfiePath = $request->file('selfie_photo')->storeAs('uploads/selfie', $selfieFilename, 'public');
+            // // Simpan ke storage
+            // $ktpPath = $request->file('ktp_photo')->storeAs('uploads/ktp', $ktpFilename, 'public');
+            // $selfiePath = $request->file('selfie_photo')->storeAs('uploads/selfie', $selfieFilename, 'public');
 
             // Buat user dengan role Owner (2), tapi belum di-approve
             $user = User::create([
@@ -124,8 +124,8 @@ class SSOController extends Controller
                 'address' => $request->address,
                 'nik' => $request->nik,
                 'phone' => $request->phone,
-                'ktp_photo' => $ktpPath,
-                'selfie_photo' => $selfiePath,
+                // 'ktp_photo' => $ktpPath,
+                // 'selfie_photo' => $selfiePath,
             ]);
 
             // Event pendaftaran

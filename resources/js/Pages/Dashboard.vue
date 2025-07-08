@@ -289,31 +289,9 @@
         <div class="mb-2"><strong>Nomor HP (WA):</strong> {{ selectedUser.phone }}</div>
         <div class="mb-2"><strong>Alamat:</strong> {{ selectedUser.address }}</div>
         <div class="mb-2"><strong>NIK:</strong> {{ selectedUser.nik }}</div>
-
-        <div class="mt-4">
-          <h3 class="font-semibold">Foto KTP:</h3>
-          <img :src="getImageUrl(selectedUser.ktp_photo)" 
-              alt="Foto KTP" 
-              class="w-full max-h-60 object-contain rounded-lg border border-gray-300"
-              @error="handleImageError">
-          <!-- Link untuk melihat/download gambar -->
-          <a :href="getImageUrl(selectedUser.ktp_photo)" target="_blank" class="text-blue-500 text-sm mt-1 inline-block">
-            Lihat Gambar Asli
-          </a>
-        </div>
-
-        <div class="mt-4">
-          <h3 class="font-semibold">Foto Selfie:</h3>
-          <img :src="getImageUrl(selectedUser.selfie_photo)" 
-              alt="Foto Selfie" 
-              class="w-full max-h-60 object-contain rounded-lg border border-gray-300"
-              @error="handleImageError">
-          <!-- Link untuk melihat/download gambar -->
-          <a :href="getImageUrl(selectedUser.selfie_photo)" target="_blank" class="text-blue-500 text-sm mt-1 inline-block">
-            Lihat Gambar Asli
-          </a>
-        </div>
-
+        
+        <!-- Hapus preview foto KTP dan selfie -->
+        
         <div class="mt-6 flex justify-end space-x-2">
           <button 
             @click="showModal = false"

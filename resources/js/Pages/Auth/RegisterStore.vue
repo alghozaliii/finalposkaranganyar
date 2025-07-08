@@ -141,60 +141,6 @@
                         </div>
                     </div>
 
-                    <!-- Upload Section -->
-                    <div class="mt-6">
-                        <h2 class="text-lg font-semibold text-violet-300 mb-4">Upload Dokumen</h2>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-                            <!-- Upload Foto KTP -->
-                            <div class="mb-4">
-                                <InputLabel for="ktp_photo" value="Foto KTP" class="block text-sm font-medium text-white mb-1" />
-                                <div class="relative">
-                                    <div class="mt-1">
-                                        <div class="border-2 border-dashed border-zinc-700 rounded-xl px-4 py-4 bg-zinc-800 hover:border-violet-400 transition-colors duration-300">
-                                            <div class="flex flex-col items-center justify-center">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-zinc-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                </svg>
-                                                <p class="text-sm text-zinc-400 mb-2">Klik untuk upload foto KTP</p>
-                                                <div v-if="ktpPreview" class="relative w-full h-32 mb-2">
-                                                    <img :src="ktpPreview" class="w-full h-full object-contain rounded-lg" />
-                                                </div>
-                                                <input id="ktp_photo" type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
-                                                    accept="image/*" @change="handleKtpUpload" required />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <InputError class="mt-1 text-rose-400 text-sm" :message="form.errors.ktp_photo" />
-                            </div>
-
-                            <!-- Upload Foto Selfie -->
-                            <div class="mb-4">
-                                <InputLabel for="selfie_photo" value="Foto Selfie" class="block text-sm font-medium text-white mb-1" />
-                                <div class="relative">
-                                    <div class="mt-1">
-                                        <div class="border-2 border-dashed border-zinc-700 rounded-xl px-4 py-4 bg-zinc-800 hover:border-violet-400 transition-colors duration-300">
-                                            <div class="flex flex-col items-center justify-center">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-zinc-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                </svg>
-                                                <p class="text-sm text-zinc-400 mb-2">Klik untuk upload foto selfie</p>
-                                                <div v-if="selfiePreview" class="relative w-full h-32 mb-2">
-                                                    <img :src="selfiePreview" class="w-full h-full object-contain rounded-lg" />
-                                                </div>
-                                                <input id="selfie_photo" type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
-                                                    accept="image/*" @change="handleSelfieUpload" required />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <InputError class="mt-1 text-rose-400 text-sm" :message="form.errors.selfie_photo" />
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Submit Section -->
                     <div class="mt-8 flex flex-col-reverse sm:flex-row items-center justify-between gap-4">
                         <Link :href="route('login')" class="text-violet-400 hover:text-violet-300 transition-colors underline text-center sm:text-left w-full sm:w-auto">
@@ -238,11 +184,6 @@ const props = defineProps({
     }
 });
 
-const ktpPhoto = ref(null);
-const selfiePhoto = ref(null);
-const ktpPreview = ref(null);
-const selfiePreview = ref(null);
-
 const form = useForm({
     name: props.ssoUser.nama,
     email: props.ssoUser.email,
@@ -250,37 +191,7 @@ const form = useForm({
     address: props.ssoUser.alamat,
     nik: props.ssoUser.nik,
     phone: props.ssoUser.no_wa,
-    ktp_photo: null,
-    selfie_photo: null,
 });
-
-// Fungsi untuk preview foto KTP
-const handleKtpUpload = (event) => {
-    const file = event.target.files[0];
-    form.ktp_photo = file;
-    
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            ktpPreview.value = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-};
-
-// Fungsi untuk preview foto selfie
-const handleSelfieUpload = (event) => {
-    const file = event.target.files[0];
-    form.selfie_photo = file;
-    
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            selfiePreview.value = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-};
 
 // Fungsi submit form dengan FormData
 const submit = () => {
@@ -296,10 +207,6 @@ const submit = () => {
         forceFormData: true, // Pastikan dikirim sebagai FormData
         onFinish: () => {
             // Reset file preview jika registrasi berhasil
-            ktpPreview.value = null;
-            selfiePreview.value = null;
-            form.ktp_photo = null;
-            form.selfie_photo = null;
         },
     });
 };
