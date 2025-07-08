@@ -16,7 +16,7 @@ class DashboardController extends Controller
             ->with(['employees' => function($query) {
                 $query->select('id', 'name', 'employees_role', 'owner_id');
             }])
-            ->select('id', 'email', 'store_name')
+            ->select('id', 'email', 'store_name', 'store_address', 'address', 'nik', 'phone', 'store_status')
             ->get();
 
         $totalOwners = $owners->count();
@@ -25,5 +25,18 @@ class DashboardController extends Controller
             'totalOwners' => $totalOwners,
             'owners' => $owners
         ]);
+    }
+
+    public function updateStoreStatus(Request $request, $id)
+    {
+        $request->validate([
+            'store_status' => 'required|in:aktif,nonaktif',
+        ]);
+
+        $owner = User::where('id', $id)->where('role_id', 2)->firstOrFail();
+        $owner->store_status = $request->store_status;
+        $owner->save();
+
+        return back()->with('message', 'Status toko berhasil diperbarui.');
     }
 }

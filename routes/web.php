@@ -258,3 +258,6 @@ Route::get('/employee/stock/check', [ProductController::class, 'check']);
 Route::get('/employee/stock/history', [ProductController::class, 'showStockHistory'])
     ->name('employee.stock.history')
     ->middleware(['auth']);
+
+// Route untuk update status toko owner oleh admin
+Route::post('/admin/owner/{id}/update-store-status', [App\Http\Controllers\Admin\DashboardController::class, 'updateStoreStatus'])->name('admin.owner.updateStoreStatus');

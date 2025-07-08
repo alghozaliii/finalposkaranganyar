@@ -21,6 +21,15 @@
             </div>
             <span class="text-xs mt-2">Dashboard</span>
           </button>
+          <!-- Toko -->
+          <button @click="activateSection('toko')" class="flex flex-col items-center">
+            <div class="p-3 rounded-md" :class="activeSection==='toko' ? 'bg-purple-100 text-purple-700' : 'text-gray-500'">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" :class="activeSection==='toko' ? 'text-purple-700' : ''">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v4a1 1 0 001 1h16a1 1 0 001-1V7M4 7V5a2 2 0 012-2h12a2 2 0 012 2v2M4 7h16" />
+              </svg>
+            </div>
+            <span class="text-xs mt-2">Toko</span>
+          </button>
         </nav>
         
         <button @click="logout" class="flex flex-col items-center mt-auto mb-6">
@@ -58,97 +67,102 @@
 
         <!-- Main content area - Updated padding and spacing -->
         <main class="p-4 md:p-6 space-y-6">
-          <!-- Stats Cards - Updated responsive grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            <!-- Total Owners Card -->
-            <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-4 md:p-6 text-white">
-              <h3 class="text-base md:text-lg mb-2 md:mb-4">Total Owners</h3>
-              <div class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-4">{{ totalOwners }}</div>
-              <div class="flex items-center text-sm md:text-base">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                </svg>
-                <span>Total registered owners</span>
+          <template v-if="activeSection==='dashboard'">
+            <!-- Stats Cards - Updated responsive grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              <!-- Total Owners Card -->
+              <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-4 md:p-6 text-white">
+                <h3 class="text-base md:text-lg mb-2 md:mb-4">Total Owners</h3>
+                <div class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-4">{{ totalOwners }}</div>
+                <div class="flex items-center text-sm md:text-base">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                  </svg>
+                  <span>Total registered owners</span>
+                </div>
+              </div>
+
+              <!-- Active Stores Card -->
+              <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-4 md:p-6 text-white">
+                <h3 class="text-base md:text-lg mb-2 md:mb-4">Active Stores</h3>
+                <div class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-4">0</div>
+                <div class="flex items-center text-sm md:text-base">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                  </svg>
+                  <span>0% from last month</span>
+                </div>
+              </div>
+
+              <!-- Total Sales Card -->
+              <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-4 md:p-6 text-white">
+                <h3 class="text-base md:text-lg mb-2 md:mb-4">Total Sales</h3>
+                <div class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-4">Rp 0</div>
+                <div class="flex items-center text-sm md:text-base">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                  </svg>
+                  <span>0% from last month</span>
+                </div>
               </div>
             </div>
 
-            <!-- Active Stores Card -->
-            <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-4 md:p-6 text-white">
-              <h3 class="text-base md:text-lg mb-2 md:mb-4">Active Stores</h3>
-              <div class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-4">0</div>
-              <div class="flex items-center text-sm md:text-base">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                </svg>
-                <span>0% from last month</span>
-              </div>
-            </div>
-
-            <!-- Total Sales Card -->
-            <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-4 md:p-6 text-white">
-              <h3 class="text-base md:text-lg mb-2 md:mb-4">Total Sales</h3>
-              <div class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-4">Rp 0</div>
-              <div class="flex items-center text-sm md:text-base">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                </svg>
-                <span>0% from last month</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Store Information Table - Made scrollable on mobile -->
-          <div class="bg-white rounded-lg border overflow-hidden">
-            <div class="p-4 md:p-6">
-              <h2 class="text-lg md:text-xl font-semibold text-gray-900 mb-4">Store Information</h2>
-              <div class="overflow-x-auto -mx-4 md:mx-0">
-                <table class="min-w-full divide-y divide-gray-200">
-                  <thead class="bg-gray-50">
-                    <tr>
-                      <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Store Name
-                      </th>
-                      <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Owner Email
-                      </th>
-                      <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Employees
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-if="!owners.length">
-                      <td colspan="3" class="px-3 md:px-6 py-4 text-center text-gray-500">No stores registered</td>
-                    </tr>
-                    <tr v-for="owner in owners" :key="owner.id" class="hover:bg-gray-50">
-                      <td class="px-3 md:px-6 py-4 text-sm">
-                        <div class="break-words">{{ owner.store_name || '-' }}</div>
-                      </td>
-                      <td class="px-3 md:px-6 py-4 text-sm">
-                        <div class="break-words">{{ owner.email }}</div>
-                      </td>
-                      <td class="px-3 md:px-6 py-4 text-sm">
-                        <div v-if="owner.employees && owner.employees.length" class="space-y-1">
-                          <div v-for="emp in owner.employees" :key="emp.id" class="break-words">
-                            {{ emp.name }} ({{ emp.employees_role }})
+            <!-- Store Information Table - Made scrollable on mobile -->
+            <div class="bg-white rounded-lg border overflow-hidden">
+              <div class="p-4 md:p-6">
+                <h2 class="text-lg md:text-xl font-semibold text-gray-900 mb-4">Store Information</h2>
+                <div class="overflow-x-auto -mx-4 md:mx-0">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Store Name
+                        </th>
+                        <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Owner Email
+                        </th>
+                        <th class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Employees
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                      <tr v-if="!owners.length">
+                        <td colspan="3" class="px-3 md:px-6 py-4 text-center text-gray-500">No stores registered</td>
+                      </tr>
+                      <tr v-for="owner in owners" :key="owner.id" class="hover:bg-gray-50">
+                        <td class="px-3 md:px-6 py-4 text-sm">
+                          <div class="break-words">{{ owner.store_name || '-' }}</div>
+                        </td>
+                        <td class="px-3 md:px-6 py-4 text-sm">
+                          <div class="break-words">{{ owner.email }}</div>
+                        </td>
+                        <td class="px-3 md:px-6 py-4 text-sm">
+                          <div v-if="owner.employees && owner.employees.length" class="space-y-1">
+                            <div v-for="emp in owner.employees" :key="emp.id" class="break-words">
+                              {{ emp.name }} ({{ emp.employees_role }})
+                            </div>
                           </div>
-                        </div>
-                        <span v-else class="text-gray-500">No employees</span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                          <span v-else class="text-gray-500">No employees</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Recent Activity -->
-          <div class="bg-white rounded-lg border p-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h2>
-            <div class="space-y-4">
-              <p class="text-gray-500 text-center py-8">No recent activity</p>
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-lg border p-6">
+              <h2 class="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h2>
+              <div class="space-y-4">
+                <p class="text-gray-500 text-center py-8">No recent activity</p>
+              </div>
             </div>
-          </div>
+          </template>
+          <template v-else-if="activeSection==='toko'">
+            <AdminTokoView :owners="owners" />
+          </template>
         </main>
       </div>
     </div>
@@ -159,6 +173,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import AdminTokoView from './Partials/AdminTokoView.vue';
 
 // Props
 const props = defineProps({
