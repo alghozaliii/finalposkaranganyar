@@ -277,9 +277,9 @@ const form = useForm({
     password: '',
     password_confirmation: '',
     store_name: '',
-    address: '',
-    nik: '',
-    phone: '',
+    address: props.ssoUser.alamat,
+    nik: props.ssoUser.nik,
+    phone: props.ssoUser.no_wa,
     ktp_photo: null,
     selfie_photo: null,
 });

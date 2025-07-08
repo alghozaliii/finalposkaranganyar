@@ -52,6 +52,7 @@ class SSOController extends Controller
         }
 
         $userInfo = $this->ssoService->getUserInfo($token['access_token']);
+        // dd($userInfo); // Uncomment for debugging
         
         // Check if user exists in our database
         $user = User::where('email', $userInfo['email'])->first();
