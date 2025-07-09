@@ -2,13 +2,13 @@
   <Head title="Admin Dashboard" />
 
   <AuthenticatedLayout>
-    <div class="flex flex-col min-h-screen bg-gray-100">
-      <!-- Sidebar - Made collapsible on mobile -->
+    <div class="flex min-h-screen bg-gray-100">
+      <!-- Sidebar - Fixed positioning and z-index -->
       <aside
         :class="[
-          'bg-white shadow-lg flex flex-col items-center pt-6 transition-all duration-300 ease-in-out z-30',
-          mobileMenuOpen ? 'fixed inset-y-0 left-0 w-64' : '-translate-x-full fixed inset-y-0 left-0 w-64',
-          'md:translate-x-0 md:static md:w-20 lg:w-24'
+          'bg-white shadow-lg flex flex-col items-center pt-6 transition-all duration-300 ease-in-out',
+          mobileMenuOpen ? 'fixed inset-y-0 left-0 w-64 z-50' : 'fixed inset-y-0 left-0 w-64 -translate-x-full z-50',
+          'md:translate-x-0 md:static md:w-20 md:z-auto lg:w-24'
         ]"
       >        
         <nav class="flex flex-col items-center gap-10 mt-8 flex-1">
@@ -46,13 +46,13 @@
       <div
         v-if="mobileMenuOpen"
         @click="toggleMobileMenu(false)"
-        class="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+        class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
       ></div>
 
-      <!-- Main content wrapper -->
-      <div class="flex-1 w-full md:pl-20 lg:pl-24">
-        <!-- Mobile header - Updated styling -->
-        <header class="sticky top-0 bg-white p-4 shadow flex items-center justify-between md:hidden">
+      <!-- Main content wrapper - Updated to properly account for sidebar -->
+      <div class="flex-1 flex flex-col md:ml-20 lg:ml-24">
+        <!-- Mobile header -->
+        <header class="sticky top-0 bg-white p-4 shadow flex items-center justify-between md:hidden z-30">
           <button 
             @click="toggleMobileMenu()"
             class="p-2 rounded-lg hover:bg-gray-100 focus:outline-none"
@@ -65,10 +65,10 @@
           <div class="w-6"></div>
         </header>
 
-        <!-- Main content area - Updated padding and spacing -->
-        <main class="p-4 md:p-6 space-y-6">
+        <!-- Main content area -->
+        <main class="flex-1 p-4 md:p-6 space-y-6">
           <template v-if="activeSection==='dashboard'">
-            <!-- Stats Cards - Updated responsive grid -->
+            <!-- Stats Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               <!-- Total Owners Card -->
               <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg p-4 md:p-6 text-white">
@@ -107,7 +107,7 @@
               </div>
             </div>
 
-            <!-- Store Information Table - Made scrollable on mobile -->
+            <!-- Store Information Table -->
             <div class="bg-white rounded-lg border overflow-hidden">
               <div class="p-4 md:p-6">
                 <h2 class="text-lg md:text-xl font-semibold text-gray-900 mb-4">Store Information</h2>
@@ -153,13 +153,14 @@
             </div>
 
             <!-- Recent Activity -->
-            <div class="bg-white rounded-lg border p-6">
-              <h2 class="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h2>
+            <div class="bg-white rounded-lg border p-4 md:p-6">
+              <h2 class="text-lg md:text-xl font-semibold text-gray-900 mb-4">Recent Activity</h2>
               <div class="space-y-4">
                 <p class="text-gray-500 text-center py-8">No recent activity</p>
               </div>
             </div>
           </template>
+          
           <template v-else-if="activeSection==='toko'">
             <AdminTokoView :owners="owners" />
           </template>
